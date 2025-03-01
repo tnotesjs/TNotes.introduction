@@ -8,6 +8,6 @@
 
 - `TNotes.template` 是一个开源的笔记模板，基于 [vitepress](https://github.com/vuejs/vitepress) 实现的一个快速搭建个人知识库的工具。
 
-::: info
+::: info 初版
 目前 `2025 年 3 月 2 日 01:54:18` 发了初版，先自行体验一段时间看看效果。
 :::
