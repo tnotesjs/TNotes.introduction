@@ -16,6 +16,7 @@ import {
   EOL,
   GITHUB_PAGE_NOTES_URL,
   ignore_dirs,
+  menuItems,
   NEW_NOTES_README_MD_TEMPLATE,
   NEW_NOTES_TNOTES_JSON_TEMPLATE,
   NOTES_DIR,
@@ -27,6 +28,7 @@ import {
   ROOT_README_PATH,
   socialLinks,
   VP_DIR,
+  VP_MENU_ITEMS_PATH,
   VP_SIDEBAR_PATH,
   VP_SOCIAL_LINKS_PATH,
   VP_TOC_PATH,
@@ -41,6 +43,7 @@ class ReadmeUpdater {
     this.EOL = EOL
     this.githubPageNotesUrl = GITHUB_PAGE_NOTES_URL
     this.ignoreDirs = ignore_dirs || []
+    this.menuItems = menuItems
     this.newNotesReadmeMdTemplate = NEW_NOTES_README_MD_TEMPLATE
     this.notesDir = NOTES_DIR
     this.repoBolbUrl = REPO_BOLB_URL 
@@ -51,6 +54,7 @@ class ReadmeUpdater {
     this.tocEndTag = NOTES_TOC_END_TAG
     this.tocStartTag = NOTES_TOC_START_TAG
     this.vpDir = VP_DIR
+    this.vpMenuItemsPath = VP_MENU_ITEMS_PATH
     this.vpSidebarPath = VP_SIDEBAR_PATH
     this.vpTocPath = VP_TOC_PATH
     this.vpSocialLinksPath = VP_SOCIAL_LINKS_PATH
@@ -527,9 +531,14 @@ class ReadmeUpdater {
       fs.writeFileSync(this.vpSocialLinksPath, JSON.stringify(this.socialLinks))
     };
     
+    const updateFile_MenuItems_JSON = () => {
+      fs.writeFileSync(this.vpMenuItemsPath, JSON.stringify(this.menuItems))
+    }
+
     updateFile_TOC_MD();
     updateFile_SIDEBAT_JSON();
     updateFile_SOCIAL_LINKS_JSON();
+    updateFile_MenuItems_JSON();
   }
 
   updateReadme() {

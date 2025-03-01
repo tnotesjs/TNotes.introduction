@@ -7,6 +7,7 @@ const {
   ignore_dirs,
   repoName,
   socialLinks,
+  menuItems
 } = getTnotesConfig()
 
 export {
@@ -14,6 +15,7 @@ export {
   ignore_dirs,
   repoName,
   socialLinks,
+  menuItems
 }
 
 export const BILIBILI_VIDEO_BASE_URL = "https://www.bilibili.com/video/"
@@ -27,6 +29,7 @@ export const VP_DIR = path.resolve(ROOT_DIR, '.vitepress')
 export const VP_TOC_PATH = path.resolve(ROOT_DIR, 'TOC.md')
 export const VP_SIDEBAR_PATH = path.resolve(VP_DIR, 'sidebar.json')
 export const VP_SOCIAL_LINKS_PATH = path.resolve(VP_DIR, 'socialLinks.json')
+export const VP_MENU_ITEMS_PATH = path.resolve(VP_DIR, 'menuItems.json')
 export const ROOT_PKG_PATH = path.resolve(__dirname, '..', '..', 'package.json')
 
 export const EOL = '\n'

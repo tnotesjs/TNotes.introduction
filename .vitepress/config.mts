@@ -13,6 +13,7 @@ import { author, repoName, keywords } from '../.tnotes.json'
 
 import sidebar from './sidebar.json'
 import socialLinks from './socialLinks.json'
+import menuItems from './menuItems.json'
 
 const slugger = new GithubSlugger()
 
@@ -132,24 +133,7 @@ function themeConfig() {
     nav: [
       {
         text: 'Menus',
-        items: [
-          {
-            text: '🏠 Home',
-            link: '/',
-          },
-          {
-            text: '📒 TNotes',
-            link: 'https://tdahuyou.github.io/notes',
-          },
-          {
-            text: '👀 TOC',
-            link: '/TOC',
-          },
-          {
-            text: '⚙️ Settings',
-            link: '/Settings',
-          },
-        ],
+        items: menuItems,
       },
     ],
     search: { provider: 'local' },
@@ -157,24 +141,7 @@ function themeConfig() {
       {
         text: 'Menus',
         collapsed: true,
-        items: [
-          {
-            text: '🏠 Home',
-            link: '/',
-          },
-          {
-            text: '📒 TNotes',
-            link: 'https://tdahuyou.github.io/notes',
-          },
-          {
-            text: '👀 TOC',
-            link: '/TOC',
-          },
-          {
-            text: '⚙️ Settings',
-            link: '/Settings',
-          },
-        ],
+        items: menuItems,
       },
       ...sidebar,
     ],
