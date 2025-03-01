@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <p class="label">
-            <label for="path">⚙️ NOTES_DIR_KEY:</label>
+            <label for="path">⚙️ {{ NOTES_DIR_KEY }}:</label>
         </p>
         <p class="input-container">
             <input id="path" v-model="path" placeholder="请输入当前笔记文件夹所在位置" class="input" />

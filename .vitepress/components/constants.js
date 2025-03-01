@@ -1,7 +1,9 @@
+import { repoName } from '../../.tnotes.json'
+
 /**
  * 存储本地笔记文件夹所在位置的 key
  */
-export const NOTES_DIR_KEY = 'NOTES_DIR_KEY'
+export const NOTES_DIR_KEY = 'NOTES_DIR_KEY__' + repoName
 
 /**
  * VitePress HOME README 文件名

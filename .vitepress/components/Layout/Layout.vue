@@ -97,12 +97,12 @@ const vpData = useData()
 // console.log('notesData:', notesData)
 // console.log('vpData:', vpData)
 
-const vscodeNoteDir = ref('');
+const vscodeNotesDir = ref('');
 
 const updateVscodeNoteDir = (relativePath) => {
     if (typeof window !== 'undefined') {
-        const noteDir = localStorage.getItem(NOTES_DIR_KEY);
-        vscodeNoteDir.value = noteDir ? `vscode://file/${noteDir}/${relativePath}` : '';
+        const notesDir = localStorage.getItem(NOTES_DIR_KEY);
+        vscodeNotesDir.value = notesDir ? `vscode://file/${notesDir}/${relativePath}` : '';
     }
 };
 
