@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: "en-notes"
+  name: "template"
   image:
     src: /logo.png
     alt: TNotes logo

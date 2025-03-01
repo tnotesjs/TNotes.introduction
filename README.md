@@ -1,9 +1,13 @@
 # 仓库名
 
 <!-- region:toc -->
-不需要关注这一部分内容，交由 TNotes 自动生成。
+- [仓库名](#仓库名)
+  - [1. 🚀 Quick Start](#1--quick-start)
 <!-- endregion:toc -->
 
-## 分组
+## 1. 🚀 Quick Start
 
-- [ ] 笔记ID
+- [ ] [0001. TNotes.template 简介](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0001.%20TNotes.template%20%E7%AE%80%E4%BB%8B/README.md) <!-- [locale](./notes/0001.%20TNotes.template%20%E7%AE%80%E4%BB%8B/README.md) -->  
+  <!-- #region:toc -->
+  <!-- #endregion:toc -->
+  

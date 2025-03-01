@@ -1,1 +1,9 @@
-不需要关注 TOC 中的内容，交由 TNotes 来自动生成。
+# 仓库名
+
+
+## 1. 🚀 Quick Start
+
+- [ ] [0001. TNotes.template 简介](https://tdahuyou.github.io/TNotes.template/notes/0001.%20TNotes.template%20%E7%AE%80%E4%BB%8B/README) <!-- [locale](./notes/0001.%20TNotes.template%20%E7%AE%80%E4%BB%8B/README) -->  
+  <!-- #region:toc -->
+  <!-- #endregion:toc -->
+  
