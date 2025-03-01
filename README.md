@@ -1,7 +1,7 @@
-# 仓库名
+# TNotes.template
 
 <!-- region:toc -->
-- [仓库名](#仓库名)
+- [TNotes.template](#tnotestemplate)
   - [1. 🚀 Quick Start](#1--quick-start)
 <!-- endregion:toc -->
 
