@@ -2,7 +2,7 @@
   "author": "Tdahuyou",
   "repoName": "TNotes.template",
   "keywords": ["TNotes.template"],
-  "ignore_dirs": [".vscode", "0000", "assets", "md-imgs", "node_modules"],
+  "ignore_dirs": [".vscode", "0000", "assets", "node_modules"],
   "socialLinks": [
     {
       "ariaLabel": "Tdahuyou 语雀主页链接",
