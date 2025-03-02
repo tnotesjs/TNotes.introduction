@@ -243,6 +243,9 @@ onBeforeUnmount(destroySwiper)
     font-style: italic;
     font-size: .7rem;
 }
+</style>
+
+<style>
 
 /* add some custom styles to set Swiper size */
 .swiper-container {
