@@ -1,7 +1,7 @@
 {
   "author": "Tdahuyou",
   "repoName": "TNotes.template",
-  "keywords": ["TNotes.template", "TNotes template", "Tdahuyou template notes"],
+  "keywords": ["TNotes.template"],
   "ignore_dirs": [".vscode", "0000", "assets", "md-imgs", "node_modules"],
   "socialLinks": [
     {
