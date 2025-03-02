@@ -4,7 +4,7 @@
             <!-- <pre>vscodesNoteDir: {{ vscodeNotesDir }}</pre> -->
             <!-- <pre>vpData.page.value: {{ vpData.page.value }}</pre> -->
             <!-- <button @click="copyRawFile" title="Copy raw file">raw</button> -->
-            <!-- <pre>{{ homeReadmeData }}</pre> -->
+            <!-- <pre>{{ tocData }}</pre> -->
         </template>
         <!-- <template #doc-bottom>doc-bottom</template> -->
         <template #doc-before>
@@ -81,7 +81,7 @@
 <script setup>
 import DefaultTheme from 'vitepress/theme'
 import { useData } from 'vitepress'
-import { data as homeReadmeData } from './homeReadme.data'
+import { data as tocData } from './toc.data.js'
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { formatDate, scrollToTop } from '../utils.js'
 
@@ -116,12 +116,12 @@ watch(
 );
 
 const isHomeReadme = computed(() => vpData.page.value.filePath === TOC_MD)
-const doneNotesLen = computed(() => homeReadmeData?.doneNotesLen)
+const doneNotesLen = computed(() => tocData?.doneNotesLen)
 const isCopied = ref(false)
 const copyRawFile = () => {
     // console.log(notesData, vpData.page.value.title.toLowerCase())
-    if (!homeReadmeData) return
-    navigator.clipboard.writeText(homeReadmeData.fileContent)
+    if (!tocData) return
+    navigator.clipboard.writeText(tocData.fileContent)
     isCopied.value = true
     setTimeout(() => isCopied.value = false, 1000)
 
@@ -129,7 +129,7 @@ const copyRawFile = () => {
     setTimeout(() => {
         targetWindow.postMessage({
             senderID: "__TNotes__",
-            message: homeReadmeData.fileContent
+            message: tocData.fileContent
         }, '*')
     }, 1000)
 }
