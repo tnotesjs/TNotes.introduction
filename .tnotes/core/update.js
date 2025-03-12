@@ -140,7 +140,7 @@ class ReadmeUpdater {
       const stats = fs.lstatSync(dirPath);
       
       // 检查是否是笔记文件夹
-      if (!(stats.isDirectory() && notesDirName.match(/^\d{4}/))) return
+      if (!(stats.isDirectory() && notesDirName.match(/^\d{4}/))) continue
 
       this.notesInfo.dirNameList.push(notesDirName)
       const notesID = notesDirName.slice(0, 4)
