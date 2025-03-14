@@ -28,3 +28,11 @@
   - [1. 🔗 swiperjs 官网](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0004.%20swiper/README.md#1--swiperjs-官网)
   - [2. 💻 swiper 功能测试](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0004.%20swiper/README.md#2--swiper-功能测试)
   
+
+
+
+## ⏰ pending
+
+- [ ] [0005. 嵌入 B 站视频](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0005.%20%E5%B5%8C%E5%85%A5%20B%20%E7%AB%99%E8%A7%86%E9%A2%91/README.md) <!-- [locale](./notes/0005.%20%E5%B5%8C%E5%85%A5%20B%20%E7%AB%99%E8%A7%86%E9%A2%91/README.md) -->  
+  - [1. 📒 notes_title](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0005.%20%E5%B5%8C%E5%85%A5%20B%20%E7%AB%99%E8%A7%86%E9%A2%91/README.md#1--notes_title)
+  
