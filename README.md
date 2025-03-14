@@ -29,10 +29,12 @@
   - [2. 💻 swiper 功能测试](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0004.%20swiper/README.md#2--swiper-功能测试)
   
 
-- [ ] [0005. BilibiliOutsidePlayer](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0005.%20BilibiliOutsidePlayer/README.md) <!-- [locale](./notes/0005.%20BilibiliOutsidePlayer/README.md) -->  
+- [x] [0005. BilibiliOutsidePlayer](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0005.%20BilibiliOutsidePlayer/README.md) <!-- [locale](./notes/0005.%20BilibiliOutsidePlayer/README.md) -->  
   - [1. 💻 嵌入 B 站视频](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0005.%20BilibiliOutsidePlayer/README.md#1--嵌入-b-站视频)
   
 
-- [ ] [0006. Footprints](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0006.%20Footprints/README.md) <!-- [locale](./notes/0006.%20Footprints/README.md) -->  
-  - [1. 📒 notes_title](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0006.%20Footprints/README.md#1--notes_title)
+- [x] [0006. Footprints](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0006.%20Footprints/README.md) <!-- [locale](./notes/0006.%20Footprints/README.md) -->  
+  - [1. 💻 足迹功能](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0006.%20Footprints/README.md#1--足迹功能)
+    - [1.1. 🗓 3-15](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0006.%20Footprints/README.md#11--3-15)
+    - [1.2. 🗓 3-15](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0006.%20Footprints/README.md#12--3-15)
   
