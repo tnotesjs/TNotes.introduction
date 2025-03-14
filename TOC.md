@@ -7,7 +7,7 @@
   - [1. 📒 简介](https://tdahuyou.github.io/TNotes.template/notes/0001.%20TNotes.template%20%E7%AE%80%E4%BB%8B/README#1--简介)
   
 
-## 2. 📒 扩展 markdown 功能
+## 2. 📒 扩展 vitepress
 
 - [x] [0002. 公式](https://tdahuyou.github.io/TNotes.template/notes/0002.%20%E5%85%AC%E5%BC%8F/README) <!-- [locale](./notes/0002.%20%E5%85%AC%E5%BC%8F/README) -->  
   - [1. 🔗 markdown-it-mathjax3 github page](https://tdahuyou.github.io/TNotes.template/notes/0002.%20%E5%85%AC%E5%BC%8F/README#1--markdown-it-mathjax3-github-page)
@@ -24,10 +24,6 @@
   - [2. 💻 swiper 功能测试](https://tdahuyou.github.io/TNotes.template/notes/0004.%20swiper/README#2--swiper-功能测试)
   
 
-
-
-## ⏰ pending
-
 - [ ] [0005. 嵌入 B 站视频](https://tdahuyou.github.io/TNotes.template/notes/0005.%20%E5%B5%8C%E5%85%A5%20B%20%E7%AB%99%E8%A7%86%E9%A2%91/README) <!-- [locale](./notes/0005.%20%E5%B5%8C%E5%85%A5%20B%20%E7%AB%99%E8%A7%86%E9%A2%91/README) -->  
-  - [1. 📒 notes_title](https://tdahuyou.github.io/TNotes.template/notes/0005.%20%E5%B5%8C%E5%85%A5%20B%20%E7%AB%99%E8%A7%86%E9%A2%91/README#1--notes_title)
+  - [1. 💻 嵌入 B 站视频](https://tdahuyou.github.io/TNotes.template/notes/0005.%20%E5%B5%8C%E5%85%A5%20B%20%E7%AB%99%E8%A7%86%E9%A2%91/README#1--嵌入-b-站视频)
   

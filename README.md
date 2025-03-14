@@ -3,7 +3,7 @@
 <!-- region:toc -->
 - [TNotes.template](#tnotestemplate)
   - [1. 🚀 Quick Start](#1--quick-start)
-  - [2. 📒 扩展 markdown 功能](#2--扩展-markdown-功能)
+  - [2. 📒 扩展 vitepress](#2--扩展-vitepress)
 <!-- endregion:toc -->
 
 ## 1. 🚀 Quick Start
@@ -12,7 +12,7 @@
   - [1. 📒 简介](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0001.%20TNotes.template%20%E7%AE%80%E4%BB%8B/README.md#1--简介)
   
 
-## 2. 📒 扩展 markdown 功能
+## 2. 📒 扩展 vitepress
 
 - [x] [0002. 公式](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0002.%20%E5%85%AC%E5%BC%8F/README.md) <!-- [locale](./notes/0002.%20%E5%85%AC%E5%BC%8F/README.md) -->  
   - [1. 🔗 markdown-it-mathjax3 github page](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0002.%20%E5%85%AC%E5%BC%8F/README.md#1--markdown-it-mathjax3-github-page)
@@ -29,10 +29,6 @@
   - [2. 💻 swiper 功能测试](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0004.%20swiper/README.md#2--swiper-功能测试)
   
 
-
-
-## ⏰ pending
-
 - [ ] [0005. 嵌入 B 站视频](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0005.%20%E5%B5%8C%E5%85%A5%20B%20%E7%AB%99%E8%A7%86%E9%A2%91/README.md) <!-- [locale](./notes/0005.%20%E5%B5%8C%E5%85%A5%20B%20%E7%AB%99%E8%A7%86%E9%A2%91/README.md) -->  
-  - [1. 📒 notes_title](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0005.%20%E5%B5%8C%E5%85%A5%20B%20%E7%AB%99%E8%A7%86%E9%A2%91/README.md#1--notes_title)
+  - [1. 💻 嵌入 B 站视频](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0005.%20%E5%B5%8C%E5%85%A5%20B%20%E7%AB%99%E8%A7%86%E9%A2%91/README.md#1--嵌入-b-站视频)
   
