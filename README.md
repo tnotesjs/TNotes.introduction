@@ -35,6 +35,4 @@
 
 - [x] [0006. Footprints](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0006.%20Footprints/README.md) <!-- [locale](./notes/0006.%20Footprints/README.md) -->  
   - [1. 💻 足迹功能](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0006.%20Footprints/README.md#1--足迹功能)
-    - [1.1. 🗓 3-15](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0006.%20Footprints/README.md#11--3-15)
-    - [1.2. 🗓 3-15](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0006.%20Footprints/README.md#12--3-15)
   

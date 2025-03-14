@@ -2,8 +2,6 @@
 
 <!-- region:toc -->
 - [1. 💻 足迹功能](#1--足迹功能)
-  - [1.1. 🗓 3-15](#11--3-15)
-  - [1.2. 🗓 3-15](#12--3-15)
 <!-- endregion:toc -->
 
 ## 1. 💻 足迹功能
@@ -13,12 +11,15 @@
 - 格式：
 
 ```md
-### 1.1. 🗓 3-15
+🗓 3-15
 
 <Footprints :times="[2025, 3, 15, 0, 43]">
   <template #text-area>
     <p>正在整理 TNotes.template 的功能文档</p>
     <p>现在外边正下着小于雨 🌧️</p>
+    <p>不早了</p>
+    <p>写完这篇笔记就去睡觉了～</p>
+    <p>头发要紧</p>
   </template>
   <template #image-list="{ openModal }">
     <img src="./assets/1.png" @click="openModal(0)"/>
@@ -32,12 +33,15 @@
 
 - 最终渲染效果：
 
-### 1.2. 🗓 3-15
+🗓 3-15
 
 <Footprints :times="[2025, 3, 15, 0, 43]">
   <template #text-area>
     <p>正在整理 TNotes.template 的功能文档</p>
     <p>现在外边正下着小于雨 🌧️</p>
+    <p>不早了</p>
+    <p>写完这篇笔记就去睡觉了～</p>
+    <p>头发要紧</p>
   </template>
   <template #image-list="{ openModal }">
     <img src="./assets/1.png" @click="openModal(0)"/>
