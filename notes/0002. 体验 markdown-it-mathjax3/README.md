@@ -34,3 +34,15 @@ $\nabla \times \vec{\mathbf{E}}\, +\, \frac1c\, \frac{\partial\vec{\mathbf{B}}}{
 $\nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} = \frac{4\pi}{c}\vec{\mathbf{j}}    \nabla \cdot \vec{\mathbf{E}} = 4 \pi \rho$ | _wha?_
 
 ![electricity](http://i.giphy.com/Gty2oDYQ1fih2.gif)
+
+---
+
+```md
+- $O(n)$
+- $O(n^2)$
+- $O(log n)$
+```
+
+- $O(n)$
+- $O(n^2)$
+- $O(log n)$
