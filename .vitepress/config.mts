@@ -9,7 +9,6 @@ import markdownItTaskLists from 'markdown-it-task-lists'
 import mila from 'markdown-it-link-attributes'
 import markdownItContainer from 'markdown-it-container'
 import { withMermaid } from 'vitepress-plugin-mermaid'
-import commonjs from 'vite-plugin-commonjs'
 
 import { author, repoName, keywords } from '../.tnotes.json'
 
@@ -43,18 +42,6 @@ const vpConfig = defineConfig({
   // https://vitepress.dev/reference/default-theme-config
   themeConfig: themeConfig(),
   title: repoName,
-  // vite: {
-  //   plugins: [
-  //     commonjs({
-  //       filter: (id) => id.includes('node_modules/dayjs'), // 仅对 dayjs 应用此插件
-  //     }),
-  //   ],
-  //   resolve: {
-  //     alias: {
-  //       dayjs: 'dayjs/esm', // 强制使用 dayjs 的 ESM 格式
-  //     },
-  //   },
-  // },
 })
 
 function head() {
@@ -81,44 +68,46 @@ function markdown() {
     math: true,
     config(md) {
       md.use(markdownItTaskLists)
-        .use(mila, {
-          attrs: {
-            target: '_self',
-            rel: 'noopener',
-          },
-        })
-        .use(markdownItContainer, 'swiper', {
-          render: (tokens, idx) => {
-            const defaultRenderRulesImage =
-              md.renderer.rules.image ||
-              ((tokens, idx, options, env, slf) =>
-                slf.renderToken(tokens, idx, options))
-            if (tokens[idx].nesting === 1) {
-              md.renderer.rules.paragraph_open = () => ''
-              md.renderer.rules.paragraph_close = () => ''
-              md.renderer.rules.image = (tokens, idx, options, env, slf) =>
-                `<div class="swiper-slide">${defaultRenderRulesImage(
-                  tokens,
-                  idx,
-                  options,
-                  env,
-                  slf
-                )
-                  .replaceAll('<div class="swiper-slide">', '')
-                  .replaceAll('</div>', '')}</div>`
 
-              return `<div class="swiper-container"><div class="swiper-wrapper">\n`
-            } else {
-              md.renderer.rules.paragraph_open = undefined
-              md.renderer.rules.paragraph_close = undefined
-              md.renderer.rules.image = (tokens, idx, options, env, slf) =>
-                `${defaultRenderRulesImage(tokens, idx, options, env, slf)
-                  .replaceAll('<div class="swiper-slide">', '')
-                  .replaceAll('</div>', '')}`
-              return '</div><div class="swiper-button-next"></div><div class="swiper-button-prev"></div><div class="swiper-pagination"></div></div>\n'
-            }
-          },
-        })
+      md.use(mila, {
+        attrs: {
+          target: '_self',
+          rel: 'noopener',
+        },
+      })
+
+      md.use(markdownItContainer, 'swiper', {
+        render: (tokens, idx) => {
+          const defaultRenderRulesImage =
+            md.renderer.rules.image ||
+            ((tokens, idx, options, env, slf) =>
+              slf.renderToken(tokens, idx, options))
+          if (tokens[idx].nesting === 1) {
+            md.renderer.rules.paragraph_open = () => ''
+            md.renderer.rules.paragraph_close = () => ''
+            md.renderer.rules.image = (tokens, idx, options, env, slf) =>
+              `<div class="swiper-slide">${defaultRenderRulesImage(
+                tokens,
+                idx,
+                options,
+                env,
+                slf
+              )
+                .replaceAll('<div class="swiper-slide">', '')
+                .replaceAll('</div>', '')}</div>`
+
+            return `<div class="swiper-container"><div class="swiper-wrapper">\n`
+          } else {
+            md.renderer.rules.paragraph_open = undefined
+            md.renderer.rules.paragraph_close = undefined
+            md.renderer.rules.image = (tokens, idx, options, env, slf) =>
+              `${defaultRenderRulesImage(tokens, idx, options, env, slf)
+                .replaceAll('<div class="swiper-slide">', '')
+                .replaceAll('</div>', '')}`
+            return '</div><div class="swiper-button-next"></div><div class="swiper-button-prev"></div><div class="swiper-pagination"></div></div>\n'
+          }
+        },
+      })
     },
     anchor: {
       slugify: (label: string) => {
