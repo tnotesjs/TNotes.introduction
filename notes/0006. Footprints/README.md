@@ -16,7 +16,7 @@
     <img src="assets/2025-03-15-00-44-24.png" @click="openModal(1)"/>
     <img src="assets/2025-03-15-00-44-24.png" @click="openModal(2)"/>
     <img src="assets/2025-03-15-00-44-24.png" @click="openModal(3)"/>
-    <img src="assets/we.png" @click="openModal(4)"/>
+    <img src="assets/we.jpg" @click="openModal(4)"/>
     <img src="assets/2025-03-15-00-44-24.png" @click="openModal(5)"/>
     <img src="assets/2025-03-15-00-44-24.png" @click="openModal(6)"/>
     <img src="assets/2025-03-15-00-44-24.png" @click="openModal(7)"/>
