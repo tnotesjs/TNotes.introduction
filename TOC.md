@@ -24,6 +24,10 @@
   - [2. 💻 swiper 功能测试](https://tdahuyou.github.io/TNotes.template/notes/0004.%20swiper/README#2--swiper-功能测试)
   
 
-- [ ] [0005. 嵌入 B 站视频](https://tdahuyou.github.io/TNotes.template/notes/0005.%20%E5%B5%8C%E5%85%A5%20B%20%E7%AB%99%E8%A7%86%E9%A2%91/README) <!-- [locale](./notes/0005.%20%E5%B5%8C%E5%85%A5%20B%20%E7%AB%99%E8%A7%86%E9%A2%91/README) -->  
-  - [1. 💻 嵌入 B 站视频](https://tdahuyou.github.io/TNotes.template/notes/0005.%20%E5%B5%8C%E5%85%A5%20B%20%E7%AB%99%E8%A7%86%E9%A2%91/README#1--嵌入-b-站视频)
+- [ ] [0005. BilibiliOutsidePlayer](https://tdahuyou.github.io/TNotes.template/notes/0005.%20BilibiliOutsidePlayer/README) <!-- [locale](./notes/0005.%20BilibiliOutsidePlayer/README) -->  
+  - [1. 💻 嵌入 B 站视频](https://tdahuyou.github.io/TNotes.template/notes/0005.%20BilibiliOutsidePlayer/README#1--嵌入-b-站视频)
+  
+
+- [ ] [0006. Footprints](https://tdahuyou.github.io/TNotes.template/notes/0006.%20Footprints/README) <!-- [locale](./notes/0006.%20Footprints/README) -->  
+  - [1. 📒 notes_title](https://tdahuyou.github.io/TNotes.template/notes/0006.%20Footprints/README#1--notes_title)
   
