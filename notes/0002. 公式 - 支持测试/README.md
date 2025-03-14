@@ -1,4 +1,4 @@
-# [0002. 体验 markdown-it-mathjax3](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0002.%20%E4%BD%93%E9%AA%8C%20markdown-it-mathjax3)
+# [0002. 公式 - 支持测试](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0002.%20%E5%85%AC%E5%BC%8F%20-%20%E6%94%AF%E6%8C%81%E6%B5%8B%E8%AF%95)
 
 <!-- region:toc -->
 - [1. 🔗 markdown-it-mathjax3 github page](#1--markdown-it-mathjax3-github-page)

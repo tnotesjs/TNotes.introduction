@@ -8,6 +8,7 @@ import GithubSlugger from 'github-slugger'
 import markdownItTaskLists from 'markdown-it-task-lists'
 import mila from 'markdown-it-link-attributes'
 import markdownItContainer from 'markdown-it-container'
+import { withMermaid } from 'vitepress-plugin-mermaid'
 
 import { author, repoName, keywords } from '../.tnotes.json'
 
@@ -21,7 +22,7 @@ const github_page_url =
   'https://' + author.toLowerCase() + '.github.io/' + repoName + '/'
 
 // https://vitepress.dev/reference/site-config
-export default defineConfig({
+const vpConfig = defineConfig({
   appearance: 'dark',
   base: '/' + repoName + '/',
   cleanUrls: true,
@@ -151,3 +152,16 @@ function themeConfig() {
 
   return themeConfig
 }
+
+export default withMermaid({
+  // your existing vitepress config...
+  ...vpConfig,
+  // optionally, you can pass MermaidConfig
+  mermaid: {
+    // refer https://mermaid.js.org/config/setup/modules/mermaidAPI.html#mermaidapi-configuration-defaults for options
+  },
+  // optionally set additional config for plugin itself with MermaidPluginConfig
+  mermaidPlugin: {
+    class: 'mermaid my-class', // set additional css classes for parent container
+  },
+})
