@@ -64,6 +64,7 @@ function head() {
 function markdown() {
   const markdown: MarkdownOptions = {
     lineNumbers: true,
+    math: true,
     config(md) {
       md.use(markdownItTaskLists)
         .use(mila, {
