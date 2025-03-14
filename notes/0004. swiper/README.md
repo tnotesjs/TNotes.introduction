@@ -22,12 +22,12 @@
 
 ```md
 ::: swiper
-![](./assets/4.png)
+![](./assets/4.jpg)
 ![](./assets/5.png)
 :::
 ```
 
 ::: swiper
-![](./assets/4.png)
+![](./assets/4.jpg)
 ![](./assets/5.png)
 :::
