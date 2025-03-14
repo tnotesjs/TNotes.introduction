@@ -14,7 +14,7 @@
 
 ## 2. 📒 扩展 markdown 功能
 
-- [ ] [0002. 体验 markdown-it-mathjax3](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0002.%20%E4%BD%93%E9%AA%8C%20markdown-it-mathjax3/README.md) <!-- [locale](./notes/0002.%20%E4%BD%93%E9%AA%8C%20markdown-it-mathjax3/README.md) -->  
+- [x] [0002. 体验 markdown-it-mathjax3](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0002.%20%E4%BD%93%E9%AA%8C%20markdown-it-mathjax3/README.md) <!-- [locale](./notes/0002.%20%E4%BD%93%E9%AA%8C%20markdown-it-mathjax3/README.md) -->  
   - [1. 🔗 markdown-it-mathjax3 github page](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0002.%20%E4%BD%93%E9%AA%8C%20markdown-it-mathjax3/README.md#1--markdown-it-mathjax3-github-page)
   - [2. 💻 vitepress 公式支持测试](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0002.%20%E4%BD%93%E9%AA%8C%20markdown-it-mathjax3/README.md#2--vitepress-公式支持测试)
   
