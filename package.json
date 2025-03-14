@@ -11,16 +11,17 @@
   "devDependencies": {
     "markdown-it-task-lists": "^2.1.1",
     "mermaid": "^11.5.0",
+    "vite-plugin-commonjs": "^0.10.4",
     "vitepress": "^1.6.3",
     "vitepress-plugin-mermaid": "^2.0.17"
   },
   "dependencies": {
+    "dayjs": "^1.11.13",
     "github-slugger": "^2.0.0",
     "markdown-it-container": "^4.0.0",
     "markdown-it-link-attributes": "^4.0.1",
     "markdown-it-mathjax3": "^4.3.2",
     "minimist": "^1.2.8",
     "swiper": "^11.2.1"
-  },
-  "packageManager": "pnpm@9.0.4+sha512.c374b52de3de88c58fd8333df664a737279cdb0e1344ba4054d3b1fffa9a1a3670854f755dca4f16adea3f14be9896a7fcaf167409fe0c1ad60475271dafe81a"
+  }
 }

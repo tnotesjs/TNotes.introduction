@@ -9,6 +9,7 @@ import markdownItTaskLists from 'markdown-it-task-lists'
 import mila from 'markdown-it-link-attributes'
 import markdownItContainer from 'markdown-it-container'
 import { withMermaid } from 'vitepress-plugin-mermaid'
+import commonjs from 'vite-plugin-commonjs'
 
 import { author, repoName, keywords } from '../.tnotes.json'
 
@@ -42,6 +43,18 @@ const vpConfig = defineConfig({
   // https://vitepress.dev/reference/default-theme-config
   themeConfig: themeConfig(),
   title: repoName,
+  // vite: {
+  //   plugins: [
+  //     commonjs({
+  //       filter: (id) => id.includes('node_modules/dayjs'), // 仅对 dayjs 应用此插件
+  //     }),
+  //   ],
+  //   resolve: {
+  //     alias: {
+  //       dayjs: 'dayjs/esm', // 强制使用 dayjs 的 ESM 格式
+  //     },
+  //   },
+  // },
 })
 
 function head() {
