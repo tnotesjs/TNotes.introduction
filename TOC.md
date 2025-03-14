@@ -19,10 +19,6 @@
   - [2. 💻 测试 mermaid 的渲染](https://tdahuyou.github.io/TNotes.template/notes/0003.%20mermaid%20%E5%9B%BE%E8%A1%A8/README#2--测试-mermaid-的渲染)
   
 
-
-
-## ⏰ pending
-
 - [ ] [0004. swiper](https://tdahuyou.github.io/TNotes.template/notes/0004.%20swiper/README) <!-- [locale](./notes/0004.%20swiper/README) -->  
-  - [1. 📒 notes_title](https://tdahuyou.github.io/TNotes.template/notes/0004.%20swiper/README#1--notes_title)
+  - [1. 💻 swiper 功能测试](https://tdahuyou.github.io/TNotes.template/notes/0004.%20swiper/README#1--swiper-功能测试)
   
