@@ -1,12 +1,13 @@
 {
+  "type": "module",
   "scripts": {
     "tn:dev": "         vitepress dev --host",
     "tn:build": "       vitepress build",
     "tn:preview": "     vitepress preview",
-    "tn:distribute": "  node ./.tnotes/core --distribute",
-    "tn:merge": "       node ./.tnotes/core --merge",
-    "tn:sync": "        node ./.tnotes/core --sync",
-    "tn:update": "      node ./.tnotes/core --update"
+    "tn:distribute": "  node ./.vitepress/tnotes --distribute",
+    "tn:merge": "       node ./.vitepress/tnotes --merge",
+    "tn:sync": "        node ./.vitepress/tnotes --sync",
+    "tn:update": "      node ./.vitepress/tnotes --update"
   },
   "devDependencies": {
     "markdown-it-task-lists": "^2.1.1",
