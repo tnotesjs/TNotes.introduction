@@ -22,16 +22,13 @@ import {
   NOTES_DIR,
   NOTES_TOC_END_TAG,
   NOTES_TOC_START_TAG,
-  REPO_BOLB_URL,
+  // REPO_BOLB_URL,
   REPO_NOTES_URL,
   repoName,
   ROOT_README_PATH,
   socialLinks,
-  VP_DIR,
-  VP_MENU_ITEMS_PATH,
-  VP_SIDEBAR_PATH,
-  VP_SOCIAL_LINKS_PATH,
   VP_TOC_PATH,
+  VP_SIDEBAR_PATH
 } from './constants.js'
 import { genHierarchicalSidebar } from './utils/index.js'
 
@@ -46,18 +43,15 @@ class ReadmeUpdater {
     this.menuItems = menuItems
     this.newNotesReadmeMdTemplate = NEW_NOTES_README_MD_TEMPLATE
     this.notesDir = NOTES_DIR
-    this.repoBolbUrl = REPO_BOLB_URL 
+    // this.repoBolbUrl = REPO_BOLB_URL 
     this.repoName = repoName
     this.repoNotesUrl = REPO_NOTES_URL
     this.rootReadmePath = ROOT_README_PATH
     this.socialLinks = socialLinks
     this.tocEndTag = NOTES_TOC_END_TAG
     this.tocStartTag = NOTES_TOC_START_TAG
-    this.vpDir = VP_DIR
-    this.vpMenuItemsPath = VP_MENU_ITEMS_PATH
-    this.vpSidebarPath = VP_SIDEBAR_PATH
     this.vpTocPath = VP_TOC_PATH
-    this.vpSocialLinksPath = VP_SOCIAL_LINKS_PATH
+    this.vpSidebarPath = VP_SIDEBAR_PATH
 
     this.notesInfo = {
       /**
@@ -201,13 +195,19 @@ class ReadmeUpdater {
               )}/README.md${p2})`;
             } else {
               // 图片引用或者是其它静态资源（比如 pdf）
-              const isImage = match.startsWith("![");
-              const prefix = isImage ? "![" : "[";
-              const suffix = isImage ? "]" : "]";
-              const baseUrl = isImage ? this.repoBolbUrl : this.repoNotesUrl;
+              const prefix = "[";
+              const suffix = "]";
+              const baseUrl = this.repoNotesUrl;
               return `${prefix}${p1}${suffix}(${baseUrl}/${encodeURIComponent(
                 notesDirName
               )}/${encodeURIComponent(p2)})`;
+              // const isImage = match.startsWith("![");
+              // const prefix = isImage ? "![" : "[";
+              // const suffix = isImage ? "]" : "]";
+              // const baseUrl = isImage ? this.repoBolbUrl : this.repoNotesUrl;
+              // return `${prefix}${p1}${suffix}(${baseUrl}/${encodeURIComponent(
+              //   notesDirName
+              // )}/${encodeURIComponent(p2)})`;
             }
           });
       });
@@ -527,18 +527,8 @@ class ReadmeUpdater {
       );
     };
 
-    const updateFile_SOCIAL_LINKS_JSON = () => {
-      fs.writeFileSync(this.vpSocialLinksPath, JSON.stringify(this.socialLinks))
-    };
-    
-    const updateFile_MenuItems_JSON = () => {
-      fs.writeFileSync(this.vpMenuItemsPath, JSON.stringify(this.menuItems))
-    }
-
     updateFile_TOC_MD();
     updateFile_SIDEBAT_JSON();
-    updateFile_SOCIAL_LINKS_JSON();
-    updateFile_MenuItems_JSON();
   }
 
   updateReadme() {

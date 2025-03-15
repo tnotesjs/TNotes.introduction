@@ -10,11 +10,15 @@ import mila from 'markdown-it-link-attributes'
 import markdownItContainer from 'markdown-it-container'
 import { withMermaid } from 'vitepress-plugin-mermaid'
 
-import { author, repoName, keywords } from '../.tnotes.json'
+import {
+  author,
+  repoName,
+  keywords,
+  socialLinks,
+  menuItems,
+} from '../.tnotes.json'
 
-import sidebar from './sidebar.json'
-import socialLinks from './socialLinks.json'
-import menuItems from './menuItems.json'
+import sidebar from '../sidebar.json'
 
 const slugger = new GithubSlugger()
 
