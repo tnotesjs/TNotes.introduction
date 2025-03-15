@@ -154,13 +154,24 @@ class ReadmeUpdater {
 
       let notesConfig
       if (fs.existsSync(notesConfigPath)) {
-        notesConfig = JSON.parse(fs.readFileSync(notesConfigPath, "utf8"))
-        notesConfig = { ...notesConfig, ...NEW_NOTES_TNOTES_JSON_TEMPLATE }
-        fs.writeFileSync(notesConfigPath, JSON.stringify(notesConfig), "utf8")
+        notesConfig = JSON.parse(fs.readFileSync(notesConfigPath, 'utf8'))
+        notesConfig = {
+          ...notesConfig,
+          ...JSON.parse(NEW_NOTES_TNOTES_JSON_TEMPLATE),
+        }
+        fs.writeFileSync(
+          notesConfigPath,
+          JSON.stringify(notesConfig, null, 2),
+          'utf8'
+        )
         this.notesInfo.configMap[notesID] = notesConfig
         notesConfig.done && this.notesInfo.doneIds.add(notesID)
       } else {
-        fs.writeFileSync(notesConfigPath, NEW_NOTES_TNOTES_JSON_TEMPLATE, "utf8")
+        fs.writeFileSync(
+          notesConfigPath,
+          JSON.stringify(JSON.parse(NEW_NOTES_TNOTES_JSON_TEMPLATE), null, 2),
+          'utf8'
+        )
         notesConfig = JSON.parse(NEW_NOTES_TNOTES_JSON_TEMPLATE)
         this.notesInfo.configMap[notesID] = notesConfig
       }
