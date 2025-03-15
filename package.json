@@ -6,6 +6,7 @@
     "tn:preview": "     vitepress preview",
     "tn:distribute": "  node ./.vitepress/tnotes --distribute",
     "tn:merge": "       node ./.vitepress/tnotes --merge",
+    "tn:new": "         node ./.vitepress/tnotes --new",
     "tn:sync": "        node ./.vitepress/tnotes --sync",
     "tn:update": "      node ./.vitepress/tnotes --update"
   },

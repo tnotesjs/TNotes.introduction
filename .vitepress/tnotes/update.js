@@ -43,7 +43,7 @@ class ReadmeUpdater {
     this.menuItems = menuItems
     this.newNotesReadmeMdTemplate = NEW_NOTES_README_MD_TEMPLATE
     this.notesDir = NOTES_DIR
-    // this.repoBolbUrl = REPO_BOLB_URL 
+    // this.repoBolbUrl = REPO_BOLB_URL
     this.repoName = repoName
     this.repoNotesUrl = REPO_NOTES_URL
     this.rootReadmePath = ROOT_README_PATH
@@ -78,11 +78,11 @@ class ReadmeUpdater {
        * - 存在于 NOTES_DIR 中的需要处理的笔记目录名称列表。
        */
       dirNameList: [],
-    };
+    }
 
     this.homeReadme = {
       path: ROOT_README_PATH,
-      contents: "",
+      contents: '',
       lines: [],
       /**
        * titles 目录标题集合，用于辅助生成 vp sidebar.json。
@@ -107,14 +107,72 @@ class ReadmeUpdater {
        * - 生成 vp sidebar.json 的时候，同一篇笔记可能会被多次添加到 sidebar.json 文件内容中。
        */
       idList: [],
-    };
+    }
+  }
+
+  /**
+   * 检查笔记目录列表，对于缺失必要文件的笔记目录，使用默认模板进行补全。
+   */
+  checkNotesInfo() {
+    for (let notesDirName of fs.readdirSync(this.notesDir)) {
+      if (this.ignoreDirs.includes(notesDirName)) continue
+      const dirPath = path.join(this.notesDir, notesDirName)
+      const stats = fs.lstatSync(dirPath)
+
+      if (!(stats.isDirectory() && notesDirName.match(/^\d{4}/))) continue
+
+      const notesPath = path.resolve(this.notesDir, notesDirName, 'README.md')
+      const notesConfigPath = path.resolve(
+        this.notesDir,
+        notesDirName,
+        '.tnotes.json'
+      )
+
+      const notesTitle = `# [${notesDirName}](${
+        this.repoNotesUrl
+      }/${encodeURIComponent(notesDirName)})`
+
+      if (!fs.existsSync(notesPath)) {
+        fs.writeFileSync(
+          notesPath,
+          notesTitle + this.newNotesReadmeMdTemplate,
+          'utf8'
+        )
+        fs.writeFileSync(
+          notesConfigPath,
+          NEW_NOTES_TNOTES_JSON_TEMPLATE,
+          'utf8'
+        )
+        console.log(`${notesDirName} 笔记不存在，已完成初始化。`)
+        return
+      }
+
+      if (fs.existsSync(notesConfigPath)) {
+        let notesConfig = JSON.parse(fs.readFileSync(notesConfigPath, 'utf8'))
+        notesConfig = {
+          ...JSON.parse(NEW_NOTES_TNOTES_JSON_TEMPLATE),
+          ...notesConfig,
+        }
+        fs.writeFileSync(
+          notesConfigPath,
+          JSON.stringify(notesConfig, null, 2),
+          'utf8'
+        )
+      } else {
+        fs.writeFileSync(
+          notesConfigPath,
+          JSON.stringify(JSON.parse(NEW_NOTES_TNOTES_JSON_TEMPLATE), null, 2),
+          'utf8'
+        )
+      }
+    }
   }
 
   /**
    * 遍历所有笔记目录，完成 this.notesInfo 的初始化。
-   * 
+   *
    * 主要功能点：
-   * 
+   *
    * 1. 获取笔记目录列表。
    *   - 约定笔记目录的判定逻辑：
    *     1. 是文件夹
@@ -131,53 +189,34 @@ class ReadmeUpdater {
     for (let notesDirName of fs.readdirSync(this.notesDir)) {
       if (this.ignoreDirs.includes(notesDirName)) continue
       const dirPath = path.join(this.notesDir, notesDirName)
-      const stats = fs.lstatSync(dirPath);
-      
+      const stats = fs.lstatSync(dirPath)
+
       // 检查是否是笔记文件夹
       if (!(stats.isDirectory() && notesDirName.match(/^\d{4}/))) continue
 
       this.notesInfo.dirNameList.push(notesDirName)
       const notesID = notesDirName.slice(0, 4)
       this.notesInfo.ids.add(notesID)
-      
-      const notesPath = path.resolve(this.notesDir, notesDirName, "README.md")
-      const notesConfigPath = path.resolve(this.notesDir, notesDirName, ".tnotes.json")
 
-      const notesTitle = `# [${notesDirName}](${this.repoNotesUrl}/${encodeURIComponent(notesDirName)})`
+      const notesPath = path.resolve(this.notesDir, notesDirName, 'README.md')
+      const notesConfigPath = path.resolve(
+        this.notesDir,
+        notesDirName,
+        '.tnotes.json'
+      )
 
-      if (!fs.existsSync(notesPath)) {
-        fs.writeFileSync(notesPath, notesTitle + this.newNotesReadmeMdTemplate, "utf8")
-        fs.writeFileSync(notesConfigPath, NEW_NOTES_TNOTES_JSON_TEMPLATE, "utf8")
-        console.log(`${notesDirName} 笔记不存在，已完成初始化。`)
-        return
-      }
+      const notesTitle = `# [${notesDirName}](${
+        this.repoNotesUrl
+      }/${encodeURIComponent(notesDirName)})`
 
-      let notesConfig
-      if (fs.existsSync(notesConfigPath)) {
-        notesConfig = JSON.parse(fs.readFileSync(notesConfigPath, 'utf8'))
-        notesConfig = {
-          ...JSON.parse(NEW_NOTES_TNOTES_JSON_TEMPLATE),
-          ...notesConfig,
-        }
-        fs.writeFileSync(
-          notesConfigPath,
-          JSON.stringify(notesConfig, null, 2),
-          'utf8'
-        )
-        this.notesInfo.configMap[notesID] = notesConfig
-        notesConfig.done && this.notesInfo.doneIds.add(notesID)
-      } else {
-        fs.writeFileSync(
-          notesConfigPath,
-          JSON.stringify(JSON.parse(NEW_NOTES_TNOTES_JSON_TEMPLATE), null, 2),
-          'utf8'
-        )
-        notesConfig = JSON.parse(NEW_NOTES_TNOTES_JSON_TEMPLATE)
-        this.notesInfo.configMap[notesID] = notesConfig
-      }
-      
-      const notesLines = fs.readFileSync(notesPath, "utf8").split(this.EOL)
-      
+      // 获取笔记配置
+      const notesConfig = JSON.parse(fs.readFileSync(notesConfigPath, 'utf8'))
+      this.notesInfo.configMap[notesID] = notesConfig
+      notesConfig.done && this.notesInfo.doneIds.add(notesID)
+
+      // 读取笔记内容
+      const notesLines = fs.readFileSync(notesPath, 'utf8').split(this.EOL)
+
       // 更新笔记标题
       notesLines[0] = notesTitle
 
@@ -196,11 +235,11 @@ class ReadmeUpdater {
       this.updateNotesToc(notesID, notesLines)
 
       // 删除笔记结尾的空行
-      while (notesLines[notesLines.length - 1].trim() === "") {
+      while (notesLines[notesLines.length - 1].trim() === '') {
         notesLines.pop()
       }
 
-      fs.writeFileSync(notesPath, notesLines.join(this.EOL) + this.EOL, "utf8")
+      fs.writeFileSync(notesPath, notesLines.join(this.EOL) + this.EOL, 'utf8')
 
       let firstHeading2Index = -1
       for (let i = 1; i < notesLines.length; i++) {
@@ -213,44 +252,45 @@ class ReadmeUpdater {
         firstHeading2Index > 0
           ? notesLines.slice(1, firstHeading2Index)
           : notesLines.slice(1)
-        
+
       // 处理头部信息中的跳转链接
       topInfoLines = topInfoLines.map((line) => {
-          return line.replace(/!?\[(.*?)\]\((.*?)\)/g, (match, p1, p2) => {
-            // 检查路径是否以 https:// 或者 http:// 开头
-            if (/^https?:\/\//.test(p2)) {
-              // 外部链接
-              return match;
-            } else if (/^#.?/.test(p2)) {
-              // anchor
-              return `[${p1}](${this.repoNotesUrl}/${encodeURIComponent(
-                notesDirName
-              )}/README.md${p2})`;
-            } else {
-              // 图片引用或者是其它静态资源（比如 pdf）
-              const prefix = "[";
-              const suffix = "]";
-              const baseUrl = this.repoNotesUrl;
-              return `${prefix}${p1}${suffix}(${baseUrl}/${encodeURIComponent(
-                notesDirName
-              )}/${encodeURIComponent(p2)})`;
-              // const isImage = match.startsWith("![");
-              // const prefix = isImage ? "![" : "[";
-              // const suffix = isImage ? "]" : "]";
-              // const baseUrl = isImage ? this.repoBolbUrl : this.repoNotesUrl;
-              // return `${prefix}${p1}${suffix}(${baseUrl}/${encodeURIComponent(
-              //   notesDirName
-              // )}/${encodeURIComponent(p2)})`;
-            }
-          });
-      });
+        return line.replace(/!?\[(.*?)\]\((.*?)\)/g, (match, p1, p2) => {
+          // 检查路径是否以 https:// 或者 http:// 开头
+          if (/^https?:\/\//.test(p2)) {
+            // 外部链接
+            return match
+          } else if (/^#.?/.test(p2)) {
+            // anchor
+            return `[${p1}](${this.repoNotesUrl}/${encodeURIComponent(
+              notesDirName
+            )}/README.md${p2})`
+          } else {
+            // 图片引用或者是其它静态资源（比如 pdf）
+            const prefix = '['
+            const suffix = ']'
+            const baseUrl = this.repoNotesUrl
+            return `${prefix}${p1}${suffix}(${baseUrl}/${encodeURIComponent(
+              notesDirName
+            )}/${encodeURIComponent(p2)})`
+            // const isImage = match.startsWith("![");
+            // const prefix = isImage ? "![" : "[";
+            // const suffix = isImage ? "]" : "]";
+            // const baseUrl = isImage ? this.repoBolbUrl : this.repoNotesUrl;
+            // return `${prefix}${p1}${suffix}(${baseUrl}/${encodeURIComponent(
+            //   notesDirName
+            // )}/${encodeURIComponent(p2)})`;
+          }
+        })
+      })
 
       // 每一行增加俩空格的缩进，以便后续插入到首页中生成目录结构。
-      topInfoLines = topInfoLines.map((line) => `  ${line}`);
+      topInfoLines = topInfoLines.map((line) => `  ${line}`)
       // 删除 toc startTag 和 endTag
       topInfoLines = topInfoLines.filter(
-        (line) => !line.includes(this.tocStartTag) && !line.includes(this.tocEndTag)
-      );
+        (line) =>
+          !line.includes(this.tocStartTag) && !line.includes(this.tocEndTag)
+      )
       // console.log('topInfoLines:', topInfoLines);
 
       // 以 notes ID 作为 key，初始化 notes map，value 为笔记头部信息。
@@ -260,7 +300,7 @@ class ReadmeUpdater {
         notesDirName
       )}/README.md) <!-- [locale](./notes/${encodeURIComponent(
         notesDirName
-      )}/README.md) -->${topInfoLines.join(this.EOL)}${this.EOL}`;
+      )}/README.md) -->${topInfoLines.join(this.EOL)}${this.EOL}`
     }
   }
 
@@ -269,34 +309,34 @@ class ReadmeUpdater {
    * @returns 不带有笔记头部信息的 Home Readme 内容。
    */
   resetHomeTopInfos() {
-    const lines = this.homeReadme.contents.split(this.EOL);
-    let result = [];
+    const lines = this.homeReadme.contents.split(this.EOL)
+    let result = []
 
-    let deleteMode = false;
+    let deleteMode = false
 
-    const headers = ["# ", "## ", "### ", "#### ", "##### ", "###### "];
+    const headers = ['# ', '## ', '### ', '#### ', '##### ', '###### ']
 
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
+      const line = lines[i]
 
       if (line.match(this.homeReadme.noteTitleReg)) {
         // 遇到笔记标题，进入删除模式。
-        deleteMode = true;
-        result.push(line);
-        continue;
+        deleteMode = true
+        result.push(line)
+        continue
       }
 
       if (headers.some((header) => line.startsWith(header))) {
         // 遇到非笔记标题，停止删除。
-        deleteMode = false;
-        result.push(line);
-        continue;
+        deleteMode = false
+        result.push(line)
+        continue
       }
 
-      if (!deleteMode) result.push(line);
+      if (!deleteMode) result.push(line)
     }
 
-    return result;
+    return result
   }
 
   /**
@@ -305,34 +345,27 @@ class ReadmeUpdater {
   setHomeTopInfos() {
     // console.log('this.notes.map:', this.notes.map);
     this.homeReadme.lines.forEach((line, index) => {
-      const match = line.match(this.homeReadme.noteTitleReg);
+      const match = line.match(this.homeReadme.noteTitleReg)
       if (match) {
-        const notesID = match[3];
-        this.homeReadme.ids.add(notesID);
+        const notesID = match[3]
+        this.homeReadme.ids.add(notesID)
         this.homeReadme.idList.push(notesID)
         if (notesID in this.notesInfo.topInfoMap) {
-          let prefixSymbol = match[1];
+          let prefixSymbol = match[1]
           if (this.notesInfo.doneIds.has(notesID)) {
-            prefixSymbol = prefixSymbol.replace('[ ]', '[x]');
+            prefixSymbol = prefixSymbol.replace('[ ]', '[x]')
           } else {
-            prefixSymbol = prefixSymbol.replace('[x]', '[ ]');
+            prefixSymbol = prefixSymbol.replace('[x]', '[ ]')
           }
-          this.homeReadme.lines[index] = `${prefixSymbol}${this.notesInfo.topInfoMap[notesID]}`;
+          this.homeReadme.lines[
+            index
+          ] = `${prefixSymbol}${this.notesInfo.topInfoMap[notesID]}`
+        } else {
+          // 清理不存在的笔记
+          console.warn(`⚠️ ${this.repoName}.${notesID} - 笔记不存在`)
+          this.homeReadme.lines[index] = ''
         }
       }
-    });
-  }
-
-  /**
-   * 打印不存在的笔记 ID
-   * 存在于首页 README 中的笔记 ID 但是不存在与实际仓库中的笔记 ID。
-   */
-  printMissingNotes() {
-    const missingNoteIds = [...this.homeReadme.ids].filter(
-      (id) => !this.notesInfo.ids.has(id)
-    )
-    missingNoteIds.forEach((id) => {
-      console.log(`⚠️ ${this.repoName}.${id} - 笔记不存在`)
     })
   }
 
@@ -344,20 +377,21 @@ class ReadmeUpdater {
   handleUnassignedNotes() {
     const unassignedNoteIds = [...this.notesInfo.ids].filter(
       (noteID) => !this.homeReadme.ids.has(noteID)
-    );
+    )
 
     if (unassignedNoteIds.length > 0) {
-      console.log(
+      console.warn(
         `⚠️ ${this.repoName} 存在未分组的笔记：${[...unassignedNoteIds].join(
-          ", "
-        )}`
-      );
-      const unassignedNotesSection =
+          ', '
+        )}`,
+        '已加入到目录结尾，请手动调整笔记位置！'
+      )
+      this.homeReadme.lines.push(
         `${this.EOL}${this.EOL}## ⏰ pending${this.EOL}${this.EOL}` +
-        [...unassignedNoteIds]
-          .map((noteId) => `- [ ] ${this.notesInfo.topInfoMap[noteId]}`)
-          .join(this.EOL);
-      this.homeReadme.lines.push(unassignedNotesSection);
+          [...unassignedNoteIds]
+            .map((noteId) => `- [ ] ${this.notesInfo.topInfoMap[noteId]}`)
+            .join(this.EOL)
+      )
     }
   }
 
@@ -383,48 +417,52 @@ class ReadmeUpdater {
     if (startLineIdx === -1 || endLineIdx === -1) return
 
     // 收集标题，并更新编号。
-    const titles = isHome ? this.homeReadme.titles : [];
-    const headers = ["## ", "### ", "#### ", "##### ", "###### "]; // 2~6 级标题，忽略 1 级标题。
-    isHome && headers.push("# "); // homeReadme 处理标题范围 1~6；非 homeReadme 处理标题范围 2~6。
-    const titleNumbers = Array(7).fill(0); // 用于存储每个级别的编号
-    let notesCount = 0; // 统计每个标题下的直属笔记数量
+    const titles = isHome ? this.homeReadme.titles : []
+    const headers = ['## ', '### ', '#### ', '##### ', '###### '] // 2~6 级标题，忽略 1 级标题。
+    isHome && headers.push('# ') // homeReadme 处理标题范围 1~6；非 homeReadme 处理标题范围 2~6。
+    const titleNumbers = Array(7).fill(0) // 用于存储每个级别的编号
+    let notesCount = 0 // 统计每个标题下的直属笔记数量
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      const isHeader = headers.some((header) => line.startsWith(header));
-      const match = line.match(this.homeReadme.noteTitleReg);
+      const line = lines[i]
+      const isHeader = headers.some((header) => line.startsWith(header))
+      const match = line.match(this.homeReadme.noteTitleReg)
       if (isHeader) {
         if (isHome) {
-          this.homeReadme.titlesNotesCount.push(notesCount);
-          notesCount = 0;
+          this.homeReadme.titlesNotesCount.push(notesCount)
+          notesCount = 0
         }
-        const [numberedTitle, plainTitle] = addNumberToTitle(
-          line,
-          titleNumbers
-        );
-        titles.push(numberedTitle);
-        lines[i] = numberedTitle; // 更新原行内容
+        const [numberedTitle, plainTitle] = addNumberToTitle(line, titleNumbers)
+        titles.push(numberedTitle)
+        lines[i] = numberedTitle // 更新原行内容
         // console.log('lines[i] =>', numberedTitle)
       } else if (isHome && match) {
         // const noteID = match[3];
-        notesCount++;
+        notesCount++
       }
     }
     if (isHome) {
-      this.homeReadme.titlesNotesCount.push(notesCount);
-      notesCount = 0;
-      this.homeReadme.titlesNotesCount.splice(0, 1);
+      this.homeReadme.titlesNotesCount.push(notesCount)
+      notesCount = 0
+      this.homeReadme.titlesNotesCount.splice(0, 1)
     }
 
-    const toc = generateToc(titles, this.EOL);
+    const toc = generateToc(titles, this.EOL)
     // console.log('toc =>', toc);
 
-    let bilibiliUrl = '';
+    let bilibiliUrl = ''
     // let BilibiliOutsidePlayerCompStr = '';
     if (!isHome) {
-      const notesConfig = this.notesInfo.configMap[id];
+      const notesConfig = this.notesInfo.configMap[id]
       if (notesConfig && notesConfig.bilibili.length > 0) {
-        bilibiliUrl = notesConfig.bilibili.map((bvid, i) => `[bilibili.${this.repoName}.${id}.${i + 1}](${BILIBILI_VIDEO_BASE_URL + bvid})`).join('、');
-        bilibiliUrl = `- ${bilibiliUrl}`;
+        bilibiliUrl = notesConfig.bilibili
+          .map(
+            (bvid, i) =>
+              `[bilibili.${this.repoName}.${id}.${i + 1}](${
+                BILIBILI_VIDEO_BASE_URL + bvid
+              })`
+          )
+          .join('、')
+        bilibiliUrl = `- ${bilibiliUrl}`
         // BilibiliOutsidePlayerCompStr = notesConfig.bilibili.map((bvid, i) => `<BilibiliOutsidePlayer id="${bvid}" />`).join(this.EOL);
       }
     }
@@ -438,65 +476,64 @@ class ReadmeUpdater {
         this.EOL,
         bilibiliUrl,
         ...toc.split(this.EOL)
-      );
+      )
     } else {
       lines.splice(
         startLineIdx + 1,
         endLineIdx - startLineIdx - 1,
         ...toc.split(this.EOL)
-      );
+      )
     }
-  
 
     // 生成 toc
     function generateToc(titles, EOL) {
       const toc = titles
         .map((title) => {
-          const level = title.indexOf(" ");
-          const text = title.slice(level).trim();
-          const anchor = generateAnchor(text);
-          const baseLevel = isHome ? 1 : 2;
-          return (
-            " ".repeat((level - baseLevel) * 2) + `- [${text}](#${anchor})`
-          );
+          const level = title.indexOf(' ')
+          const text = title.slice(level).trim()
+          const anchor = generateAnchor(text)
+          const baseLevel = isHome ? 1 : 2
+          return ' '.repeat((level - baseLevel) * 2) + `- [${text}](#${anchor})`
         })
-        .join(EOL);
+        .join(EOL)
 
-      return toc;
+      return toc
     }
 
     function addNumberToTitle(title, titleNumbers) {
       // !注意：windows 环境下，读到的 title 结尾会带有一个 /r，在正则匹配的时候，不要记上结尾 $
       // console.log(title, title.endsWith('\r'));
-      const match = title.match(/^(\#+)\s*((\d+(\.\d*)?(\.\d*)?(\.\d*)?(\.\d*)?(\.\d*)?)\.\s*)?(.*)/);
-      const plainTitle = match ? match[9].trim() : title.trim();
+      const match = title.match(
+        /^(\#+)\s*((\d+(\.\d*)?(\.\d*)?(\.\d*)?(\.\d*)?(\.\d*)?)\.\s*)?(.*)/
+      )
+      const plainTitle = match ? match[9].trim() : title.trim()
 
-      const level = title.indexOf(" ");
-      const baseLevel = 2; // 基础级别为2
+      const level = title.indexOf(' ')
+      const baseLevel = 2 // 基础级别为2
 
       // 一级标题
-      if (level === 1) return [title, plainTitle];
+      if (level === 1) return [title, plainTitle]
 
       // 重置当前级别以上的编号
-      for (let i = level + 1; i < titleNumbers.length; i++) titleNumbers[i] = 0;
+      for (let i = level + 1; i < titleNumbers.length; i++) titleNumbers[i] = 0
 
       // 增加当前级别的编号
-      titleNumbers[level] += 1;
+      titleNumbers[level] += 1
 
       // 生成新的编号
-      const newNumber = titleNumbers.slice(baseLevel, level + 1).join(".");
+      const newNumber = titleNumbers.slice(baseLevel, level + 1).join('.')
 
       // 构建新的标题
-      const headerSymbol = title.slice(0, level).trim(); // 获取原有的 # 符号
-      const newTitle = `${headerSymbol} ${newNumber}. ${plainTitle}`;
+      const headerSymbol = title.slice(0, level).trim() // 获取原有的 # 符号
+      const newTitle = `${headerSymbol} ${newNumber}. ${plainTitle}`
 
-      return [newTitle, plainTitle];
+      return [newTitle, plainTitle]
     }
 
     // !注意：需要跟和 .vitepress/config.mts 中的 markdown.anchor.slugify 的锚点要保持一致。
     function generateAnchor(label) {
-      slugger.reset();
-      return slugger.slug(label);
+      slugger.reset()
+      return slugger.slug(label)
     }
   }
 
@@ -505,23 +542,31 @@ class ReadmeUpdater {
    */
   updateVitepressDocs() {
     const updateFile_TOC_MD = () => {
-      const lines_ = this.homeReadme.lines;
+      const lines_ = this.homeReadme.lines
       /**
        * 重写路径
        * - github 上的首页 README.md 中记录的路径是 github 的路径格式。
        * - vitepress 需要的 TOC.md 中的笔记链接需要改为基于 github pages 的路径格式。
        */
-      const lines = lines_.map(line => line.replaceAll(this.repoNotesUrl, this.githubPageNotesUrl).replaceAll('README.md', 'README'))
+      const lines = lines_.map((line) =>
+        line
+          .replaceAll(this.repoNotesUrl, this.githubPageNotesUrl)
+          .replaceAll('README.md', 'README')
+      )
 
-      let tocStartIdx = lines_.indexOf(this.tocStartTag);
-      tocStartIdx = tocStartIdx === -1 ? lines_.indexOf(this.tocStartTag + '\r') : tocStartIdx;
-      let tocEndIdx = lines_.indexOf(this.tocEndTag);
-      tocEndIdx = tocEndIdx === -1 ? lines_.indexOf(this.tocEndTag + '\r') : tocEndIdx;
-      
+      let tocStartIdx = lines_.indexOf(this.tocStartTag)
+      tocStartIdx =
+        tocStartIdx === -1
+          ? lines_.indexOf(this.tocStartTag + '\r')
+          : tocStartIdx
+      let tocEndIdx = lines_.indexOf(this.tocEndTag)
+      tocEndIdx =
+        tocEndIdx === -1 ? lines_.indexOf(this.tocEndTag + '\r') : tocEndIdx
+
       // console.log(lines_)
       // console.log('tocStartIdx', tocStartIdx)
       // console.log('tocEndIdx', tocEndIdx)
-      
+
       if (tocStartIdx !== -1 && tocEndIdx !== -1) {
         // 将 tocStartIdx 到 tocEndIdx 之间的内容给删除后再写入。
         fs.writeFileSync(
@@ -530,58 +575,63 @@ class ReadmeUpdater {
             .slice(0, tocStartIdx)
             .concat(lines.slice(tocEndIdx + 1))
             .join(this.EOL)
-        );
+        )
       } else {
-        fs.writeFileSync(
-          this.vpTocPath,
-          lines.join(this.EOL)
-        );
+        fs.writeFileSync(this.vpTocPath, lines.join(this.EOL))
       }
     }
 
     const updateFile_SIDEBAT_JSON = () => {
       const itemList = []
-      this.homeReadme.idList.forEach(id => {
-        const notesDirName = this.notesInfo.dirNameList.find((dirName) => dirName.startsWith(id))
-        const done = this.notesInfo.doneIds.has(id) ? true : false
-        itemList.push({
-          text: (done ? '✅ ' : '⏰ ') + notesDirName.replace(/\d\d\d\d. /, ''),
-          link: `/notes/${notesDirName}/README`
-        })
+      this.homeReadme.idList.forEach((id) => {
+        const notesDirName = this.notesInfo.dirNameList.find((dirName) =>
+          dirName.startsWith(id)
+        )
+        // console.log('notesDirName', notesDirName)
+        if (notesDirName) {
+          const done = this.notesInfo.doneIds.has(id) ? true : false
+          itemList.push({
+            text: (done ? '✅ ' : '⏰ ') + notesDirName.replace(/\d\d\d\d. /, ''),
+            link: `/notes/${notesDirName}/README`,
+          })
+        }
       })
-    
+
       // console.log('this.homeReadme.titles', this.homeReadme.titles);
       // console.log('this.homeReadme.titlesNotesCount', this.homeReadme.titlesNotesCount);
-    
+
       // Write the final JSON to file
       fs.writeFileSync(
         this.vpSidebarPath,
-        JSON.stringify(genHierarchicalSidebar(itemList, this.homeReadme.titles, this.homeReadme.titlesNotesCount))
-      );
-    };
+        JSON.stringify(
+          genHierarchicalSidebar(
+            itemList,
+            this.homeReadme.titles,
+            this.homeReadme.titlesNotesCount
+          )
+        )
+      )
+    }
 
-    updateFile_TOC_MD();
-    updateFile_SIDEBAT_JSON();
+    updateFile_TOC_MD()
+    updateFile_SIDEBAT_JSON()
   }
 
   updateReadme() {
+    this.checkNotesInfo()
     this.getNotesInfo()
-    this.homeReadme.contents = fs.readFileSync(this.homeReadme.path, "utf8")
+    this.homeReadme.contents = fs.readFileSync(this.homeReadme.path, 'utf8')
     this.homeReadme.lines = this.resetHomeTopInfos()
-    this.setHomeTopInfos();
+    this.setHomeTopInfos()
 
     // console.log(this.notes.ids, this.homeReadme.ids);
 
-    this.printMissingNotes();
-    this.handleUnassignedNotes();
-    this.updateHomeToc(this.homeReadme.lines);
-    fs.writeFileSync(
-      this.homeReadme.path,
-      this.homeReadme.lines.join(this.EOL)
-    );
-    this.updateVitepressDocs();
-    
-    console.log(`✅ ${this.repoName} \t README.md updated.`);
+    this.handleUnassignedNotes()
+    this.updateHomeToc(this.homeReadme.lines)
+    fs.writeFileSync(this.homeReadme.path, this.homeReadme.lines.join(this.EOL))
+    this.updateVitepressDocs()
+
+    console.log(`✅ ${this.repoName} \t README.md updated.`)
   }
 }
 
