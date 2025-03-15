@@ -10,7 +10,8 @@
     "tn:pull": "        node ./.vitepress/tnotes --pull",
     "tn:push": "        node ./.vitepress/tnotes --push",
     "tn:sync": "        node ./.vitepress/tnotes --sync",
-    "tn:update": "      node ./.vitepress/tnotes --update"
+    "tn:update": "      node ./.vitepress/tnotes --update",
+    "tn:tempSync": "    node ./.vitepress/tnotes --tempSync"
   },
   "devDependencies": {
     "markdown-it-task-lists": "^2.1.1",

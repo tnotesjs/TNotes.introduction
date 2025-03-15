@@ -5,6 +5,7 @@ import { mergeNotes, distributeNotes } from './merge_distribute.js'
 import { syncRepo, pushRepo, pullRepo } from './utils/index.js'
 import { newNotes } from './new.js'
 import { __dirname } from './constants.js'
+import { tempSync } from './temp-sync.js'
 
 ;(async () => {
   const args = minimist(process.argv)
@@ -32,6 +33,9 @@ import { __dirname } from './constants.js'
       break
     case args.distribute:
       distributeNotes()
+      break
+    case args.tempSync:
+      tempSync()
       break
     default:
       console.log('No valid command provided.')
