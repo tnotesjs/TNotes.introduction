@@ -14,25 +14,25 @@
 
 ## 2. 📒 扩展 vitepress
 
-- [ ] [0002. 公式](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0002.%20%E5%85%AC%E5%BC%8F/README.md) <!-- [locale](./notes/0002.%20%E5%85%AC%E5%BC%8F/README.md) -->  
+- [x] [0002. 公式](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0002.%20%E5%85%AC%E5%BC%8F/README.md) <!-- [locale](./notes/0002.%20%E5%85%AC%E5%BC%8F/README.md) -->  
   - [1. 🔗 markdown-it-mathjax3 github page](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0002.%20%E5%85%AC%E5%BC%8F/README.md#1--markdown-it-mathjax3-github-page)
   - [2. 💻 vitepress 公式支持测试](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0002.%20%E5%85%AC%E5%BC%8F/README.md#2--vitepress-公式支持测试)
   
 
-- [ ] [0003. mermaid 图表](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0003.%20mermaid%20%E5%9B%BE%E8%A1%A8/README.md) <!-- [locale](./notes/0003.%20mermaid%20%E5%9B%BE%E8%A1%A8/README.md) -->  
+- [x] [0003. mermaid 图表](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0003.%20mermaid%20%E5%9B%BE%E8%A1%A8/README.md) <!-- [locale](./notes/0003.%20mermaid%20%E5%9B%BE%E8%A1%A8/README.md) -->  
   - [1. 🔗 vitepress-plugin-mermaid github-pages](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0003.%20mermaid%20%E5%9B%BE%E8%A1%A8/README.md#1--vitepress-plugin-mermaid-github-pages)
   - [2. 💻 测试 mermaid 的渲染](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0003.%20mermaid%20%E5%9B%BE%E8%A1%A8/README.md#2--测试-mermaid-的渲染)
   
 
-- [ ] [0004. swiper](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0004.%20swiper/README.md) <!-- [locale](./notes/0004.%20swiper/README.md) -->  
+- [x] [0004. swiper](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0004.%20swiper/README.md) <!-- [locale](./notes/0004.%20swiper/README.md) -->  
   - [1. 🔗 swiperjs 官网](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0004.%20swiper/README.md#1--swiperjs-官网)
   - [2. 💻 swiper 功能测试](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0004.%20swiper/README.md#2--swiper-功能测试)
   
 
-- [ ] [0005. BilibiliOutsidePlayer](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0005.%20BilibiliOutsidePlayer/README.md) <!-- [locale](./notes/0005.%20BilibiliOutsidePlayer/README.md) -->  
+- [x] [0005. BilibiliOutsidePlayer](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0005.%20BilibiliOutsidePlayer/README.md) <!-- [locale](./notes/0005.%20BilibiliOutsidePlayer/README.md) -->  
   - [1. 💻 嵌入 B 站视频](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0005.%20BilibiliOutsidePlayer/README.md#1--嵌入-b-站视频)
   
 
-- [ ] [0006. Footprints](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0006.%20Footprints/README.md) <!-- [locale](./notes/0006.%20Footprints/README.md) -->  
+- [x] [0006. Footprints](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0006.%20Footprints/README.md) <!-- [locale](./notes/0006.%20Footprints/README.md) -->  
   - [1. 💻 足迹功能](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0006.%20Footprints/README.md#1--足迹功能)
   

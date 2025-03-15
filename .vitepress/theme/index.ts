@@ -12,6 +12,8 @@ import Footprints from '../components/Footprints/Footprints.vue'
 import Layout from '../components/Layout/Layout.vue'
 import Settings from '../components/Settings/Settings.vue'
 
+import './style.css'
+
 export default {
   extends: DefaultTheme,
 

@@ -11,7 +11,7 @@ import { __dirname } from './constants.js'
   if (args.update) {
     const updater = new ReadmeUpdater()
     updater.updateReadme()
-    await syncRepo()
+    // await syncRepo()
   }
 
   if (args.sync) await syncRepo()

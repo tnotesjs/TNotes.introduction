@@ -156,8 +156,8 @@ class ReadmeUpdater {
       if (fs.existsSync(notesConfigPath)) {
         notesConfig = JSON.parse(fs.readFileSync(notesConfigPath, 'utf8'))
         notesConfig = {
-          ...notesConfig,
           ...JSON.parse(NEW_NOTES_TNOTES_JSON_TEMPLATE),
+          ...notesConfig,
         }
         fs.writeFileSync(
           notesConfigPath,
@@ -181,30 +181,38 @@ class ReadmeUpdater {
       // 更新笔记标题
       notesLines[0] = notesTitle
 
-      // 开启笔记评论
-      if (notesConfig.enableDiscussions) {
-        const comp_Discussions = `<Discussions id="${this.repoName}.${notesID}" />`
-        if (!notesLines.includes(comp_Discussions)) {
-          notesLines.push(`${this.EOL}${comp_Discussions}${this.EOL}`)
-        }
-      }
+      // ! Deprecated
+      // 以下逻辑已经合并到 Layout.vue 组件中，如果开启评论功能，会在文档结尾自动注入 Discussions 组件。
+      // 管理笔记评论是否开启
+      // const comp_Discussions = `<Discussions id="${this.repoName}.${notesID}" />`
+      // if (notesConfig.enableDiscussions && !notesLines.includes(comp_Discussions)) {
+      //   notesLines.push(`${this.EOL}${comp_Discussions}`)
+      // } else if (!notesConfig.enableDiscussions && notesLines.includes(comp_Discussions)) {
+      //   const index = notesLines.indexOf(comp_Discussions)
+      //   notesLines.splice(index, 1)
+      // }
 
       // 更新笔记目录。
       this.updateNotesToc(notesID, notesLines)
 
-      fs.writeFileSync(notesPath, notesLines.join(this.EOL), "utf8");
+      // 删除笔记结尾的空行
+      while (notesLines[notesLines.length - 1].trim() === "") {
+        notesLines.pop()
+      }
 
-      let firstHeading2Index = -1;
+      fs.writeFileSync(notesPath, notesLines.join(this.EOL) + this.EOL, "utf8")
+
+      let firstHeading2Index = -1
       for (let i = 1; i < notesLines.length; i++) {
         if (notesLines[i].startsWith('## ')) {
-          firstHeading2Index = i;
-          break;
+          firstHeading2Index = i
+          break
         }
       }
       let topInfoLines =
         firstHeading2Index > 0
           ? notesLines.slice(1, firstHeading2Index)
-          : notesLines.slice(1);
+          : notesLines.slice(1)
         
       // 处理头部信息中的跳转链接
       topInfoLines = topInfoLines.map((line) => {
