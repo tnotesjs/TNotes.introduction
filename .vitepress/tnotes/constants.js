@@ -7,7 +7,8 @@ const {
   ignore_dirs,
   repoName,
   socialLinks,
-  menuItems
+  menuItems,
+  sidebar_isNotesIDVisible
 } = getTnotesConfig()
 
 export {
@@ -15,7 +16,8 @@ export {
   ignore_dirs,
   repoName,
   socialLinks,
-  menuItems
+  menuItems,
+  sidebar_isNotesIDVisible
 }
 
 export const BILIBILI_VIDEO_BASE_URL = "https://www.bilibili.com/video/"
