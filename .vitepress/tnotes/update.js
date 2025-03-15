@@ -156,6 +156,7 @@ class ReadmeUpdater {
       if (fs.existsSync(notesConfigPath)) {
         notesConfig = JSON.parse(fs.readFileSync(notesConfigPath, "utf8"))
         notesConfig = { ...notesConfig, ...NEW_NOTES_TNOTES_JSON_TEMPLATE }
+        fs.writeFileSync(notesConfigPath, JSON.stringify(notesConfig), "utf8")
         this.notesInfo.configMap[notesID] = notesConfig
         notesConfig.done && this.notesInfo.doneIds.add(notesID)
       } else {
