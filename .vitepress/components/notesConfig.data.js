@@ -6,7 +6,7 @@ export default {
   // 监听笔记目录下的 .tnotes.json 文件变化
   watch: ['../../notes/**/.tnotes.json'],
   load(watchedFiles) {
-    console.log('watchedFiles', watchedFiles)
+    // console.log('watchedFiles', watchedFiles)
 
     // 初始化一个空对象，用于存储所有笔记的配置数据
     const allNotesConfig = {}
