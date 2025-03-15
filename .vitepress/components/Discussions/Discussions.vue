@@ -6,9 +6,9 @@ const props = defineProps({
    * 留言版 ID
    * 格式规范：repoName.noteId
    * eg.
-   *    electron.0001
-   *    react.0032
-   *    react.0040
+   *    TNotes.electron.0001
+   *    TNotes.react.0032
+   *    TNotes.react.0040
    */
   id: {
     type: String,
@@ -39,7 +39,7 @@ onMounted(() => {
   // 确保脚本仅注入一次
   if (!document.getElementById('giscus-script')) {
     giscusScript.id = 'giscus-script';
-    document.getElementById('giscus-comments').appendChild(giscusScript);
+    document.getElementById('giscus-comments')?.appendChild(giscusScript);
   }
 });
 </script>

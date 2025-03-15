@@ -67,5 +67,6 @@ export const NEW_NOTES_README_MD_TEMPLATE = `
  */
 export const NEW_NOTES_TNOTES_JSON_TEMPLATE = `{
   "bilibili": [],
-  "done": false
+  "done": false,
+  "enableDiscussions": false
 }`

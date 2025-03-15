@@ -145,24 +145,37 @@ class ReadmeUpdater {
 
       const notesTitle = `# [${notesDirName}](${this.repoNotesUrl}/${encodeURIComponent(notesDirName)})`
 
+      if (!fs.existsSync(notesPath)) {
+        fs.writeFileSync(notesPath, notesTitle + this.newNotesReadmeMdTemplate, "utf8")
+        fs.writeFileSync(notesConfigPath, NEW_NOTES_TNOTES_JSON_TEMPLATE, "utf8")
+        console.log(`${notesDirName} 笔记不存在，已完成初始化。`)
+        return
+      }
+
+      let notesConfig
       if (fs.existsSync(notesConfigPath)) {
-        const notesConfig = JSON.parse(fs.readFileSync(notesConfigPath, "utf8"))
+        notesConfig = JSON.parse(fs.readFileSync(notesConfigPath, "utf8"))
+        notesConfig = { ...notesConfig, ...NEW_NOTES_TNOTES_JSON_TEMPLATE }
         this.notesInfo.configMap[notesID] = notesConfig
         notesConfig.done && this.notesInfo.doneIds.add(notesID)
       } else {
         fs.writeFileSync(notesConfigPath, NEW_NOTES_TNOTES_JSON_TEMPLATE, "utf8")
-        const notesConfig = JSON.parse(NEW_NOTES_TNOTES_JSON_TEMPLATE)
+        notesConfig = JSON.parse(NEW_NOTES_TNOTES_JSON_TEMPLATE)
         this.notesInfo.configMap[notesID] = notesConfig
-      }
-
-      if (!fs.existsSync(notesPath)) {
-        fs.writeFileSync(notesPath, notesTitle + this.newNotesReadmeMdTemplate, "utf8")
       }
       
       const notesLines = fs.readFileSync(notesPath, "utf8").split(this.EOL)
       
       // 更新笔记标题
       notesLines[0] = notesTitle
+
+      // 开启笔记评论
+      if (notesConfig.enableDiscussions) {
+        const comp_Discussions = `<Discussions id="${this.repoName}.${notesID}" />`
+        if (!notesLines.includes(comp_Discussions)) {
+          notesLines.push(`${this.EOL}${comp_Discussions}${this.EOL}`)
+        }
+      }
 
       // 更新笔记目录。
       this.updateNotesToc(notesID, notesLines)
