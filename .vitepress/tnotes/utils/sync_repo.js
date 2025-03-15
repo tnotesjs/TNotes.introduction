@@ -88,7 +88,7 @@ export async function pushRepo(dir = ROOT_DIR) {
       `✅ 笔记同步完成 ${remoteMatch ? remoteMatch[0] : '（无法解析远程 URL）'}`
     )
   } catch (error) {
-    console.error(`推送 ${dir} 时出错：${error.message}`)
+    console.error(`推送 ${dir} 时出错：${error.message}\n请检查网络环境，可尝试手动执行 git push 推送`)
   }
 }
 
