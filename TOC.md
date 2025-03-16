@@ -30,4 +30,12 @@
 
 - [x] [0006. Footprints](https://tdahuyou.github.io/TNotes.template/notes/0006.%20Footprints/README) <!-- [locale](./notes/0006.%20Footprints/README) -->  
   - [1. 💻 足迹功能](https://tdahuyou.github.io/TNotes.template/notes/0006.%20Footprints/README#1--足迹功能)
+  - 丢几张图片做测试：
+    - ![](https://github.com/Tdahuyou/TNotes.template/blob/main/notes//0006.%20Footprints/.%2Fassets%2F1.png?raw=true)
+    - ![](https://github.com/Tdahuyou/TNotes.template/blob/main/notes//0006.%20Footprints/.%2Fassets%2F1.png?raw=true)
+    - ![](https://github.com/Tdahuyou/TNotes.template/blob/main/notes//0006.%20Footprints/.%2Fassets%2F2.png?raw=true)
+    - ![](https://github.com/Tdahuyou/TNotes.template/blob/main/notes//0006.%20Footprints/.%2Fassets%2F2.png?raw=true)
+    - ![](https://github.com/Tdahuyou/TNotes.template/blob/main/notes//0006.%20Footprints/.%2Fassets%2F2.png?raw=true)
+    - ![](https://github.com/Tdahuyou/TNotes.template/blob/main/notes//0006.%20Footprints/.%2Fassets%2F3.png?raw=true)
+    - ![](https://github.com/Tdahuyou/TNotes.template/blob/main/notes//0006.%20Footprints/.%2Fassets%2F4.png?raw=true)
   
