@@ -1,8 +1,10 @@
 # [0002. 公式](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0002.%20%E5%85%AC%E5%BC%8F)
 
 <!-- region:toc -->
+
 - [1. 🔗 markdown-it-mathjax3 github page](#1--markdown-it-mathjax3-github-page)
 - [2. 💻 vitepress 公式支持测试](#2--vitepress-公式支持测试)
+
 <!-- endregion:toc -->
 
 ## 1. 🔗 markdown-it-mathjax3 github page

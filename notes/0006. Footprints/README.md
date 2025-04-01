@@ -1,7 +1,9 @@
 # [0006. Footprints](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0006.%20Footprints)
 
 <!-- region:toc -->
+
 - [1. 💻 足迹功能](#1--足迹功能)
+
 <!-- endregion:toc -->
 
 ## 1. 💻 足迹功能
