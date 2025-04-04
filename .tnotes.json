@@ -2,7 +2,15 @@
   "author": "Tdahuyou",
   "repoName": "TNotes.template",
   "keywords": ["TNotes.template"],
-  "ignore_dirs": [".vscode", "0000", "assets", "node_modules"],
+  "ignore_dirs": [
+    ".vscode",
+    "0000",
+    "assets",
+    "node_modules",
+    "hidden",
+    "demos",
+    "assets"
+  ],
   "menuItems": [
     {
       "text": "🏠 Home",
@@ -19,10 +27,6 @@
     {
       "text": "📂 TNotes.assets",
       "link": "https://www.yuque.com/tdahuyou/tnotes.assets"
-    },
-    {
-      "text": "👀 TOC",
-      "link": "/TOC"
     }
   ],
   "socialLinks": [

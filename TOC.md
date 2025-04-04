@@ -20,3 +20,5 @@
   - [1. 💻 嵌入 B 站视频](https://tdahuyou.github.io/TNotes.template/notes/0005.%20BilibiliOutsidePlayer/README#1--嵌入-b-站视频)
 - [x] [0006. Footprints](https://tdahuyou.github.io/TNotes.template/notes/0006.%20Footprints/README) <!-- [locale](./notes/0006.%20Footprints/README) -->
   - [1. 💻 足迹功能](https://tdahuyou.github.io/TNotes.template/notes/0006.%20Footprints/README#1--足迹功能)
+- [ ] [0007. 新笔记](https://tdahuyou.github.io/TNotes.template/notes/0007.%20%E6%96%B0%E7%AC%94%E8%AE%B0/README) <!-- [locale](./notes/0007.%20%E6%96%B0%E7%AC%94%E8%AE%B0/README) -->
+  - [1. 📒 notes_title](https://tdahuyou.github.io/TNotes.template/notes/0007.%20%E6%96%B0%E7%AC%94%E8%AE%B0/README#1--notes_title)

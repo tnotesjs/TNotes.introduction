@@ -606,7 +606,6 @@ class ReadmeUpdater {
       // console.log('this.homeReadme.titles', this.homeReadme.titles);
       // console.log('this.homeReadme.titlesNotesCount', this.homeReadme.titlesNotesCount);
 
-      // Write the final JSON to file
       fs.writeFileSync(
         this.vpSidebarPath,
         JSON.stringify(
