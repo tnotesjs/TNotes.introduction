@@ -386,7 +386,7 @@ class ReadmeUpdater {
    * 根据 this.notesInfo.topInfoMap 重置首页目录。
    */
   setHomeTopInfos() {
-    console.log('this.homeReadme.lines', this.homeReadme.lines)
+    // console.log('this.homeReadme.lines', this.homeReadme.lines)
     // console.log('this.notes.map:', this.notes.map);
     this.homeReadme.lines.forEach((line, index) => {
       const match = line.match(this.homeReadme.noteTitleReg)
@@ -411,7 +411,7 @@ class ReadmeUpdater {
         }
       }
     })
-    console.log('this.notesInfo.topInfoMap', this.notesInfo.topInfoMap)
+    // console.log('this.notesInfo.topInfoMap', this.notesInfo.topInfoMap)
   }
 
   /**
