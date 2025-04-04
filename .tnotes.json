@@ -11,6 +11,7 @@
     "demos",
     "assets"
   ],
+  "port": 9379,
   "menuItems": [
     {
       "text": "🏠 Home",
