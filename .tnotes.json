@@ -11,6 +11,7 @@
     "demos",
     "assets"
   ],
+  "rootDocsSrcDir": "../_/docs/src",
   "port": 9379,
   "menuItems": [
     {
