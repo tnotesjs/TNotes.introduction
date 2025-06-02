@@ -1,4 +1,4 @@
-# [0004. swiper](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0004.%20swiper)
+# [0004. swiper](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0004.%20swiper)
 
 <!-- region:toc -->
 

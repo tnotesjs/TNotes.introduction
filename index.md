@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: 'TNotes 笔记模板'
+  name: 'TNotes 说明文档'
   image:
     src: /logo.png
     alt: TNotes logo

@@ -1,4 +1,4 @@
-# [0002. 公式](https://github.com/Tdahuyou/TNotes.template/tree/main/notes/0002.%20%E5%85%AC%E5%BC%8F)
+# [0002. 公式](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0002.%20%E5%85%AC%E5%BC%8F)
 
 <!-- region:toc -->
 

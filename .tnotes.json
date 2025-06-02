@@ -1,8 +1,8 @@
 {
   "author": "Tdahuyou",
-  "repoName": "TNotes.template",
+  "repoName": "TNotes.introduction",
   "keywords": [
-    "TNotes.template"
+    "TNotes.introduction"
   ],
   "ignore_dirs": [
     ".vscode",
@@ -16,12 +16,12 @@
   "rootDocsSrcDir": "../_/docs/src",
   "home.features.item": {
     "icon": {
-      "src": "https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/assets/icon--template.svg"
+      "src": "https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/assets/icon--introduction.svg"
     },
-    "title": "TNotes 笔记模板",
-    "completed_notes_count": 5,
-    "details": "25.03 正在测试、优化中。",
-    "link": "https://tdahuyou.github.io/TNotes.template/"
+    "title": "TNotes 说明文档",
+    "completed_notes_count": 8,
+    "details": "这是一个基于 TNotes 实现的一个知识库，记录了对 TNotes 的相关介绍，比如基本架构和使用方法等内容。",
+    "link": "https://tdahuyou.github.io/TNotes.introduction/"
   },
   "port": 9379,
   "menuItems": [
@@ -58,8 +58,8 @@
       }
     },
     {
-      "ariaLabel": "TNotes.template github 仓库链接",
-      "link": "https://github.com/Tdahuyou/TNotes.template",
+      "ariaLabel": "TNotes.introduction github 仓库链接",
+      "link": "https://github.com/Tdahuyou/TNotes.introduction",
       "icon": "github"
     }
   ],
