@@ -1,4 +1,4 @@
-# [0014. TNotes 基本架构](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0014.%20TNotes%20%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84)
+# [0014. 本地目录结构](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0014.%20%E6%9C%AC%E5%9C%B0%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84)
 
 <!-- region:toc -->
 
