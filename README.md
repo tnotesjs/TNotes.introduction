@@ -25,7 +25,6 @@
   - [2. 🤔 TNotes 中的知识库是什么？](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0001.%20TNotes%20%E7%AE%80%E4%BB%8B/README.md#2--tnotes-中的知识库是什么)
   - [3. 🤔 TNotes 中知识库之间的关系是？](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0001.%20TNotes%20%E7%AE%80%E4%BB%8B/README.md#3--tnotes-中知识库之间的关系是)
   - [4. 📒 TNotes.introduction](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0001.%20TNotes%20%E7%AE%80%E4%BB%8B/README.md#4--tnotesintroduction)
-
 - [ ] [0014. 本地目录结构](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0014.%20%E6%9C%AC%E5%9C%B0%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84/README.md)
   - [1. 📝 概述](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0014.%20%E6%9C%AC%E5%9C%B0%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84/README.md#1--概述)
   - [2. 分仓库模式](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0014.%20%E6%9C%AC%E5%9C%B0%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84/README.md#2-分仓库模式)
