@@ -210,8 +210,8 @@ features:
     "demos",
     "assets"
   ],
-  "rootDocsSrcDir": "../_/docs/src",
-  "home.features.item": {
+  "rootSidebarDir": "../_/sidebars",
+  "root_item": {
     "icon": {
       "src": "https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/assets/icon--change-log.svg"
     },
@@ -322,7 +322,7 @@ const SUB_KNOWLEDGE_TNOTES_CONFIG_PATHS = FEATURES_DISPLAY_ORDER.map((key) =>
   path.resolve(__dirname, '..', '..', key, '.tnotes.json')
 )
 
-const SUB_CONFIG_KEY = 'home.features.item'
+const SUB_CONFIG_KEY = 'root_itemm'
 
 // 📁 工具函数 ------------------------------------------------------------------
 
