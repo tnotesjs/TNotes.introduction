@@ -20,6 +20,8 @@
 
 ## 1. Introduction
 
+- [x] [0028. TNotes 首页改造计划 25.07](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0028.%20TNotes%20%E9%A6%96%E9%A1%B5%E6%94%B9%E9%80%A0%E8%AE%A1%E5%88%92%2025.07/README.md)
+  - [1. 📝 概述](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0028.%20TNotes%20%E9%A6%96%E9%A1%B5%E6%94%B9%E9%80%A0%E8%AE%A1%E5%88%92%2025.07/README.md#1--概述)
 - [ ] [0001. TNotes 简介](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0001.%20TNotes%20%E7%AE%80%E4%BB%8B/README.md)
   - [1. 🤔 TNotes 是什么？](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0001.%20TNotes%20%E7%AE%80%E4%BB%8B/README.md#1--tnotes-是什么)
   - [2. 🤔 TNotes 中的知识库是什么？](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0001.%20TNotes%20%E7%AE%80%E4%BB%8B/README.md#2--tnotes-中的知识库是什么)
@@ -134,8 +136,6 @@
   - [1. 💰 支付宝｜微信](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0017.%20%E6%94%AF%E4%BB%98%E5%AE%9D%20or%20%E5%BE%AE%E4%BF%A1/README.md#1--支付宝微信)
 - [ ] [0018. bilibili 充电](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0018.%20bilibili%20%E5%85%85%E7%94%B5/README.md)
   - [1. 📺 Bilibili 充电 🔋](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0018.%20bilibili%20%E5%85%85%E7%94%B5/README.md#1--bilibili-充电-)
-- [ ] [0028. xxx](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0028.%20xxx/README.md)
-  - [1. 📝 概述](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0028.%20xxx/README.md#1--概述)
 - [ ] [0029. xxx](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0029.%20xxx/README.md)
   - [1. 📝 概述](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0029.%20xxx/README.md#1--概述)
 - [ ] [0030. xxx](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0030.%20xxx/README.md)
