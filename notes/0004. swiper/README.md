@@ -15,30 +15,24 @@ https://swiperjs.com/
 
 在笔记模板 `TNotes.template` 中，集成了 swiper 功能，可以通过下面这样的语法来插入多张图片内容。
 
-在笔记模板 `TNotes.template` 中，集成了 swiper 功能，可以通过下面这样的语法来插入多张图片内容。
-
 ```md
 ::: swiper
-![](./assets/1.png)
-![](./assets/2.png)
-![](./assets/3.png)
+
+![1](./assets/1.png)
+
+![2](./assets/2.png)
+
+![3](./assets/3.png)
+
 :::
 ```
 
 ::: swiper
-![](./assets/1.png)
-![](./assets/2.png)
-![](./assets/3.png)
-:::
 
-```md
-::: swiper
-![](./assets/4.jpg)
-![](./assets/5.png)
-:::
-```
+![1](./assets/1.png)
 
-::: swiper
-![](./assets/4.jpg)
-![](./assets/5.png)
+![2](./assets/2.png)
+
+![3](./assets/3.png)
+
 :::
