@@ -8,5 +8,5 @@
 
 ## 1. 🆕 知识库首页样式优化
 
-- ![图 1](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-11-04-34.png)
-- ![图 2](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-11-05-23.png)
+- ![图 1](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-11-04-34.png)
+- ![图 2](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-11-05-23.png)

@@ -10,8 +10,8 @@
 
 - **创作指数**
   - 基本上每天都会写点儿东西，可见 [yuque](https://github.com/Tdahuyou)、[github](https://github.com/Tdahuyou) 底部的创作指数。
-    - ![图 0](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-18-39-44.png)
-    - ![图 1](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-18-39-54.png)
+    - ![图 0](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-18-39-44.png)
+    - ![图 1](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-18-39-54.png)
     - 从 24.08 开始逐步搬运 yuque 上的内容到 github 上。
 - **创作流程**
   1. 输入 - 找资料学习，会在分享的文章中记录相关资料的链接。

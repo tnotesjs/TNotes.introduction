@@ -17,7 +17,7 @@
   - **划分原则**：仓库的划分可能有些是不太合理的，会根据实际情况不断调整优化。
     - 比如 markdown、mermaid 的笔记，从某种程度上讲，mermaid 的笔记其实可以一并丢到 markdown 中，因为 mermaid 的主要应用场景基本上都是在 markdown 中使用。
     - 这也是一个不断学习的过程，在学习某个内容 xxx 的时候，最初做的划分很可能也都是不太合理的，后续再优化结构即可，初学阶段没必要过分纠结自己写的笔记应该属于哪个组，重要的是先把笔记给写好。
-- ![图 0](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-12-11-09.png)
+- ![图 0](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-12-11-09.png)
 
 ## 3. 📒 本地目录结构
 

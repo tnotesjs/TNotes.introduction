@@ -10,4 +10,4 @@
 
 - 增加笔记标题的权重。
 - 支持通过编号来精确定位笔记内容。
-- ![图 3](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-11-08-44.png)
+- ![图 3](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-11-08-44.png)

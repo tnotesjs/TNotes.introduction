@@ -10,9 +10,9 @@
 
 ::: swiper
 
-![1](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-05-07-18-39-56.png)
+![1](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-05-07-18-39-56.png)
 
-![2](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-05-07-18-39-42.png)
+![2](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-05-07-18-39-42.png)
 
 :::
 

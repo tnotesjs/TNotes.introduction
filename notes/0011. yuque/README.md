@@ -14,4 +14,4 @@
 ## 2. 📒 `yuque` 字段的作用
 
 - TNotes.yuque -> mysql.0001
-- ![图 5](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-05-10-22-48-40.png)
+- ![图 5](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-05-10-22-48-40.png)

@@ -28,7 +28,7 @@
   - `dahuyou_top@163.com`
 - 🧑🏻‍💻 微信
   - 微信号：`Tdahuyou`
-  - <img src="https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-18-43-48.png" style="height: 500px" />
+  - <img src="https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-18-43-48.png" style="height: 500px" />
   - 注：
     - 来者不拒。
     - 这就是目前的主号。

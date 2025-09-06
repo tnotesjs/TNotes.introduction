@@ -19,7 +19,7 @@
 - 转换结果是只读的，主要用于 **临时预览**。
 - 编写 m2mm 的初衷是为了让自己的笔记大纲能够以思维导图的形式来呈现，以便笔记大纲的预览。
   - 结合 m2mm - 以思维导图的形式来呈现笔记大纲，这也是写这个小工具的初衷。
-  - ![图 0](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-19-21-28.png)
+  - ![图 0](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-19-21-28.png)
 
 ## 2. 🔗 m2mm - github 仓库
 
@@ -34,12 +34,12 @@
 
 - https://chromewebstore.google.com/detail/m2mm/efagcmmcgdofnhlpajgdpfdmicmkjkda?authuser=0&hl=zh-CN
 - sidebar 默认位置是从右边弹出，可以通过 chrome 浏览器设置修改 sidebar 的位置为左侧。
-  - ![图 1](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-19-21-39.png)
+  - ![图 1](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-19-21-39.png)
 
 ## 5. 💻 基本使用流程
 
 - 在 TNotes 上复制笔记大纲，然后丢到 m2mm 中。
-  - ![图 2](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-19-22-10.png)
+  - ![图 2](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-19-22-10.png)
 - 也可以在 github 中直接复制文件原始内容。
   - ![](assets/2024-12-06-17-08-00-m2mm-usage.gif)
 
@@ -57,7 +57,7 @@ git clone https://github.com/Tdahuyou/m2mm
 npm run build
 ```
 
-- ![图 3](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-19-23-06.png)
+- ![图 3](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-19-23-06.png)
 
 ## 7. 🤔 m2mm 都有哪些应用场景？
 
@@ -76,7 +76,7 @@ npm run build
     - 目录 2.1
 ```
 
-- ![图 4](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-19-23-21.png)
+- ![图 4](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-19-23-21.png)
 
 ---
 
@@ -97,7 +97,7 @@ https://github.com/Tdahuyou/javascript/blob/main/0001.%20var%20%E5%85%B3%E9%94%A
 ```
 
 - 然后将 gpt4 回复的内容粘贴到 m2mm 中：
-  - ![图 5](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-19-23-48.png)
+  - ![图 5](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-19-23-48.png)
 - 同样的内容丢给通义千问，得到的回复如下：
 
 ```md
@@ -127,7 +127,7 @@ https://github.com/Tdahuyou/javascript/blob/main/0001.%20var%20%E5%85%B3%E9%94%A
 ```
 
 - 将上述内容复制到 m2mm 中，得到的结果如下：
-  - ![图 6](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-19-24-05.png)
+  - ![图 6](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-19-24-05.png)
 - 具体选择哪个 AI 模型，可以多体验一下，选择一个合适的即可。
 - 可以保存一下提问模板，后续每次在提问的时候，只需要更新咨询的文章连接即可。
 - 也可以多问几篇文章，然后利用类似文本编辑器（比如 vscode）对 AI 的回复格式做一些微调，合并在一起，然后一起丢到 m2mm 中，一次阅读多篇文档。

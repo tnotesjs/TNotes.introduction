@@ -18,8 +18,8 @@
 - 缺点：
   - 发布评论的前提是得有 GitHub 账号。
   - Giscus 提供的输入框不支持直接上传附件，如果要上传图片等 `📎 附件资源` 需要通过原生的 Discusstions 来发。
-    - ![图 0](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-19-11-51.png)
-    - ![图 1](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-19-12-01.png)
+    - ![图 0](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-19-11-51.png)
+    - ![图 1](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-19-12-01.png)
     - 在发布图片的时候，如果已经有了图片的超链接地址，那么可以直接采用 markdown 语法来发布。
 - 集成步骤：
   1. 前往 [Giscus](https://giscus.app/) 配置页面。

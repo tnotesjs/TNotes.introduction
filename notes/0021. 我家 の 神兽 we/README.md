@@ -21,8 +21,8 @@
   - 应该说零食基本都爱吃
 - 写真：
   - 表盘背景
-    - ![图 0](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-18-38-32.png)
+    - ![图 0](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-18-38-32.png)
   - 手机背景
-    - ![图 1](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-18-38-54.png)
+    - ![图 1](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-18-38-54.png)
   - 电脑背景
-    - ![图 2](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-18-39-11.png)
+    - ![图 2](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-18-39-11.png)

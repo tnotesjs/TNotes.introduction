@@ -32,9 +32,9 @@
   - 根知识库：只有一个
   - 子知识库：可以有多个
   - 比如：下图中 notes 就是根知识库，其余的都是子知识库。
-  - ![](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-12-11-09.png)
+  - ![](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-12-11-09.png)
 - TNotes 的根知识库，汇总了其余所有知识库的 README.md 笔记文档，以便满足查阅和分享的需求。
-  - ![图 0](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-05-29-00-20-43.png)
+  - ![图 0](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-05-29-00-20-43.png)
 
 ## 4. 📒 TNotes.introduction
 

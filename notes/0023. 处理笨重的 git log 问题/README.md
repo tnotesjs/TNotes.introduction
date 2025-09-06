@@ -19,9 +19,9 @@
 
 - **最终效果**：
   - 清理前：150 次 commit 历史……
-    - ![图 0](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-19-06-35.png)
+    - ![图 0](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-19-06-35.png)
   - 清理后：1 次最新的 commit 历史……
-    - ![图 1](https://cdn.jsdelivr.net/gh/Tdahuyou/imgs@main/2025-06-02-19-06-47.png)
+    - ![图 1](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-06-02-19-06-47.png)
 - **实现步骤**：
 
 ::: code-group
