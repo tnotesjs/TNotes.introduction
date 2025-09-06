@@ -1,4 +1,4 @@
-# [0025. Q&A](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0025.%20Q%26A)
+# [0025. Q&A](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0025.%20Q%26A)
 
 <!-- region:toc -->
 

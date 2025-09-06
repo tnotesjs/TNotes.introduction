@@ -1,4 +1,4 @@
-# [0009. 优化搜索配置](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0009.%20%E4%BC%98%E5%8C%96%E6%90%9C%E7%B4%A2%E9%85%8D%E7%BD%AE)
+# [0009. 优化搜索配置](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0009.%20%E4%BC%98%E5%8C%96%E6%90%9C%E7%B4%A2%E9%85%8D%E7%BD%AE)
 
 <!-- region:toc -->
 

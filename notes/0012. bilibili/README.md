@@ -1,4 +1,4 @@
-# [0012. bilibili](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0012.%20bilibili)
+# [0012. bilibili](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0012.%20bilibili)
 
 <!-- region:toc -->
 

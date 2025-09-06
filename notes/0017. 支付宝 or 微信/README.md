@@ -1,4 +1,4 @@
-# [0017. 支付宝 or 微信](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0017.%20%E6%94%AF%E4%BB%98%E5%AE%9D%20or%20%E5%BE%AE%E4%BF%A1)
+# [0017. 支付宝 or 微信](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0017.%20%E6%94%AF%E4%BB%98%E5%AE%9D%20or%20%E5%BE%AE%E4%BF%A1)
 
 <!-- region:toc -->
 

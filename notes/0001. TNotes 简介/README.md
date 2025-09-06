@@ -1,4 +1,4 @@
-# [0001. TNotes 简介](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0001.%20TNotes%20%E7%AE%80%E4%BB%8B)
+# [0001. TNotes 简介](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0001.%20TNotes%20%E7%AE%80%E4%BB%8B)
 
 <!-- region:toc -->
 

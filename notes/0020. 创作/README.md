@@ -1,4 +1,4 @@
-# [0020. 创作](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0020.%20%E5%88%9B%E4%BD%9C)
+# [0020. 创作](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0020.%20%E5%88%9B%E4%BD%9C)
 
 <!-- region:toc -->
 

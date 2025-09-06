@@ -1,4 +1,4 @@
-# [0022. TNotes 核心脚本功能简介](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0022.%20TNotes%20%E6%A0%B8%E5%BF%83%E8%84%9A%E6%9C%AC%E5%8A%9F%E8%83%BD%E7%AE%80%E4%BB%8B)
+# [0022. TNotes 核心脚本功能简介](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0022.%20TNotes%20%E6%A0%B8%E5%BF%83%E8%84%9A%E6%9C%AC%E5%8A%9F%E8%83%BD%E7%AE%80%E4%BB%8B)
 
 <!-- region:toc -->
 

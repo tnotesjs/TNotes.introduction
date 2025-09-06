@@ -1,4 +1,4 @@
-# [0021. 我家 の 神兽 we](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0021.%20%E6%88%91%E5%AE%B6%20%E3%81%AE%20%E7%A5%9E%E5%85%BD%20we)
+# [0021. 我家 の 神兽 we](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0021.%20%E6%88%91%E5%AE%B6%20%E3%81%AE%20%E7%A5%9E%E5%85%BD%20we)
 
 <!-- region:toc -->
 

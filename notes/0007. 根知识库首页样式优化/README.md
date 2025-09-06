@@ -1,4 +1,4 @@
-# [0007. 根知识库首页样式优化](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0007.%20%E6%A0%B9%E7%9F%A5%E8%AF%86%E5%BA%93%E9%A6%96%E9%A1%B5%E6%A0%B7%E5%BC%8F%E4%BC%98%E5%8C%96)
+# [0007. 根知识库首页样式优化](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0007.%20%E6%A0%B9%E7%9F%A5%E8%AF%86%E5%BA%93%E9%A6%96%E9%A1%B5%E6%A0%B7%E5%BC%8F%E4%BC%98%E5%8C%96)
 
 <!-- region:toc -->
 

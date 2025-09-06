@@ -1,4 +1,4 @@
-# [0006. Footprints](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0006.%20Footprints)
+# [0006. Footprints](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0006.%20Footprints)
 
 <!-- region:toc -->
 

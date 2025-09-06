@@ -1,4 +1,4 @@
-# [0016. 掘金小册](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0016.%20%E6%8E%98%E9%87%91%E5%B0%8F%E5%86%8C)
+# [0016. 掘金小册](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0016.%20%E6%8E%98%E9%87%91%E5%B0%8F%E5%86%8C)
 
 <!-- region:toc -->
 

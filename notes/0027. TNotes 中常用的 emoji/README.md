@@ -1,4 +1,4 @@
-# [0027. TNotes 中常用的 emoji](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0027.%20TNotes%20%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84%20emoji)
+# [0027. TNotes 中常用的 emoji](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0027.%20TNotes%20%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84%20emoji)
 
 <!-- region:toc -->
 

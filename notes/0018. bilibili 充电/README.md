@@ -1,4 +1,4 @@
-# [0018. bilibili 充电](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0018.%20bilibili%20%E5%85%85%E7%94%B5)
+# [0018. bilibili 充电](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0018.%20bilibili%20%E5%85%85%E7%94%B5)
 
 <!-- region:toc -->
 

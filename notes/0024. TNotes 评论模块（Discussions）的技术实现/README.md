@@ -1,4 +1,4 @@
-# [0024. TNotes 评论模块（Discussions）的技术实现](https://github.com/Tdahuyou/TNotes.introduction/tree/main/notes/0024.%20TNotes%20%E8%AF%84%E8%AE%BA%E6%A8%A1%E5%9D%97%EF%BC%88Discussions%EF%BC%89%E7%9A%84%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0)
+# [0024. TNotes 评论模块（Discussions）的技术实现](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0024.%20TNotes%20%E8%AF%84%E8%AE%BA%E6%A8%A1%E5%9D%97%EF%BC%88Discussions%EF%BC%89%E7%9A%84%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0)
 
 <!-- region:toc -->
 
