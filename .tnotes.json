@@ -1,5 +1,5 @@
 {
-  "author": "Tdahuyou",
+  "author": "tnotesjs",
   "repoName": "TNotes.introduction",
   "keywords": ["TNotes.introduction"],
   "ignore_dirs": [
@@ -19,7 +19,7 @@
     "title": "introduction",
     "completed_notes_count": 1,
     "details": "TNotes 说明文档",
-    "link": "https://tdahuyou.github.io/TNotes.introduction/",
+    "link": "https://tnotesjs.github.io/TNotes.introduction/",
     "created_at": 1740850835000,
     "updated_at": 1757163544388,
     "days_since_birth": 9379
@@ -36,7 +36,7 @@
     },
     {
       "text": "📒 TNotes",
-      "link": "https://tdahuyou.github.io/notes"
+      "link": "https://tnotesjs.github.io/notes"
     },
     {
       "text": "📂 TNotes.yuque",
