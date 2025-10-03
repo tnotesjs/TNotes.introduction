@@ -13,8 +13,7 @@
 ## 1. 知识库简介
 
 - [x] [0015. 知识库简介](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0015.%20%E7%9F%A5%E8%AF%86%E5%BA%93%E7%AE%80%E4%BB%8B/README.md)
-  - [1. 🎯 本节内容](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0015.%20%E7%9F%A5%E8%AF%86%E5%BA%93%E7%AE%80%E4%BB%8B/README.md#1--本节内容)
-  - [2. 🫧 评价](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0015.%20%E7%9F%A5%E8%AF%86%E5%BA%93%E7%AE%80%E4%BB%8B/README.md#2--评价)
+  - [1. 🫧 评价](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0015.%20%E7%9F%A5%E8%AF%86%E5%BA%93%E7%AE%80%E4%BB%8B/README.md#1--评价)
 
 ## 2. TNotes
 
@@ -62,7 +61,7 @@
     - [2.1. test 1](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0002.%20TNotes%20%E5%85%AC%E5%BC%8F%E6%94%AF%E6%8C%81/README.md#21-test-1)
     - [2.2. test 2](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0002.%20TNotes%20%E5%85%AC%E5%BC%8F%E6%94%AF%E6%8C%81/README.md#22-test-2)
   - [3. 🔗 引用](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0002.%20TNotes%20%E5%85%AC%E5%BC%8F%E6%94%AF%E6%8C%81/README.md#3--引用)
-- [ ] [0027. TNotes 中常用的 emoji](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0027.%20TNotes%20%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84%20emoji/README.md)
+- [x] [0027. TNotes 中常用的 emoji](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0027.%20TNotes%20%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84%20emoji/README.md)
   - [1. 🫧 评价](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0027.%20TNotes%20%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84%20emoji/README.md#1--评价)
   - [2. 😄 emoji 列表](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0027.%20TNotes%20%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84%20emoji/README.md#2--emoji-列表)
 - [ ] [0011. TNotes 笔记配置文件](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0011.%20TNotes%20%E7%AC%94%E8%AE%B0%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/README.md)
