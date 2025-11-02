@@ -20,6 +20,7 @@ const props = defineProps({
 })
 
 const isMobile = computed(() => {
+  if (typeof navigator === 'undefined') return false
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
     navigator.userAgent
   )

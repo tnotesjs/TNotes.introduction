@@ -37,6 +37,10 @@ flowchart LR
   Start --> Stop
 ```
 
+会在鼠标悬停在图表上时，显示相关控制按钮：
+
+![img](https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/2025-11-03-00-27-44.png)
+
 ## 4. 🔗 引用
 
 - [mermaid.org 官方文档][1]

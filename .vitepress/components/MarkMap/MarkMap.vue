@@ -4,10 +4,11 @@ import { Transformer } from 'markmap-lib'
 import { Markmap, IMarkmapOptions } from 'markmap-view'
 import { Toolbar } from 'markmap-toolbar'
 import 'markmap-toolbar/dist/style.css'
+import { MARKMAP_THEME_KEY, MARKMAP_EXPAND_LEVEL_KEY } from '../constants'
+import { withBase } from 'vitepress'
 
 // doc: https://github.com/markmap/markmap/blob/205367a24603dc187f67da1658940c6cade20dce/packages/markmap-view/src/constants.ts#L15
-// import { scaleOrdinal, schemePastel2 } from 'd3'
-// const defaultColorFn = scaleOrdinal(schemePastel2)
+import { scaleOrdinal, schemePastel2, schemeSet3, schemeTableau10 } from 'd3'
 
 const props = defineProps({
   content: { type: String, default: '' },
@@ -25,8 +26,32 @@ let markmapInstance: Markmap | null = null
 let observer: MutationObserver | null = null
 let toolbarEl: HTMLElement | null = null
 
-// 可由 props.initialExpandLevel 初始化，也可以通过工具栏改动
-const expandLevel = ref(props.initialExpandLevel)
+// 从 localStorage 读取配置，如果没有则使用 props 或默认值
+const getInitialExpandLevel = () => {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem(MARKMAP_EXPAND_LEVEL_KEY)
+    if (saved) return parseInt(saved)
+  }
+  return props.initialExpandLevel
+}
+
+const getThemeColorFn = () => {
+  if (typeof window !== 'undefined') {
+    const theme = localStorage.getItem(MARKMAP_THEME_KEY) || 'default'
+    switch (theme) {
+      case 'colorful':
+        return scaleOrdinal(schemeTableau10)
+      case 'dark':
+        return scaleOrdinal(schemeSet3)
+      default:
+        return scaleOrdinal(schemePastel2)
+    }
+  }
+  return scaleOrdinal(schemePastel2)
+}
+
+// 可由配置/props 初始化，也可以通过工具栏改动
+const expandLevel = ref(getInitialExpandLevel())
 const transformer = new Transformer()
 const isFullscreen = ref(false)
 
@@ -51,6 +76,7 @@ function renderMarkmap(content: string, level = expandLevel.value) {
 
     try {
       const { root } = transformer.transform(content)
+      const colorFn = getThemeColorFn()
       const options: Partial<IMarkmapOptions> = {
         // autoFit 会自动调整 scale 和 position 来适配当前容器大小，在阅读大量节点内容的时候，会放大某块区域阅读，每次展开节点或者收起节点，都会自动触发 autoFit，导致阅读体验不佳，因此不启用。
         // autoFit: true,
@@ -61,12 +87,8 @@ function renderMarkmap(content: string, level = expandLevel.value) {
         spacingHorizontal: props.spacingHorizontal,
         maxInitialScale: 2,
         maxWidth: 400,
-        // default color
-        // color: (node): string => defaultColorFn(`${node.state?.path || ''}`),
-        // color: (node): string =>
-        //   +node.state?.path === 1
-        //     ? 'var(--vp-c-brand-3)'
-        //     : 'var(--vp-c-brand-1)',
+        // 使用配置的主题颜色
+        color: (node): string => colorFn(`${node.state?.path || ''}`),
       }
 
       markmapInstance = Markmap.create(svgRef.value!, options, root)
@@ -120,7 +142,14 @@ function addFullscreenButton(toolbar: HTMLElement) {
   const fullscreenBtn = document.createElement('div')
   fullscreenBtn.className = 'mm-toolbar-item'
   fullscreenBtn.title = isFullscreen.value ? '退出全屏' : '全屏'
-  fullscreenBtn.innerHTML = isFullscreen.value ? 'R' : 'M'
+  // 使用 public 目录下的 svg 图标，保持大小和可访问性
+  fullscreenBtn.innerHTML = isFullscreen.value
+    ? `<img src="${withBase(
+        '/icon__fullscreen_exit.svg'
+      )}" alt="退出全屏" style="width:18px;height:18px;display:block" />`
+    : `<img src="${withBase(
+        '/icon__fullscreen.svg'
+      )}" alt="全屏" style="width:18px;height:18px;display:block" />`
   fullscreenBtn.addEventListener('click', toggleFullscreen)
   toolbar.appendChild(fullscreenBtn)
 }
@@ -133,24 +162,53 @@ function addUpdateButton(toolbar: HTMLElement) {
   updateContainer.style.gap = '8px'
   updateContainer.style.marginRight = '5px'
 
-  // 创建输入框
+  // 创建输入框（确保具有 id/name，且样式能在工具栏中清晰可见）
   const levelInput = document.createElement('input')
   levelInput.type = 'number'
+  levelInput.id = 'markmap-expand-level'
+  levelInput.name = 'markmap-expand-level'
   levelInput.min = '1'
   levelInput.max = '100'
   levelInput.value = expandLevel.value.toString()
-  levelInput.style.width = '2.2rem'
+  levelInput.style.width = '2.4rem'
+  levelInput.style.height = '1.6rem'
+  levelInput.style.padding = '2px 6px'
+  levelInput.style.fontSize = '12px'
+  levelInput.style.lineHeight = '1.2'
   levelInput.style.textAlign = 'center'
+  levelInput.style.boxSizing = 'border-box'
+  levelInput.style.borderBottom = '.5px solid var(--vp-c-tip-1)'
+  // levelInput.style.borderRadius = '4px'
+  // levelInput.style.background = 'var(--vp-c-bg)'
+  levelInput.style.color = 'var(--vp-c-tip-1)'
   levelInput.title = '展开层级'
   levelInput.setAttribute('aria-label', 'markmap-expand-level')
 
   // 保存引用，供外部（props 改变）同步输入值
   toolbarLevelInput = levelInput
 
+  // 实时限制输入范围（1-100）
+  levelInput.addEventListener('input', (e) => {
+    const input = e.target as HTMLInputElement
+    let value = parseInt(input.value)
+
+    // 如果输入为空或非数字，不做处理
+    if (input.value === '' || isNaN(value)) return
+
+    // 限制范围：1-100
+    if (value < 1) {
+      input.value = '1'
+      value = 1
+    } else if (value > 100) {
+      input.value = '100'
+      value = 100
+    }
+  })
+
   // 当输入框值变化时仅更新内部 expandLevel（不自动渲染）
   levelInput.addEventListener('change', (e) => {
     const value = parseInt((e.target as HTMLInputElement).value)
-    if (!isNaN(value) && value >= 1) {
+    if (!isNaN(value) && value >= 1 && value <= 100) {
       expandLevel.value = value
     } else {
       // 回退到之前的值（避免非法输入）
@@ -158,13 +216,16 @@ function addUpdateButton(toolbar: HTMLElement) {
     }
   })
 
-  // 按键监听：按 Enter 时触发更新（相当于点击 L 按钮）
+  // 按键监听：按 Enter 时触发更新（相当于点击确认按钮）
   levelInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
       // 同步输入框值到 expandLevel（防止未触发 change）
       const val = parseInt((e.target as HTMLInputElement).value)
-      if (!isNaN(val) && val >= 1) {
+      if (!isNaN(val) && val >= 1 && val <= 100) {
         expandLevel.value = val
+      } else {
+        // 如果超出范围，重置为有效值
+        levelInput.value = expandLevel.value.toString()
       }
       onUpdateClick()
     }
@@ -172,8 +233,12 @@ function addUpdateButton(toolbar: HTMLElement) {
 
   // 创建按钮
   const updateBtn = document.createElement('button')
-  updateBtn.innerText = 'L'
-  updateBtn.title = '更新层级'
+  updateBtn.type = 'button'
+  updateBtn.title = '确定层级并更新'
+  // 使用确认图标（public 目录）
+  updateBtn.innerHTML = `<img src="${withBase(
+    '/icon__confirm.svg'
+  )}" alt="确定" style="width:16px;height:16px;display:block" />`
   updateBtn.addEventListener('click', onUpdateClick)
 
   updateContainer.appendChild(levelInput)
@@ -227,7 +292,14 @@ function handleFullscreenChange() {
       fullscreenBtn.title = isFullscreen.value
         ? '退出全屏（Exit Fullscreen）'
         : '全屏（Fullscreen）'
-      fullscreenBtn.innerHTML = isFullscreen.value ? 'E' : 'F'
+      // 切换图标（全屏 / 退出全屏）
+      fullscreenBtn.innerHTML = isFullscreen.value
+        ? `<img src="${withBase(
+            '/icon__fullscreen_exit.svg'
+          )}" alt="退出全屏" style="width:18px;height:18px;display:block" />`
+        : `<img src="${withBase(
+            '/icon__fullscreen.svg'
+          )}" alt="全屏" style="width:18px;height:18px;display:block" />`
     }
   }
 
@@ -336,7 +408,7 @@ onBeforeUnmount(() => {
   <div
     :class="$style.markmapContainer"
     ref="containerRef"
-    style="position: relative; min-height: 450px"
+    style="position: relative"
   >
     <svg ref="svgRef" style="width: 100%; height: 400px"></svg>
   </div>

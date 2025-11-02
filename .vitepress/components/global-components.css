@@ -193,11 +193,12 @@
   background: rgba(255, 255, 255, 0.9);
   border-radius: 6px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-  color: rgb(39 39 42);
   backdrop-filter: blur(8px);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
+  color: var(--vp-c-tip-1);
+  font-weight: 700;
 }
 
 .mm-toolbar-item {
@@ -223,6 +224,10 @@
 
 .markmap g {
   transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.mm-toolbar-item svg {
+  color: var(--vp-c-tip-1);
 }
 
 /* ===================================== */
@@ -280,7 +285,6 @@ html.dark .swiper-container {
 
 .markmap-dark .mm-toolbar {
   background: rgba(30, 30, 30, 0.9);
-  color: rgb(228 228 231);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 

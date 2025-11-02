@@ -6,15 +6,23 @@
         <h2 :class="$style.sectionTitle">
           <span :class="$style.icon">📁</span>
           本地知识库路径
+          <span
+            :class="$style.infoIcon"
+            @mouseenter="showTooltip('path')"
+            @mouseleave="hideTooltip"
+            @click="toggleTooltip('path')"
+            >ℹ️
+            <span v-if="activeTooltip === 'path'" :class="$style.tooltip">
+              适用于 PC 桌面环境（Windows / macOS / Linux） 需要本地安装 VS Code
+              编辑器 配置后可在侧边栏快速用 VS Code 打开笔记
+            </span>
+          </span>
         </h2>
         <span :class="$style.badge" v-if="path">已配置</span>
         <span :class="[$style.badge, $style.badgeWarning]" v-else>未配置</span>
       </div>
 
       <div :class="$style.formGroup">
-        <label for="notesPath" :class="$style.formLabel">
-          知识库绝对路径
-        </label>
         <div :class="$style.inputWrapper">
           <input
             id="notesPath"
@@ -33,18 +41,80 @@
             ✕
           </button>
         </div>
-        <p :class="$style.formHint">
-          💡 配置后可在侧边栏快速用 VS Code 打开笔记
-        </p>
+      </div>
+    </section>
+
+    <!-- MarkMap 配置 -->
+    <section :class="$style.section">
+      <div :class="$style.sectionHeader">
+        <h2 :class="$style.sectionTitle">
+          <span :class="$style.icon">💡</span>
+          MarkMap 思维导图
+          <span
+            :class="$style.infoIcon"
+            @mouseenter="showTooltip('markmap')"
+            @mouseleave="hideTooltip"
+            @click="toggleTooltip('markmap')"
+            >ℹ️
+            <span v-if="activeTooltip === 'markmap'" :class="$style.tooltip">
+              配置思维导图的默认显示效果
+            </span>
+          </span>
+        </h2>
       </div>
 
-      <div :class="$style.infoBox">
-        <p :class="$style.infoTitle">📋 使用说明</p>
-        <ul :class="$style.infoList">
-          <li>适用于 PC 桌面环境（Windows / macOS / Linux）</li>
-          <li>需要本地安装 VS Code 编辑器</li>
-          <li>路径示例：<code>/Users/yourname/projects/notes</code></li>
-        </ul>
+      <div :class="$style.formRow">
+        <div :class="$style.formGroup">
+          <label for="markmapTheme" :class="$style.formLabel">
+            分支主题
+            <span
+              :class="$style.infoIcon"
+              @mouseenter="showTooltip('theme')"
+              @mouseleave="hideTooltip"
+              @click="toggleTooltip('theme')"
+              >ℹ️
+              <span v-if="activeTooltip === 'theme'" :class="$style.tooltip">
+                选择思维导图分支的配色方案
+              </span>
+            </span>
+          </label>
+          <select
+            id="markmapTheme"
+            v-model="markmapTheme"
+            :class="$style.formSelect"
+          >
+            <option value="default">默认主题</option>
+            <option value="colorful">多彩主题</option>
+            <option value="dark">深色主题</option>
+          </select>
+        </div>
+
+        <div :class="$style.formGroup">
+          <label for="markmapExpandLevel" :class="$style.formLabel">
+            展开层级
+            <span
+              :class="$style.infoIcon"
+              @mouseenter="showTooltip('level')"
+              @mouseleave="hideTooltip"
+              @click="toggleTooltip('level')"
+              >ℹ️
+              <span v-if="activeTooltip === 'level'" :class="$style.tooltip">
+                设置思维导图初始展开的层级深度（1-100）
+              </span>
+            </span>
+          </label>
+          <div :class="$style.inputWrapper">
+            <input
+              id="markmapExpandLevel"
+              v-model.number="markmapExpandLevel"
+              type="number"
+              min="1"
+              max="100"
+              :class="$style.formInput"
+            />
+            <span :class="$style.inputSuffix">层</span>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -76,20 +146,34 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { NOTES_DIR_KEY } from '../constants'
+import {
+  NOTES_DIR_KEY,
+  MARKMAP_THEME_KEY,
+  MARKMAP_EXPAND_LEVEL_KEY,
+} from '../constants'
 
 // ===================================
 // #region 响应式数据
 // ===================================
 const path = ref('')
 const originalPath = ref('')
+const markmapTheme = ref('default')
+const originalMarkmapTheme = ref('default')
+const markmapExpandLevel = ref(5)
+const originalMarkmapExpandLevel = ref(5)
 const showSuccessToast = ref(false)
+const activeTooltip = ref<string | null>(null)
 // #endregion
 
 // ===================================
 // #region 计算属性
 // ===================================
-const hasChanges = computed(() => path.value !== originalPath.value)
+const hasChanges = computed(
+  () =>
+    path.value !== originalPath.value ||
+    markmapTheme.value !== originalMarkmapTheme.value ||
+    markmapExpandLevel.value !== originalMarkmapExpandLevel.value
+)
 
 const saveText = computed(() => {
   if (!hasChanges.value) return '无更改'
@@ -105,6 +189,14 @@ onMounted(() => {
     const savedPath = localStorage.getItem(NOTES_DIR_KEY) || ''
     path.value = savedPath
     originalPath.value = savedPath
+
+    const savedTheme = localStorage.getItem(MARKMAP_THEME_KEY) || 'default'
+    markmapTheme.value = savedTheme
+    originalMarkmapTheme.value = savedTheme
+
+    const savedLevel = localStorage.getItem(MARKMAP_EXPAND_LEVEL_KEY) || '5'
+    markmapExpandLevel.value = parseInt(savedLevel)
+    originalMarkmapExpandLevel.value = parseInt(savedLevel)
   }
 })
 // #endregion
@@ -125,7 +217,15 @@ function save() {
 
   try {
     localStorage.setItem(NOTES_DIR_KEY, path.value)
+    localStorage.setItem(MARKMAP_THEME_KEY, markmapTheme.value)
+    localStorage.setItem(
+      MARKMAP_EXPAND_LEVEL_KEY,
+      markmapExpandLevel.value.toString()
+    )
+
     originalPath.value = path.value
+    originalMarkmapTheme.value = markmapTheme.value
+    originalMarkmapExpandLevel.value = markmapExpandLevel.value
 
     // 显示成功提示
     showSuccessToast.value = true
@@ -140,6 +240,20 @@ function save() {
 
 function reset() {
   path.value = originalPath.value
+  markmapTheme.value = originalMarkmapTheme.value
+  markmapExpandLevel.value = originalMarkmapExpandLevel.value
+}
+
+function showTooltip(id: string) {
+  activeTooltip.value = id
+}
+
+function hideTooltip() {
+  activeTooltip.value = null
+}
+
+function toggleTooltip(id: string) {
+  activeTooltip.value = activeTooltip.value === id ? null : id
 }
 // #endregion
 </script>

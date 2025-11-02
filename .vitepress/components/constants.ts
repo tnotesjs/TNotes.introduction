@@ -39,6 +39,17 @@ export const EN_WORD_LIST_COMP_IS_AUTO_SHOW_CARD: string =
   'EN_WORD_LIST_COMP_IS_AUTO_SHOW_CARD__' + repoName
 
 /**
+ * MarkMap 默认主题配置
+ */
+export const MARKMAP_THEME_KEY: string = 'MARKMAP_THEME_KEY__' + repoName
+
+/**
+ * MarkMap 默认展开层级配置
+ */
+export const MARKMAP_EXPAND_LEVEL_KEY: string =
+  'MARKMAP_EXPAND_LEVEL_KEY__' + repoName
+
+/**
  * VitePress HOME README 文件名
  * 该文件内容基于 HOME README 而生成，作为 github pages 中的 README 文件，主要用于展示笔记的目录结构。
  */

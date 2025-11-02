@@ -85,12 +85,33 @@ const previewStyle = computed(() => ({
 }))
 
 function openPreview(src) {
-  // 收集当前文档区所有 img
+  // 收集当前文档区所有 img，排除：
+  // 1. data-preview="false" 的图片
+  // 2. .tn-preview-ignore 容器内的图片
+  // 3. 组件工具栏按钮内的图标 (button > img)
+  // 4. 导航按钮内的图标
   const imgs = Array.from(document.querySelectorAll('.vp-doc img'))
-    .filter(
-      (img) =>
-        !(img.dataset?.preview === 'false' || img.closest('.tn-preview-ignore'))
-    )
+    .filter((img) => {
+      // 排除明确标记不预览的
+      if (
+        img.dataset?.preview === 'false' ||
+        img.closest('.tn-preview-ignore')
+      ) {
+        return false
+      }
+
+      // 排除按钮内的图标 (工具栏图标)
+      if (img.closest('button')) {
+        return false
+      }
+
+      // 排除小尺寸图标 (通常是图标而非内容图片)
+      if (img.naturalWidth < 50 && img.naturalHeight < 50) {
+        return false
+      }
+
+      return true
+    })
     .map((img) => img.currentSrc || img.src)
 
   preview.value.images = imgs
@@ -209,6 +230,12 @@ function onDocClick(e) {
   // 明确排除：带 data-preview="false" 或 .tn-preview-ignore 的图片
   if (img.dataset?.preview === 'false' || img.closest('.tn-preview-ignore'))
     return
+
+  // 排除按钮内的图标 (组件工具栏)
+  if (img.closest('button')) return
+
+  // 排除小尺寸图标
+  if (img.naturalWidth < 50 && img.naturalHeight < 50) return
 
   // !禁止图片包含超链接
   // TODO
