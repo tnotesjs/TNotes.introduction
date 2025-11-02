@@ -2,14 +2,14 @@
   <!-- #region img preview -->
   <div
     v-show="preview.visible"
-    class="tn-preview"
+    :class="$style.tnPreview"
     @click.self="closePreview"
     @wheel.prevent="onWheel"
   >
     <!-- 左侧切换按钮 -->
     <button
       v-if="preview.images.length > 1"
-      class="tn-preview__nav tn-preview__nav--left"
+      :class="[$style.nav, $style.navLeft]"
       @click.stop="prevImage"
     >
       <img :src="icon__prev" alt="prev" />
@@ -17,13 +17,13 @@
     <!-- 右侧切换按钮 -->
     <button
       v-if="preview.images.length > 1"
-      class="tn-preview__nav tn-preview__nav--right"
+      :class="[$style.nav, $style.navRight]"
       @click.stop="nextImage"
     >
       <img :src="icon__next" alt="next" />
     </button>
 
-    <div class="tn-preview__toolbar">
+    <div :class="$style.toolbar">
       <button @click.stop="zoomOut" title="缩小">
         <img :src="icon__zoom_out" alt="zoom out" />
       </button>
@@ -33,14 +33,14 @@
       <button @click.stop="zoomIn" title="放大">
         <img :src="icon__zoom_in" alt="zoom in" />
       </button>
-      <button class="tn-preview__close" @click.stop="closePreview" title="关闭">
+      <button :class="$style.close" @click.stop="closePreview" title="关闭">
         <img :src="icon__close" alt="close" />
       </button>
     </div>
 
     <img
       ref="previewImg"
-      class="tn-preview__img"
+      :class="[$style.img, { [$style.dragging]: isDragging }]"
       :src="preview.src"
       :style="previewStyle"
       @pointerdown="onPointerDown"
@@ -48,7 +48,7 @@
     />
 
     <!-- 底部页码指示器 -->
-    <div v-if="preview.images.length > 1" class="tn-preview__counter">
+    <div v-if="preview.images.length > 1" :class="$style.counter">
       {{ preview.index + 1 }} / {{ preview.images.length }}
     </div>
   </div>
@@ -76,6 +76,8 @@ const preview = ref({
 })
 
 const previewImg = ref(null)
+
+const isDragging = ref(false)
 
 const previewStyle = computed(() => ({
   transform: `translate(${preview.value.tx}px, ${preview.value.ty}px) scale(${preview.value.scale})`,
@@ -146,7 +148,7 @@ function onWheel(e) {
   preview.value.scale = next
 }
 
-// 拖拽（Pointer Events，兼容鼠标/触屏）
+// 拖拽(Pointer Events,兼容鼠标/触屏)
 let dragging = false
 let startX = 0
 let startY = 0
@@ -155,12 +157,12 @@ let baseY = 0
 
 function onPointerDown(e) {
   dragging = true
+  isDragging.value = true
   e.target.setPointerCapture?.(e.pointerId)
   startX = e.clientX
   startY = e.clientY
   baseX = preview.value.tx
   baseY = preview.value.ty
-  previewImg.value?.classList.add('dragging')
   window.addEventListener('pointermove', onPointerMove)
   window.addEventListener('pointerup', onPointerUp, { once: true })
 }
@@ -173,7 +175,7 @@ function onPointerMove(e) {
 
 function onPointerUp() {
   dragging = false
-  previewImg.value?.classList.remove('dragging')
+  isDragging.value = false
   window.removeEventListener('pointermove', onPointerMove)
 }
 
@@ -247,103 +249,4 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style scoped>
-/* #region img preview */
-/* 预览遮罩层 */
-.tn-preview {
-  position: fixed;
-  inset: 0;
-  z-index: 3000;
-  background: rgba(0, 0, 0, 0.85);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* 工具栏 */
-.tn-preview__toolbar {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  display: flex;
-  gap: 10px;
-  z-index: 2;
-}
-
-.tn-preview__toolbar button {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(42, 42, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.tn-preview__toolbar button img {
-  width: 18px;
-  height: 18px;
-}
-
-.tn-preview__toolbar button:hover {
-  background: rgba(255, 255, 255, 0.15);
-}
-
-/* 左右切换按钮 */
-.tn-preview__nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 56px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* background: rgba(0, 0, 0, 0.45); */
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 2;
-  /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); */
-  transition: all 0.2s ease;
-}
-
-.tn-preview__nav img {
-  width: 2rem;
-  height: 2rem;
-}
-
-.tn-preview__nav--left {
-  left: 24px;
-}
-
-.tn-preview__nav--right {
-  right: 24px;
-}
-
-.tn-preview__nav:hover {
-  background: rgba(0, 0, 0, 0.7);
-  transform: translateY(-50%) scale(1.1);
-}
-
-/* 底部页码指示器 */
-.tn-preview__counter {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  /* background: rgba(0, 0, 0, 0.65); */
-  color: #fff;
-  padding: 6px 14px;
-  border-radius: 14px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4); */
-  z-index: 2;
-  user-select: none;
-}
-/* #endregion */
-</style>
+<style module src="./ImagePreview.module.scss"></style>

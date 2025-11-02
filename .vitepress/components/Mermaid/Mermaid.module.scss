@@ -1,0 +1,32 @@
+.mermaidContainer {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.mermaidLoading,
+.mermaidError {
+  padding: 1rem;
+  text-align: center;
+  color: var(--vp-c-text-2);
+}
+
+.mermaidError {
+  color: var(--vp-c-red);
+}
+
+.mermaidDiagram {
+  width: 100%;
+  overflow: auto;
+  /* 居中 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 暗色主题下的 Mermaid 图表优化 */
+:global(html.dark) .mermaidDiagram {
+  /* background: var(--vp-code-block-bg);
+  border-radius: 8px;
+  padding: 1rem; */
+}

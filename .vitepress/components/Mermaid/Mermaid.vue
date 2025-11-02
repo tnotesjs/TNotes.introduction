@@ -1,12 +1,11 @@
 <template>
-  <div ref="mermaidRef" class="mermaid-container">
-    <div v-if="loading" class="mermaid-loading">Loading diagram...</div>
-    <div v-else-if="error" class="mermaid-error">{{ error }}</div>
+  <div ref="mermaidRef" :class="$style.mermaidContainer">
+    <div v-if="loading" :class="$style.mermaidLoading">Loading diagram...</div>
+    <div v-else-if="error" :class="$style.mermaidError">{{ error }}</div>
     <div
       v-show="!loading && !error"
       ref="diagramRef"
-      class="mermaid-diagram"
-      :class="props.class"
+      :class="[$style.mermaidDiagram, props.class]"
     ></div>
   </div>
 </template>
@@ -152,37 +151,4 @@ watch(
 )
 </script>
 
-<style scoped>
-.mermaid-container {
-  margin: 1rem 0;
-  display: flex;
-  justify-content: center;
-}
-
-.mermaid-loading,
-.mermaid-error {
-  padding: 1rem;
-  text-align: center;
-  color: var(--vp-c-text-2);
-}
-
-.mermaid-error {
-  color: var(--vp-c-red);
-}
-
-.mermaid-diagram {
-  width: 100%;
-  overflow: auto;
-  /* 居中 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* 暗色主题下的 Mermaid 图表优化 */
-html.dark .mermaid-diagram {
-  /* background: var(--vp-code-block-bg);
-  border-radius: 8px;
-  padding: 1rem; */
-}
-</style>
+<style module src="./Mermaid.module.scss"></style>

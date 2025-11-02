@@ -1,6 +1,6 @@
 <script setup>
 import { useData } from 'vitepress'
-import { formatDate } from '../utils.js'
+import { formatDate } from '../utils.ts'
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vitepress'
 
@@ -10,7 +10,7 @@ import {
   REPO_NAME,
   AUTHOR,
   ROOT_ITEM,
-} from '../constants.js'
+} from '../constants.ts'
 
 import icon__fold from './icon__fold.svg'
 import icon__github from './icon__github.svg'
@@ -35,11 +35,12 @@ const props = defineProps({
 })
 // #endregion
 
-// #region config
+// #region data
 /**
+ * 视图模式
  * 可选值 'cards' 或 'folder'
  */
-const viewMode = ref(localStorage.getItem(NOTES_VIEW_KEY) || 'cards')
+const viewMode = ref('cards')
 const expandedGroupsFolder = ref(new Set())
 // #endregion
 

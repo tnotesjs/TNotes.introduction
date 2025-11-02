@@ -1,123 +1,147 @@
 <template>
-  <div class="container">
-    <p class="label">
-      <label for="path">⚙️ 本地知识库的绝对路径:</label>
-    </p>
-    <p class="input-container">
-      <input
-        id="path"
-        v-model="path"
-        placeholder="请输入当前笔记文件夹所在位置"
-        class="input"
-      />
-    </p>
-    <ul class="instructions">
-      <li>配置本地笔记文件夹所在位置，以便使用 VSCode 快速打开笔记。</li>
-      <li>⚠️ 注意：要求是 PC 环境。</li>
-    </ul>
-  </div>
-  <hr />
-  <!-- <div class="container">
-    <p class="label">
-      <label for="path">⚙️ {{ EN_WORD_LIST_COMP_IS_AUTO_SHOW_CARD }}:</label>
-    </p>
-    <p class="input-container">
-      <label>
-        <input type="checkbox" v-model="isAutoShowCard" />
-        自动显示单词卡片
-      </label>
-    </p>
-    <ul class="instructions">
-      <li>全局配置 EnWordList.vue 组件是否自动展示词汇卡片</li>
-      <li>默认显示</li>
-    </ul>
-  </div> -->
-  <div class="button-container">
-    <button @click="save" class="button">save</button>
+  <div :class="$style.settingsWrapper">
+    <!-- 本地路径配置 -->
+    <section :class="$style.section">
+      <div :class="$style.sectionHeader">
+        <h2 :class="$style.sectionTitle">
+          <span :class="$style.icon">📁</span>
+          本地知识库路径
+        </h2>
+        <span :class="$style.badge" v-if="path">已配置</span>
+        <span :class="[$style.badge, $style.badgeWarning]" v-else>未配置</span>
+      </div>
+
+      <div :class="$style.formGroup">
+        <label for="notesPath" :class="$style.formLabel">
+          知识库绝对路径
+        </label>
+        <div :class="$style.inputWrapper">
+          <input
+            id="notesPath"
+            v-model="path"
+            type="text"
+            placeholder="例如: /Users/username/Documents/notes"
+            :class="$style.formInput"
+            @input="handlePathChange"
+          />
+          <button
+            v-if="path"
+            @click="clearPath"
+            :class="$style.clearBtn"
+            title="清空路径"
+          >
+            ✕
+          </button>
+        </div>
+        <p :class="$style.formHint">
+          💡 配置后可在侧边栏快速用 VS Code 打开笔记
+        </p>
+      </div>
+
+      <div :class="$style.infoBox">
+        <p :class="$style.infoTitle">📋 使用说明</p>
+        <ul :class="$style.infoList">
+          <li>适用于 PC 桌面环境（Windows / macOS / Linux）</li>
+          <li>需要本地安装 VS Code 编辑器</li>
+          <li>路径示例：<code>/Users/yourname/projects/notes</code></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 保存按钮 -->
+    <div :class="$style.actionBar">
+      <button
+        @click="save"
+        :class="[$style.saveBtn, { [$style.disabled]: !hasChanges }]"
+        :disabled="!hasChanges"
+      >
+        <span :class="$style.btnIcon">💾</span>
+        {{ saveText }}
+      </button>
+      <button v-if="hasChanges" @click="reset" :class="$style.resetBtn">
+        <span :class="$style.btnIcon">↩️</span>
+        重置
+      </button>
+    </div>
+
+    <!-- 保存成功提示 -->
+    <Transition name="toast">
+      <div v-if="showSuccessToast" :class="$style.toast">
+        <span :class="$style.toastIcon">✅</span>
+        配置已保存成功！
+      </div>
+    </Transition>
   </div>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import {
-  NOTES_DIR_KEY,
-  // EN_WORD_LIST_COMP_IS_AUTO_SHOW_CARD,
-} from '../constants.js'
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { NOTES_DIR_KEY } from '../constants'
 
+// ===================================
+// #region 响应式数据
+// ===================================
 const path = ref('')
-// const isAutoShowCard = ref(false)
+const originalPath = ref('')
+const showSuccessToast = ref(false)
+// #endregion
 
-if (typeof window !== 'undefined') {
-  path.value = localStorage.getItem(NOTES_DIR_KEY)
-  // isAutoShowCard.value = ['true' /* , null */].includes(
-  //   localStorage.getItem(EN_WORD_LIST_COMP_IS_AUTO_SHOW_CARD)
-  // )
+// ===================================
+// #region 计算属性
+// ===================================
+const hasChanges = computed(() => path.value !== originalPath.value)
+
+const saveText = computed(() => {
+  if (!hasChanges.value) return '无更改'
+  return '保存配置'
+})
+// #endregion
+
+// ===================================
+// #region 生命周期
+// ===================================
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    const savedPath = localStorage.getItem(NOTES_DIR_KEY) || ''
+    path.value = savedPath
+    originalPath.value = savedPath
+  }
+})
+// #endregion
+
+// ===================================
+// #region 事件处理
+// ===================================
+function handlePathChange() {
+  // 可以在这里添加路径格式验证
 }
 
-const save = () => {
-  localStorage.setItem(NOTES_DIR_KEY, path.value)
-  // localStorage.setItem(
-  //   EN_WORD_LIST_COMP_IS_AUTO_SHOW_CARD,
-  //   isAutoShowCard.value
-  // )
-  alert(`配置已保存`)
+function clearPath() {
+  path.value = ''
 }
+
+function save() {
+  if (!hasChanges.value) return
+
+  try {
+    localStorage.setItem(NOTES_DIR_KEY, path.value)
+    originalPath.value = path.value
+
+    // 显示成功提示
+    showSuccessToast.value = true
+    setTimeout(() => {
+      showSuccessToast.value = false
+    }, 3000)
+  } catch (error) {
+    console.error('保存配置失败:', error)
+    alert('保存失败，请检查浏览器设置')
+  }
+}
+
+function reset() {
+  path.value = originalPath.value
+}
+// #endregion
 </script>
 
-<style scoped>
-.container {
-  margin: 0 auto;
-  padding: 20px;
-  border-radius: 8px;
-}
-
-.label {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.input-container {
-  margin-bottom: 20px;
-}
-
-.input {
-  width: 100%;
-  padding: 10px;
-  font-size: 14px;
-  border: 1px solid #88888888;
-  border-radius: 4px;
-  transition: border-color 0.3s ease;
-}
-
-.input:focus {
-  border-color: var(--vp-c-brand-1);
-  outline: none;
-  box-shadow: 0 0 4px var(--vp-c-brand-2);
-}
-
-.button-container {
-  text-align: right;
-}
-
-.button {
-  padding: 10px 15px;
-  font-size: 14px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  background-color: var(--vp-c-brand-1);
-  transition: background-color 0.3s ease;
-}
-
-.button:hover {
-  background-color: var(--vp-c-brand-2);
-}
-
-.instructions {
-  margin-top: 20px;
-  font-size: 12px;
-  color: var(--vp-c-text-3);
-  line-height: 1.6;
-}
-</style>
+<style module src="./Settings.module.scss"></style>

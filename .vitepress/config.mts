@@ -62,5 +62,16 @@ export default defineConfig({
       // },
     },
     plugins: [TN_HMR_Plugin()],
+    css: {
+      preprocessorOptions: {
+        scss: {
+          // 抑制 legacy-js-api 弃用警告
+          silenceDeprecations: ['legacy-js-api'],
+        },
+      },
+    },
+    build: {
+      chunkSizeWarningLimit: 1000, // 提高 chunk 大小警告阈值到 1000KB
+    },
   },
 })
