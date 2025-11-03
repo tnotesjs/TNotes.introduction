@@ -2,7 +2,6 @@
 
 <!-- region:toc -->
 
-- [TNotes.introduction](#tnotesintroduction)
   - [1. 知识库简介](#1-知识库简介)
   - [2. TNotes](#2-tnotes)
   - [3. TNotes 组件](#3-tnotes-组件)

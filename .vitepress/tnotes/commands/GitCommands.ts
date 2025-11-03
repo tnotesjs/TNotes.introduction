@@ -13,7 +13,7 @@ import {
   syncAllRepos,
   GitManager,
 } from '../utils'
-import { ROOT_DIR_PATH } from '../constants'
+import { ROOT_DIR_PATH } from '../config/constants'
 
 export class PushCommand extends BaseCommand {
   constructor() {

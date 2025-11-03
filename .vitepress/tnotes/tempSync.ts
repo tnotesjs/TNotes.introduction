@@ -1,7 +1,11 @@
 import fs from 'fs'
 import path from 'path'
 import { deleteDirectory, getTargetDirs } from './utils/index'
-import { EN_WORDS_DIR, ROOT_DIR_PATH, TNOTES_BASE_DIR } from './constants'
+import {
+  EN_WORDS_DIR,
+  ROOT_DIR_PATH,
+  TNOTES_BASE_DIR,
+} from './config/constants'
 import { logger } from './utils/logger'
 import { runCommand } from './utils/runCommand'
 

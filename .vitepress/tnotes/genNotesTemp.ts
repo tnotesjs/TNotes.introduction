@@ -16,13 +16,11 @@
  */
 import fs from 'fs'
 import path from 'path'
+import { __dirname, author, repoName } from './config/constants'
 import {
-  __dirname,
-  author,
   NEW_NOTES_README_MD_TEMPLATE,
   getNewNotesTnotesJsonTemplate,
-  repoName,
-} from './constants'
+} from './config/templates'
 
 /**
  * 定义起始数字常量

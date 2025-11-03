@@ -5,7 +5,7 @@
  */
 import minimist from 'minimist'
 import { getCommand } from './commands'
-import { isValidCommand, type CommandArgs } from './types'
+import { isValidCommand, type CommandArgs } from './types/command'
 import { handleError, createError } from './utils/errorHandler'
 import { logger } from './utils/logger'
 
