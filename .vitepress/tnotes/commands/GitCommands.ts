@@ -11,7 +11,9 @@ import {
   pushAllRepos,
   pullAllRepos,
   syncAllRepos,
+  GitManager,
 } from '../utils'
+import { ROOT_DIR_PATH } from '../constants'
 
 export class PushCommand extends BaseCommand {
   constructor() {
@@ -19,6 +21,12 @@ export class PushCommand extends BaseCommand {
   }
 
   protected async run(): Promise<void> {
+    // 显示状态摘要
+    const git = new GitManager(ROOT_DIR_PATH, this.logger)
+    if (await git.isValidRepo()) {
+      await git.showStatus()
+    }
+
     await pushRepo()
   }
 }
@@ -39,6 +47,12 @@ export class SyncCommand extends BaseCommand {
   }
 
   protected async run(): Promise<void> {
+    // 显示状态摘要
+    const git = new GitManager(ROOT_DIR_PATH, this.logger)
+    if (await git.isValidRepo()) {
+      await git.showStatus()
+    }
+
     await syncRepo()
   }
 }
@@ -49,7 +63,14 @@ export class PushAllCommand extends BaseCommand {
   }
 
   protected async run(): Promise<void> {
-    await pushAllRepos()
+    // 支持并行推送（通过环境变量控制）
+    const parallel = process.env.PARALLEL_PUSH === 'true'
+
+    if (parallel) {
+      this.logger.info('Parallel push mode enabled')
+    }
+
+    await pushAllRepos({ parallel })
   }
 }
 
@@ -59,7 +80,14 @@ export class PullAllCommand extends BaseCommand {
   }
 
   protected async run(): Promise<void> {
-    await pullAllRepos()
+    // 支持并行拉取
+    const parallel = process.env.PARALLEL_PULL === 'true'
+
+    if (parallel) {
+      this.logger.info('Parallel pull mode enabled')
+    }
+
+    await pullAllRepos({ parallel })
   }
 }
 
@@ -69,6 +97,7 @@ export class SyncAllCommand extends BaseCommand {
   }
 
   protected async run(): Promise<void> {
-    await syncAllRepos()
+    // 同步操作不建议并行，因为可能有冲突
+    await syncAllRepos({ parallel: false })
   }
 }

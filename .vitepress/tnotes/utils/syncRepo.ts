@@ -6,176 +6,291 @@
 import { runCommand } from './runCommand'
 import { TNOTES_BASE_DIR, ROOT_DIR_PATH, EN_WORDS_DIR } from '../constants'
 import { getTargetDirs } from './getTargetDirs'
-
-/**
- * 确保目录是一个有效的 Git 仓库
- * @param dir - 目录路径
- * @returns 是否为有效的 Git 仓库
- */
-async function ensureGitRepo(dir: string): Promise<boolean> {
-  try {
-    const isGitRepo = await runCommand(
-      'git rev-parse --is-inside-work-tree',
-      dir
-    ).catch(() => false)
-
-    if (!isGitRepo) {
-      throw new Error(`${dir} 不是一个有效的 Git 仓库。`)
-    }
-
-    return true
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error)
-    console.error(errorMessage)
-    return false
-  }
-}
+import { GitManager } from './GitManager'
+import { logger } from './logger'
+import { handleError } from './errorHandler'
 
 /**
  * 拉取远程仓库的更新
- * 该函数尝试拉取远程仓库的更新，并在必要时处理未提交的更改。
- * 它使用 stash 策略来保存未提交的更改，在拉取完成后恢复这些更改。
  * @param dir - 本地仓库目录路径
  */
 export async function pullRepo(dir: string = ROOT_DIR_PATH): Promise<void> {
+  const git = new GitManager(dir, logger.child('pull'))
+
   try {
-    // 确保是 Git 仓库
-    if (!(await ensureGitRepo(dir))) return
-
-    // 处理未暂存更改
-    const statusOutput = await runCommand('git status --porcelain', dir)
-    if (statusOutput) {
-      console.log(`${dir} 存在未暂存的更改，先 git stash`)
-      await runCommand('git stash', dir)
+    // 检查是否为有效仓库
+    if (!(await git.isValidRepo())) {
+      logger.warn(`${dir} is not a valid Git repository, skipping...`)
+      return
     }
 
-    // 拉取远程更新
-    console.log(`${dir} 正在拉取远程更新...`)
-    await runCommand('git pull --rebase', dir)
-
-    // 恢复 stash 的更改
-    if (statusOutput) {
-      console.log(`${dir} 取回之前的更改`)
-      await runCommand('git stash pop', dir)
-    }
+    await git.pull({ rebase: true, autostash: true })
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error)
-    console.error(`拉取 ${dir} 时出错：${errorMessage}`)
+    logger.error(`Failed to pull ${dir}`)
+    handleError(error)
   }
 }
 
 /**
  * 推送本地更改到远程仓库
- * 该函数检查是否有未提交的更改，如果有，则提交并推送到远程仓库。
  * @param dir - 本地仓库目录路径
  */
 export async function pushRepo(dir: string = ROOT_DIR_PATH): Promise<void> {
-  try {
-    // 确保是 Git 仓库
-    if (!(await ensureGitRepo(dir))) return
+  const git = new GitManager(dir, logger.child('push'))
 
-    // 检查是否有未提交的更改
-    const statusOutput = await runCommand('git status --porcelain', dir)
-    if (!statusOutput) {
-      console.log(`${dir} 没有新的更改，跳过提交`)
+  try {
+    // 检查是否为有效仓库
+    if (!(await git.isValidRepo())) {
+      logger.warn(`${dir} is not a valid Git repository, skipping...`)
       return
     }
 
-    // 提交并推送
-    console.log(`${dir} 正在提交并推送更改...`)
-    await runCommand('git add .', dir)
-    const changedFiles = statusOutput.split('\n').length
-    await runCommand(
-      `git commit -m "update: ${changedFiles} files modified"`,
-      dir
-    )
-    await runCommand('git push', dir)
-
-    // 获取远程 URL
-    const url = await runCommand('git remote -v', dir)
-    const remoteMatch = url.match(/https:\/\/[^\s]+|git@[^:\s]+:[^\s]+/)
-    console.log(
-      `✅ 笔记同步完成 ${remoteMatch ? remoteMatch[0] : '（无法解析远程 URL）'}`
-    )
+    await git.pushWithCommit()
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error)
-    console.error(
-      `推送 ${dir} 时出错：${errorMessage}\n请检查网络环境，可尝试手动执行 git push 推送`
-    )
+    logger.error(`Failed to push ${dir}`)
+    handleError(error)
+    throw error // 重新抛出以便上层处理
   }
 }
 
 /**
  * 同步本地和远程 Git 仓库
- * 该函数调用 pullRepo 和 pushRepo 方法，分别完成拉取和推送操作。
  * @param dir - 本地仓库目录路径
  */
 export async function syncRepo(dir: string = ROOT_DIR_PATH): Promise<void> {
+  const git = new GitManager(dir, logger.child('sync'))
+
   try {
-    await pullRepo(dir)
-    await pushRepo(dir)
+    // 检查是否为有效仓库
+    if (!(await git.isValidRepo())) {
+      logger.warn(`${dir} is not a valid Git repository, skipping...`)
+      return
+    }
+
+    await git.sync()
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error)
-    console.error(`同步 ${dir} 时出错：${errorMessage}`)
+    logger.error(`Failed to sync ${dir}`)
+    handleError(error)
   }
 }
 
 /**
- * 在所有 TNotes.* 中执行 npm run tn:push 命令
+ * 批量操作结果接口
  */
-export async function pushAllRepos(): Promise<void> {
-  const targetDirs = getTargetDirs(TNOTES_BASE_DIR, 'TNotes.', [EN_WORDS_DIR])
-  console.log('开始推送所有仓库...')
+interface BatchResult {
+  dir: string
+  success: boolean
+  error?: string
+}
 
-  for (const dir of targetDirs) {
-    try {
-      console.log(`正在推送 ${dir}...`)
-      await runCommand('npm run tn:push', dir)
-      console.log(`✅ 完成推送 ${dir}`)
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error)
-      console.error(`推送 ${dir} 时出错：${errorMessage}`)
+/**
+ * 在所有 TNotes.* 中执行推送操作
+ * @param options - 选项
+ * @param options.parallel - 是否并行执行（默认 false）
+ * @param options.continueOnError - 遇到错误是否继续（默认 true）
+ */
+export async function pushAllRepos(options?: {
+  parallel?: boolean
+  continueOnError?: boolean
+}): Promise<void> {
+  const { parallel = false, continueOnError = true } = options || {}
+  const targetDirs = getTargetDirs(TNOTES_BASE_DIR, 'TNotes.', [EN_WORDS_DIR])
+
+  logger.start(`Pushing ${targetDirs.length} repositories...`)
+
+  const results: BatchResult[] = []
+
+  if (parallel) {
+    // 并行执行
+    const promises = targetDirs.map(async (dir) => {
+      try {
+        logger.progress(`Pushing ${dir}...`)
+        await runCommand('pnpm tn:push', dir)
+        logger.success(`✓ ${dir}`)
+        return { dir, success: true }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error)
+        logger.error(`✗ ${dir}: ${errorMessage}`)
+        return { dir, success: false, error: errorMessage }
+      }
+    })
+
+    results.push(...(await Promise.all(promises)))
+  } else {
+    // 串行执行
+    for (const dir of targetDirs) {
+      try {
+        logger.progress(`Pushing ${dir}...`)
+        await runCommand('pnpm tn:push', dir)
+        logger.success(`✓ ${dir}`)
+        results.push({ dir, success: true })
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error)
+        logger.error(`✗ ${dir}: ${errorMessage}`)
+        results.push({ dir, success: false, error: errorMessage })
+
+        if (!continueOnError) {
+          throw error
+        }
+      }
     }
   }
-}
 
-/**
- * 在所有 TNotes.* 中执行 npm run tn:pull 命令
- */
-export async function pullAllRepos(): Promise<void> {
-  const targetDirs = getTargetDirs(TNOTES_BASE_DIR, 'TNotes.', [EN_WORDS_DIR])
-  console.log('开始拉取所有仓库...')
+  // 显示汇总
+  const successCount = results.filter((r) => r.success).length
+  const failCount = results.length - successCount
 
-  for (const dir of targetDirs) {
-    try {
-      console.log(`正在拉取 ${dir}...`)
-      await runCommand('npm run tn:pull', dir)
-      console.log(`✅ 完成拉取 ${dir}`)
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error)
-      console.error(`拉取 ${dir} 时出错：${errorMessage}`)
-    }
+  console.log('\n📊 Push Summary:')
+  console.log(`  Total: ${results.length}`)
+  console.log(`  Success: ${successCount}`)
+  console.log(`  Failed: ${failCount}`)
+
+  if (failCount > 0) {
+    console.log('\n❌ Failed repositories:')
+    results
+      .filter((r) => !r.success)
+      .forEach((r) => console.log(`  - ${r.dir}: ${r.error}`))
   }
 }
 
 /**
- * 在所有 TNotes.* 中执行 npm run tn:sync 命令
+ * 在所有 TNotes.* 中执行拉取操作
+ * @param options - 选项
  */
-export async function syncAllRepos(): Promise<void> {
+export async function pullAllRepos(options?: {
+  parallel?: boolean
+  continueOnError?: boolean
+}): Promise<void> {
+  const { parallel = false, continueOnError = true } = options || {}
+  const targetDirs = getTargetDirs(TNOTES_BASE_DIR, 'TNotes.', [EN_WORDS_DIR])
+
+  logger.start(`Pulling ${targetDirs.length} repositories...`)
+
+  const results: BatchResult[] = []
+
+  if (parallel) {
+    // 并行执行
+    const promises = targetDirs.map(async (dir) => {
+      try {
+        logger.progress(`Pulling ${dir}...`)
+        await runCommand('pnpm tn:pull', dir)
+        logger.success(`✓ ${dir}`)
+        return { dir, success: true }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error)
+        logger.error(`✗ ${dir}: ${errorMessage}`)
+        return { dir, success: false, error: errorMessage }
+      }
+    })
+
+    results.push(...(await Promise.all(promises)))
+  } else {
+    // 串行执行
+    for (const dir of targetDirs) {
+      try {
+        logger.progress(`Pulling ${dir}...`)
+        await runCommand('pnpm tn:pull', dir)
+        logger.success(`✓ ${dir}`)
+        results.push({ dir, success: true })
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error)
+        logger.error(`✗ ${dir}: ${errorMessage}`)
+        results.push({ dir, success: false, error: errorMessage })
+
+        if (!continueOnError) {
+          throw error
+        }
+      }
+    }
+  }
+
+  // 显示汇总
+  const successCount = results.filter((r) => r.success).length
+  const failCount = results.length - successCount
+
+  console.log('\n📊 Pull Summary:')
+  console.log(`  Total: ${results.length}`)
+  console.log(`  Success: ${successCount}`)
+  console.log(`  Failed: ${failCount}`)
+
+  if (failCount > 0) {
+    console.log('\n❌ Failed repositories:')
+    results
+      .filter((r) => !r.success)
+      .forEach((r) => console.log(`  - ${r.dir}: ${r.error}`))
+  }
+}
+
+/**
+ * 在所有 TNotes.* 中执行同步操作
+ * @param options - 选项
+ */
+export async function syncAllRepos(options?: {
+  parallel?: boolean
+  continueOnError?: boolean
+}): Promise<void> {
+  const { parallel = false, continueOnError = true } = options || {}
   const targetDirs = getTargetDirs(TNOTES_BASE_DIR, 'TNotes.')
-  console.log('开始同步所有仓库...')
 
-  for (const dir of targetDirs) {
-    try {
-      console.log(`正在同步 ${dir}...`)
-      await runCommand('npm run tn:sync', dir)
-      console.log(`✅ 完成同步 ${dir}`)
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error)
-      console.error(`同步 ${dir} 时出错：${errorMessage}`)
+  logger.start(`Syncing ${targetDirs.length} repositories...`)
+
+  const results: BatchResult[] = []
+
+  if (parallel) {
+    // 并行执行
+    const promises = targetDirs.map(async (dir) => {
+      try {
+        logger.progress(`Syncing ${dir}...`)
+        await runCommand('pnpm tn:sync', dir)
+        logger.success(`✓ ${dir}`)
+        return { dir, success: true }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error)
+        logger.error(`✗ ${dir}: ${errorMessage}`)
+        return { dir, success: false, error: errorMessage }
+      }
+    })
+
+    results.push(...(await Promise.all(promises)))
+  } else {
+    // 串行执行
+    for (const dir of targetDirs) {
+      try {
+        logger.progress(`Syncing ${dir}...`)
+        await runCommand('pnpm tn:sync', dir)
+        logger.success(`✓ ${dir}`)
+        results.push({ dir, success: true })
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error)
+        logger.error(`✗ ${dir}: ${errorMessage}`)
+        results.push({ dir, success: false, error: errorMessage })
+
+        if (!continueOnError) {
+          throw error
+        }
+      }
     }
+  }
+
+  // 显示汇总
+  const successCount = results.filter((r) => r.success).length
+  const failCount = results.length - successCount
+
+  console.log('\n📊 Sync Summary:')
+  console.log(`  Total: ${results.length}`)
+  console.log(`  Success: ${successCount}`)
+  console.log(`  Failed: ${failCount}`)
+
+  if (failCount > 0) {
+    console.log('\n❌ Failed repositories:')
+    results
+      .filter((r) => !r.success)
+      .forEach((r) => console.log(`  - ${r.dir}: ${r.error}`))
   }
 }
