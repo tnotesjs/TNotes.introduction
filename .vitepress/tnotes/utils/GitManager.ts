@@ -350,8 +350,13 @@ export class GitManager {
     }
 
     try {
-      // 显示简洁的开始信息
+      // 显示开始信息和文件列表
       this.logger.info(`正在推送 ${status.changedFiles} 个文件...`)
+
+      // 显示文件列表
+      status.files.forEach((file, index) => {
+        console.log(`  ${index + 1}. ${file.path}`)
+      })
 
       // 添加所有更改（静默执行）
       await runCommand('git add .', this.dir)
@@ -364,7 +369,6 @@ export class GitManager {
       await runCommand(`git commit -m "${message}"`, this.dir)
 
       // 推送（静默执行）
-      const pushStatus = await this.getStatus()
       let cmd = 'git push'
       if (options?.force) cmd += ' --force'
 
