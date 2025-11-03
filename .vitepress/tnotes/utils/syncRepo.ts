@@ -20,7 +20,7 @@ export async function pullRepo(dir: string = ROOT_DIR_PATH): Promise<void> {
   try {
     // 检查是否为有效仓库
     if (!(await git.isValidRepo())) {
-      logger.warn(`${dir} is not a valid Git repository, skipping...`)
+      logger.warn(`${dir} 不是一个合法的 git 仓库，跳过...`)
       return
     }
 
@@ -41,7 +41,7 @@ export async function pushRepo(dir: string = ROOT_DIR_PATH): Promise<void> {
   try {
     // 检查是否为有效仓库
     if (!(await git.isValidRepo())) {
-      logger.warn(`${dir} is not a valid Git repository, skipping...`)
+      logger.warn(`${dir} 不是一个合法的 git 仓库，跳过...`)
       return
     }
 
@@ -63,7 +63,7 @@ export async function syncRepo(dir: string = ROOT_DIR_PATH): Promise<void> {
   try {
     // 检查是否为有效仓库
     if (!(await git.isValidRepo())) {
-      logger.warn(`${dir} is not a valid Git repository, skipping...`)
+      logger.warn(`${dir} 不是一个合法的 git 仓库，跳过...`)
       return
     }
 
