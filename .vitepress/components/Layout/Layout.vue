@@ -24,10 +24,16 @@
     <template #doc-before>
       <div :class="$style.docBeforeContainer">
         <div :class="$style.leftArea">
-          <div :class="$style.toggleSidebarBox">
+          <div
+            :class="[$style.toggleSidebarBox, $style.pcOnly]"
+            v-show="!isFullContentMode"
+          >
             <ToggleSidebar />
           </div>
-          <div :class="$style.vscodeBox" v-show="vscodeNotesDir">
+          <div
+            :class="[$style.vscodeBox, $style.pcOnly]"
+            v-show="vscodeNotesDir"
+          >
             <a
               :href="vscodeNotesDir"
               aria-label="open in vscode"
@@ -37,10 +43,26 @@
               <img :src="icon__vscode" alt="open in vscode" />
             </a>
           </div>
-          <div :class="$style.contentToggleBox">
+          <!-- 笔记的 GitHub 链接（移动端和 PC 端都显示） -->
+          <div :class="$style.githubNoteBox" v-show="currentNoteGithubUrl">
+            <a
+              :href="currentNoteGithubUrl"
+              aria-label="在 GitHub 上查看此笔记"
+              title="在 GitHub 上查看此笔记"
+              target="_blank"
+              rel="noopener"
+            >
+              <img :src="icon__github" alt="github icon" />
+            </a>
+          </div>
+          <div :class="[$style.contentToggleBox, $style.pcOnly]">
             <ToggleFullContent />
           </div>
-          <div :class="$style.githubBox" v-show="isHomeReadme">
+          <!-- 知识库的 GitHub 链接（仅首页显示，PC 端） -->
+          <div
+            :class="[$style.githubRepoBox, $style.pcOnly]"
+            v-show="isHomeReadme"
+          >
             <a
               :href="`https://github.com/tnotesjs/${vpData.page.value.title.toLowerCase()}/blob/main/README.md`"
               :aria-label="`tnotesjs github - ${vpData.page.value.title.toLowerCase()} 笔记仓库链接`"
@@ -140,7 +162,17 @@
       </span>
     </template>
 
-    <!-- <template #sidebar-nav-before>sidebar-nav-before</template> -->
+    <template #sidebar-nav-before>
+      <div :class="$style.sidebarControls">
+        <span
+          @click="toggleAllSidebarSections"
+          :class="{ [$style.folded]: !allSidebarExpanded }"
+          :title="allSidebarExpanded ? '收起所有章节' : '展开所有章节'"
+        >
+          <img :src="icon__fold" alt="折叠/展开" />
+        </span>
+      </div>
+    </template>
     <!-- <template #sidebar-nav-after>sidebar-nav-after</template> -->
 
     <!-- <template #aside-outline-after>aside-outline-after</template> -->
@@ -170,6 +202,7 @@ import ToggleSidebar from './ToggleSidebar.vue'
 import icon__github from '/icon__github.svg'
 import icon__totop from '/icon__totop.svg'
 import icon__vscode from '/icon__vscode.svg'
+import icon__fold from '/icon__fold.svg'
 import m2mm from '/m2mm.png'
 
 import { useData, useRoute, useRouter } from 'vitepress'
@@ -235,10 +268,28 @@ watch(
 
 const isHomeReadme = computed(() => vpData.page.value.filePath === TOC_MD)
 const doneNotesLen = computed(() => tocData?.doneNotesLen)
+
+// 计算当前笔记的 GitHub URL
+const currentNoteGithubUrl = computed(() => {
+  if (!currentNoteId.value) return ''
+
+  // 从 relativePath 提取笔记路径
+  // 格式如: notes/0001. xxx/README.md
+  const relativePath = vpData.page.value.relativePath
+  const match = relativePath.match(/notes\/(\d{4}\.[^/]+)/)
+
+  if (!match) return ''
+
+  const notePath = match[0] // notes/0001. xxx
+  const repoName = vpData.site.value.title.toLowerCase() // TNotes.introduction
+
+  return `https://github.com/tnotesjs/${repoName}/tree/main/${notePath}`
+})
+
 const isCopied = ref(false)
 const copyRawFile = () => {
   if (!tocData) return
-  navigator.clipboard.writeText(tocData.fileContent)
+  layout.clipboard.writeText(tocData.fileContent)
   isCopied.value = true
   setTimeout(() => (isCopied.value = false), 1000)
 
@@ -348,6 +399,100 @@ function openTimeModal() {
 function onTimeModalClose() {
   timeModalOpen.value = false
 }
+
+// #region - 全屏状态检测
+const isFullContentMode = ref(false)
+
+function checkFullContentMode() {
+  if (typeof document === 'undefined') return
+
+  // 检测 VitePress 的全屏内容模式（通过检查 body 或根元素的 class）
+  const vpApp = document.querySelector('.VPContent')
+  if (vpApp) {
+    // VitePress 全屏模式通常会给容器添加特定的 class 或样式
+    // 我们检测 sidebar 是否被隐藏
+    const sidebar = document.querySelector('.VPSidebar')
+    if (sidebar) {
+      const sidebarDisplay = window.getComputedStyle(sidebar).display
+      isFullContentMode.value = sidebarDisplay === 'none'
+    }
+  }
+}
+
+// 监听窗口大小变化和全屏事件
+onMounted(() => {
+  if (typeof window !== 'undefined') {
+    checkFullContentMode()
+    window.addEventListener('resize', checkFullContentMode)
+    // 监听 VitePress 的侧边栏切换事件
+    const observer = new MutationObserver(checkFullContentMode)
+    const vpLayout = document.querySelector('.Layout')
+    if (vpLayout) {
+      observer.observe(vpLayout, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+      })
+    }
+  }
+})
+
+// 监听路由变化时重新检查
+watch(
+  () => route.path,
+  () => {
+    setTimeout(checkFullContentMode, 100)
+  }
+)
+// #endregion
+
+// #region - 侧边栏展开/收起控制
+const allSidebarExpanded = ref(true)
+
+function toggleAllSidebarSections() {
+  if (typeof document === 'undefined') return
+
+  // 查找 VitePress 左侧导航栏中的所有可折叠项
+  const sidebar = document.querySelector('.VPSidebar')
+  if (!sidebar) return
+
+  // VitePress 侧边栏使用 .group 和 .VPSidebarItem.collapsible 类
+  const collapsibleItems = sidebar.querySelectorAll(
+    '.VPSidebarItem.collapsible'
+  )
+
+  if (collapsibleItems.length === 0) return
+
+  // 切换状态
+  allSidebarExpanded.value = !allSidebarExpanded.value
+
+  // 应用到所有可折叠项
+  collapsibleItems.forEach((item) => {
+    const button = item.querySelector('.caret')
+    if (button) {
+      const isCurrentlyExpanded = item.classList.contains('collapsed')
+
+      // 如果想展开但当前是收起的，或想收起但当前是展开的，就点击按钮
+      if (allSidebarExpanded.value && isCurrentlyExpanded) {
+        button.click()
+      } else if (!allSidebarExpanded.value && !isCurrentlyExpanded) {
+        button.click()
+      }
+    }
+  })
+}
+
+// 监听路由变化，重置展开状态
+watch(
+  () => route.path,
+  () => {
+    // 延迟一下，等侧边栏渲染完成
+    setTimeout(() => {
+      allSidebarExpanded.value = true
+    }, 100)
+  }
+)
+// #endregion
 </script>
 
 <style module src="./Layout.module.scss"></style>

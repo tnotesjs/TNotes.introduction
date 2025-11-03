@@ -12,11 +12,11 @@ import {
   ROOT_ITEM,
 } from '../constants.ts'
 
-import icon__fold from './icon__fold.svg'
-import icon__github from './icon__github.svg'
-import icon__vscode from './icon__vscode.svg'
-import icon__card from './icon__card.svg'
-import icon__folder from './icon__folder.svg'
+import icon__fold from '/icon__fold.svg'
+import icon__github from '/icon__github.svg'
+import icon__vscode from '/icon__vscode.svg'
+import icon__card from '/icon__card.svg'
+import icon__folder from '/icon__folder.svg'
 
 // #region props
 const props = defineProps({

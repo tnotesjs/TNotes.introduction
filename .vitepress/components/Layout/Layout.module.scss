@@ -22,6 +22,17 @@
   }
 }
 
+/* PC 端专用按钮（移动端隐藏） */
+.pcOnly {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .pcOnly {
+    display: none !important;
+  }
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -71,7 +82,34 @@
   }
 }
 
-.githubBox {
+/* 笔记的 GitHub 链接（移动端和 PC 端都显示） */
+.githubNoteBox {
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 3px;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+
+  &:hover {
+    background: var(--vp-c-bg-alt);
+    transform: scale(1.05);
+  }
+
+  a {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+}
+
+/* 知识库的 GitHub 链接（仅首页显示） */
+.githubRepoBox {
   width: 1.5rem;
   height: 1.5rem;
   padding: 3px;
@@ -282,7 +320,53 @@
   }
 }
 
-/* 
+/* 侧边栏控制按钮容器 */
+.sidebarControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--vp-c-divider);
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+
+    img {
+      width: 1rem;
+      height: 1rem;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover {
+      background: var(--vp-c-bg-alt);
+
+      img {
+        transform: scale(1.1);
+      }
+    }
+
+    &:active {
+      img {
+        transform: scale(0.95);
+      }
+    }
+
+    &.folded img {
+      transform: rotate(180deg);
+    }
+
+    &.folded:hover img {
+      transform: rotate(180deg) scale(1.1);
+    }
+  }
+} /* 
   404 页面样式已移至 global-components.css
   相关全局类名：.not-found-container
 */
