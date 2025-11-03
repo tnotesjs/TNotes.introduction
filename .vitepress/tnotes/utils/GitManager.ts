@@ -350,6 +350,9 @@ export class GitManager {
     }
 
     try {
+      // 显示简洁的开始信息
+      this.logger.info(`正在推送 ${status.changedFiles} 个文件...`)
+
       // 添加所有更改（静默执行）
       await runCommand('git add .', this.dir)
 
@@ -359,11 +362,26 @@ export class GitManager {
 
       // 提交（静默执行）
       await runCommand(`git commit -m "${message}"`, this.dir)
-      this.logger.success(`已提交: ${message}`)
 
-      // 推送
-      await this.push(options)
+      // 推送（静默执行）
+      const pushStatus = await this.getStatus()
+      let cmd = 'git push'
+      if (options?.force) cmd += ' --force'
+
+      await runCommand(cmd, this.dir)
+
+      // 只在成功时显示结果
+      const remoteInfo = await this.getRemoteInfo()
+      if (remoteInfo) {
+        this.logger.success(
+          `推送成功: ${status.changedFiles} 个文件 → ${remoteInfo.owner}/${remoteInfo.repo}`
+        )
+      } else {
+        this.logger.success(`推送成功: ${status.changedFiles} 个文件`)
+      }
     } catch (error) {
+      // 失败时显示完整错误信息
+      this.logger.error(`推送失败: ${status.changedFiles} 个文件`)
       handleError(error)
       throw error
     }

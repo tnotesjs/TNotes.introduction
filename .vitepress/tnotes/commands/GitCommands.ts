@@ -21,12 +21,7 @@ export class PushCommand extends BaseCommand {
   }
 
   protected async run(): Promise<void> {
-    // 显示状态摘要
-    const git = new GitManager(ROOT_DIR_PATH, this.logger)
-    if (await git.isValidRepo()) {
-      await git.showStatus()
-    }
-
+    // 直接推送，不显示详细状态
     await pushRepo()
   }
 }
@@ -47,12 +42,6 @@ export class SyncCommand extends BaseCommand {
   }
 
   protected async run(): Promise<void> {
-    // 显示状态摘要
-    const git = new GitManager(ROOT_DIR_PATH, this.logger)
-    if (await git.isValidRepo()) {
-      await git.showStatus()
-    }
-
     await syncRepo()
   }
 }
