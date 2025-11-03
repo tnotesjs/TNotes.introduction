@@ -374,20 +374,20 @@ export class GitManager {
     const status = await this.getStatus()
     const remoteInfo = await this.getRemoteInfo()
 
-    console.log('\n📊 Git 状态:')
-    console.log(`  分支: ${status.branch}`)
+    console.log('\n当前Git 状态:')
+    console.log(`- 分支: ${status.branch}`)
     if (remoteInfo) {
       console.log(
-        `  远程仓库: ${remoteInfo.owner}/${remoteInfo.repo} (${remoteInfo.type})`
+        `- 远程仓库: ${remoteInfo.owner}/${remoteInfo.repo} (${remoteInfo.type})`
       )
     }
-    console.log(`  变更文件: ${status.changedFiles}`)
+    console.log(`- 变更文件: ${status.changedFiles}`)
     console.log(
-      `    - 已暂存: ${status.staged}, 未暂存: ${status.unstaged}, 未跟踪: ${status.untracked}`
+      `  - 已暂存: ${status.staged}, 未暂存: ${status.unstaged}, 未跟踪: ${status.untracked}`
     )
     if (status.ahead > 0 || status.behind > 0) {
       console.log(
-        `  同步状态: 领先 ${status.ahead} 个提交, 落后 ${status.behind} 个提交`
+        `- 同步状态: 领先 ${status.ahead} 个提交, 落后 ${status.behind} 个提交`
       )
     }
     console.log()
