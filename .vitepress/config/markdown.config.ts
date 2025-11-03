@@ -204,7 +204,7 @@ function configureMarkMapContainer(md: MarkdownIt) {
               refFullPath = refRaw
             }
 
-            console.log('refFullPath:', refFullPath)
+            // console.log('refFullPath:', refFullPath)
             const fileContent = fs.readFileSync(refFullPath, 'utf-8')
             content = fileContent
           } catch (err) {

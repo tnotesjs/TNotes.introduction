@@ -2,12 +2,23 @@
 
 <!-- region:toc -->
 
-- [1. 🫧 TNotes 评论模块（Discussions）的技术实现](#1--tnotes-评论模块discussions的技术实现)
-- [2. 🔗 引用](#2--引用)
+- [1. 🎯 本节内容](#1--本节内容)
+- [2. 🫧 评价](#2--评价)
+- [3. 🤔 TNotes 的评论模块（Discussions）是如何实现的？](#3--tnotes-的评论模块discussions是如何实现的)
+- [4. 🔗 引用](#4--引用)
 
 <!-- endregion:toc -->
 
-## 1. 🫧 TNotes 评论模块（Discussions）的技术实现
+## 1. 🎯 本节内容
+
+- Discussions 实现原理简介
+- [Giscus][1] 简介
+
+## 2. 🫧 评价
+
+核心源码位置：`.vitepress/components/Discussions/Discussions.vue`
+
+## 3. 🤔 TNotes 的评论模块（Discussions）是如何实现的？
 
 - TNotes 的评论模块
   - 评论功能是基于 [Giscus][1] 实现的。
@@ -35,6 +46,6 @@
 
 :::
 
-## 2. 🔗 引用
+## 4. 🔗 引用
 
 [1]: https://giscus.app/zh-CN

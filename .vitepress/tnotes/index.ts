@@ -1,111 +1,50 @@
+/**
+ * .vitepress/tnotes/index.ts
+ *
+ * TNotes 命令行入口
+ */
 import minimist from 'minimist'
+import { getCommand } from './commands'
+import { isValidCommand, type CommandArgs } from './types'
+import { handleError, createError } from './utils/errorHandler'
+import { logger } from './utils/logger'
 
-import ReadmeUpdater from './ReadmeUpdater'
-import { mergeNotes, distributeNotes } from './mergeDistribute'
-import {
-  syncRepo,
-  pushRepo,
-  pullRepo,
-  syncAllRepos,
-  pushAllRepos,
-  pullAllRepos,
-  runCommandSpawn,
-} from './utils/index'
-import { newNotes } from './newNotes'
-import { ROOT_DIR_PATH, port } from './constants'
-import { tempSync } from './tempSync'
-import { safeUpdate, startServer } from './VpManager'
+/**
+ * 主函数
+ */
 ;(async (): Promise<void> => {
   try {
-    const args = minimist(process.argv)
+    // 解析命令行参数
+    const args = minimist(process.argv.slice(2)) as CommandArgs
 
-    const startTime = Date.now()
-    let commandExecuted = false
+    // 查找第一个为 true 的参数作为命令名
+    const commandName = Object.keys(args).find(
+      (key) => key !== '_' && args[key] === true
+    )
 
-    switch (true) {
-      case args.dev:
-        const port_ = port || 5173
-        await runCommandSpawn(
-          `vitepress dev --host --port ${port_} --open`,
-          ROOT_DIR_PATH
-        )
-        commandExecuted = true
-        break
-      // 含大量笔记知识库（比如 TNotes.leetcode）的启动方式
-      case args.safeDev:
-        startServer()
-        commandExecuted = true
-        break
-      case args.build:
-        await runCommandSpawn(`vitepress build`, ROOT_DIR_PATH)
-        commandExecuted = true
-        break
-      case args.preview:
-        await runCommandSpawn(`vitepress preview`, ROOT_DIR_PATH)
-        commandExecuted = true
-        break
-      case args.update:
-        const updater = new ReadmeUpdater()
-        await updater.updateReadme()
-        commandExecuted = true
-        break
-      // 含大量笔记知识库（比如 TNotes.leetcode）的更新方式
-      case args.safeUpdate:
-        await safeUpdate()
-        commandExecuted = true
-        break
-      case args.push:
-        await pushRepo()
-        commandExecuted = true
-        break
-      case args.pushAll:
-        await pushAllRepos()
-        commandExecuted = true
-        break
-      case args.pull:
-        await pullRepo()
-        commandExecuted = true
-        break
-      case args.pullAll:
-        await pullAllRepos()
-        commandExecuted = true
-        break
-      case args.sync:
-        await syncRepo()
-        commandExecuted = true
-        break
-      case args.syncAll:
-        await syncAllRepos()
-        commandExecuted = true
-        break
-      case args.new:
-        newNotes()
-        commandExecuted = true
-        break
-      case args.merge:
-        mergeNotes()
-        commandExecuted = true
-        break
-      case args.distribute:
-        distributeNotes()
-        commandExecuted = true
-        break
-      case args.tempSync:
-        await tempSync()
-        commandExecuted = true
-        break
-      default:
-        console.log('No valid command provided.')
-        break
+    // 如果没有找到命令，显示帮助信息
+    if (!commandName) {
+      const helpCommand = getCommand('help')
+      if (helpCommand) {
+        await helpCommand.execute()
+      }
+      return
     }
 
-    if (commandExecuted) {
-      const endTime = Date.now() // 记录结束时间
-      const duration = endTime - startTime // 计算耗时
-      console.log(`✅ Command executed in ${duration}ms`) // 输出耗时日志
+    // 验证命令名
+    if (!isValidCommand(commandName)) {
+      throw createError.commandNotFound(commandName)
     }
+
+    // 获取命令实例
+    const command = getCommand(commandName)
+    if (!command) {
+      throw createError.commandNotFound(commandName)
+    }
+
+    // 执行命令
+    await command.execute()
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error)
-    console.error('❌ TNotes Error:', errorMessage)
+    handleError(error, true)
   }
 })()

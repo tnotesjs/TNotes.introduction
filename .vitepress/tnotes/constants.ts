@@ -87,6 +87,59 @@ export const SEPERATOR = `<!-- !======> SEPERATOR <====== -->`
 export const NOTES_TOC_START_TAG = '<!-- region:toc -->'
 export const NOTES_TOC_END_TAG = '<!-- endregion:toc -->'
 
+/**
+ * TNotes 常量配置
+ */
+export const CONSTANTS = {
+  // 端口配置
+  DEFAULT_PORT: 5173,
+
+  // 文件名配置
+  README_FILENAME: 'README.md',
+  CONFIG_FILENAME: '.tnotes.json',
+  PID_FILENAME: '.vitepress-pid',
+
+  // 笔记 ID 配置
+  NOTE_ID_LENGTH: 4,
+  NOTE_ID_PATTERN: /^\d{4}\./,
+  NOTE_ID_PREFIX_PATTERN: /^\d{4}/,
+
+  // Git 配置
+  DEFAULT_BRANCH: 'main',
+
+  // 缓存配置
+  CACHE_TTL: 5000,
+
+  // 终端输出颜色
+  COLORS: {
+    RESET: '\x1b[0m',
+    BRIGHT: '\x1b[1m',
+    DIM: '\x1b[2m',
+    RED: '\x1b[31m',
+    GREEN: '\x1b[32m',
+    YELLOW: '\x1b[33m',
+    BLUE: '\x1b[34m',
+    MAGENTA: '\x1b[35m',
+    CYAN: '\x1b[36m',
+  } as const,
+
+  // Emoji
+  EMOJI: {
+    SUCCESS: '✅',
+    ERROR: '❌',
+    WARNING: '⚠️',
+    INFO: 'ℹ️',
+    PROGRESS: '⏳',
+    ROCKET: '🚀',
+    STOP: '🛑',
+    SPARKLES: '✨',
+    LINK: '🔗',
+    FILE: '📄',
+    GIT: '📦',
+    DEBUG: '🐛',
+  } as const,
+} as const
+
 export const REPO_URL = `https://github.com/${author}/${repoName}/tree/main`
 export const REPO_NOTES_URL = `https://github.com/${author}/${repoName}/tree/main/notes`
 

@@ -1,6 +1,7 @@
 {
   "type": "module",
   "scripts": {
+    "tn:help": "        tsx ./.vitepress/tnotes/index.ts --help",
     "tn:new": "         tsx ./.vitepress/tnotes/index.ts --new",
     "tn:dev": "         tsx ./.vitepress/tnotes/index.ts --dev",
     "tn:dev:safe": "    tsx ./.vitepress/tnotes/index.ts --safeDev",
