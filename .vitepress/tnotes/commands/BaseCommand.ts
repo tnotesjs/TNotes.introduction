@@ -27,7 +27,7 @@ export abstract class BaseCommand implements Command {
       this.logger.start(this.description)
       await this.run()
       const duration = Date.now() - startTime
-      this.logger.done(`Command executed in ${duration}ms`)
+      this.logger.done(`命令执行耗时：${duration} ms`)
     } catch (error) {
       handleError(error)
       throw error
