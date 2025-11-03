@@ -93,65 +93,71 @@ export async function pushAllRepos(options?: {
   parallel?: boolean
   continueOnError?: boolean
 }): Promise<void> {
-  const { parallel = false, continueOnError = true } = options || {}
+  const { parallel = true, continueOnError = true } = options || {}
   const targetDirs = getTargetDirs(TNOTES_BASE_DIR, 'TNotes.', [EN_WORDS_DIR])
 
-  logger.start(`Pushing ${targetDirs.length} repositories...`)
+  logger.info(`正在推送 ${targetDirs.length} 个仓库...`)
 
   const results: BatchResult[] = []
 
   if (parallel) {
     // 并行执行
-    const promises = targetDirs.map(async (dir) => {
+    const promises = targetDirs.map(async (dir, index) => {
       try {
-        logger.progress(`Pushing ${dir}...`)
         await runCommand('pnpm tn:push', dir)
-        logger.success(`✓ ${dir}`)
+        // 显示进度（非精确，因为并发）
+        process.stdout.write(`\r  进度: ~${index + 1}/${targetDirs.length}`)
         return { dir, success: true }
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error)
-        logger.error(`✗ ${dir}: ${errorMessage}`)
         return { dir, success: false, error: errorMessage }
       }
     })
 
     results.push(...(await Promise.all(promises)))
+    console.log() // 换行
   } else {
-    // 串行执行
-    for (const dir of targetDirs) {
+    // 串行执行（速度慢但进度精确）
+    for (let i = 0; i < targetDirs.length; i++) {
+      const dir = targetDirs[i]
       try {
-        logger.progress(`Pushing ${dir}...`)
         await runCommand('pnpm tn:push', dir)
-        logger.success(`✓ ${dir}`)
+        process.stdout.write(`\r  进度: ${i + 1}/${targetDirs.length}`)
         results.push({ dir, success: true })
       } catch (error) {
+        process.stdout.write(`\r  进度: ${i + 1}/${targetDirs.length}`)
         const errorMessage =
           error instanceof Error ? error.message : String(error)
-        logger.error(`✗ ${dir}: ${errorMessage}`)
         results.push({ dir, success: false, error: errorMessage })
 
         if (!continueOnError) {
+          console.log() // 换行
           throw error
         }
       }
     }
+    console.log() // 换行
   }
 
   // 显示汇总
   const successCount = results.filter((r) => r.success).length
   const failCount = results.length - successCount
 
-  console.log('\n📊 Push Summary:')
-  console.log(`  Total: ${results.length}`)
-  console.log(`  Success: ${successCount}`)
-  console.log(`  Failed: ${failCount}`)
-
-  if (failCount > 0) {
-    console.log('\n❌ Failed repositories:')
+  if (failCount === 0) {
+    logger.success(`推送完成: ${successCount}/${results.length} 个仓库成功`)
+  } else {
+    logger.warn(
+      `推送完成: ${successCount} 成功, ${failCount} 失败 (共 ${results.length} 个)`
+    )
+    console.log('\n失败的仓库:')
     results
       .filter((r) => !r.success)
-      .forEach((r) => console.log(`  - ${r.dir}: ${r.error}`))
+      .forEach((r, index) => {
+        const repoName = r.dir.split('\\').pop() || r.dir
+        console.log(`  ${index + 1}. ${repoName}`)
+        console.log(`     错误: ${r.error}`)
+      })
   }
 }
 
@@ -163,65 +169,71 @@ export async function pullAllRepos(options?: {
   parallel?: boolean
   continueOnError?: boolean
 }): Promise<void> {
-  const { parallel = false, continueOnError = true } = options || {}
+  const { parallel = true, continueOnError = true } = options || {}
   const targetDirs = getTargetDirs(TNOTES_BASE_DIR, 'TNotes.', [EN_WORDS_DIR])
 
-  logger.start(`Pulling ${targetDirs.length} repositories...`)
+  logger.info(`正在拉取 ${targetDirs.length} 个仓库...`)
 
   const results: BatchResult[] = []
 
   if (parallel) {
-    // 并行执行
-    const promises = targetDirs.map(async (dir) => {
+    // 并行执行（推荐，速度快）
+    const promises = targetDirs.map(async (dir, index) => {
       try {
-        logger.progress(`Pulling ${dir}...`)
         await runCommand('pnpm tn:pull', dir)
-        logger.success(`✓ ${dir}`)
+        // 显示进度（非精确，因为并发）
+        process.stdout.write(`\r  进度: ~${index + 1}/${targetDirs.length}`)
         return { dir, success: true }
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error)
-        logger.error(`✗ ${dir}: ${errorMessage}`)
         return { dir, success: false, error: errorMessage }
       }
     })
 
     results.push(...(await Promise.all(promises)))
+    console.log() // 换行
   } else {
-    // 串行执行
-    for (const dir of targetDirs) {
+    // 串行执行（速度慢但进度精确）
+    for (let i = 0; i < targetDirs.length; i++) {
+      const dir = targetDirs[i]
       try {
-        logger.progress(`Pulling ${dir}...`)
         await runCommand('pnpm tn:pull', dir)
-        logger.success(`✓ ${dir}`)
+        process.stdout.write(`\r  进度: ${i + 1}/${targetDirs.length}`)
         results.push({ dir, success: true })
       } catch (error) {
+        process.stdout.write(`\r  进度: ${i + 1}/${targetDirs.length}`)
         const errorMessage =
           error instanceof Error ? error.message : String(error)
-        logger.error(`✗ ${dir}: ${errorMessage}`)
         results.push({ dir, success: false, error: errorMessage })
 
         if (!continueOnError) {
+          console.log() // 换行
           throw error
         }
       }
     }
+    console.log() // 换行
   }
 
   // 显示汇总
   const successCount = results.filter((r) => r.success).length
   const failCount = results.length - successCount
 
-  console.log('\n📊 Pull Summary:')
-  console.log(`  Total: ${results.length}`)
-  console.log(`  Success: ${successCount}`)
-  console.log(`  Failed: ${failCount}`)
-
-  if (failCount > 0) {
-    console.log('\n❌ Failed repositories:')
+  if (failCount === 0) {
+    logger.success(`拉取完成: ${successCount}/${results.length} 个仓库成功`)
+  } else {
+    logger.warn(
+      `拉取完成: ${successCount} 成功, ${failCount} 失败 (共 ${results.length} 个)`
+    )
+    console.log('\n失败的仓库:')
     results
       .filter((r) => !r.success)
-      .forEach((r) => console.log(`  - ${r.dir}: ${r.error}`))
+      .forEach((r, index) => {
+        const repoName = r.dir.split('\\').pop() || r.dir
+        console.log(`  ${index + 1}. ${repoName}`)
+        console.log(`     错误: ${r.error}`)
+      })
   }
 }
 
@@ -233,42 +245,41 @@ export async function syncAllRepos(options?: {
   parallel?: boolean
   continueOnError?: boolean
 }): Promise<void> {
-  const { parallel = false, continueOnError = true } = options || {}
+  const { parallel = true, continueOnError = true } = options || {}
   const targetDirs = getTargetDirs(TNOTES_BASE_DIR, 'TNotes.')
 
-  logger.start(`Syncing ${targetDirs.length} repositories...`)
+  logger.info(`正在同步 ${targetDirs.length} 个仓库...`)
 
   const results: BatchResult[] = []
 
   if (parallel) {
-    // 并行执行
-    const promises = targetDirs.map(async (dir) => {
+    // 并行执行（推荐，速度快）
+    const promises = targetDirs.map(async (dir, index) => {
       try {
-        logger.progress(`Syncing ${dir}...`)
         await runCommand('pnpm tn:sync', dir)
-        logger.success(`✓ ${dir}`)
+        // 显示进度（非精确，因为并发）
+        process.stdout.write(`\r  进度: ~${index + 1}/${targetDirs.length}`)
         return { dir, success: true }
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error)
-        logger.error(`✗ ${dir}: ${errorMessage}`)
         return { dir, success: false, error: errorMessage }
       }
     })
 
     results.push(...(await Promise.all(promises)))
   } else {
-    // 串行执行
-    for (const dir of targetDirs) {
+    // 串行执行（速度慢但进度精确）
+    for (let i = 0; i < targetDirs.length; i++) {
+      const dir = targetDirs[i]
       try {
-        logger.progress(`Syncing ${dir}...`)
         await runCommand('pnpm tn:sync', dir)
-        logger.success(`✓ ${dir}`)
+        process.stdout.write(`\r  进度: ${i + 1}/${targetDirs.length}`)
         results.push({ dir, success: true })
       } catch (error) {
+        process.stdout.write(`\r  进度: ${i + 1}/${targetDirs.length}`)
         const errorMessage =
           error instanceof Error ? error.message : String(error)
-        logger.error(`✗ ${dir}: ${errorMessage}`)
         results.push({ dir, success: false, error: errorMessage })
 
         if (!continueOnError) {
@@ -278,19 +289,25 @@ export async function syncAllRepos(options?: {
     }
   }
 
+  console.log() // 换行
+
   // 显示汇总
   const successCount = results.filter((r) => r.success).length
   const failCount = results.length - successCount
 
-  console.log('\n📊 Sync Summary:')
-  console.log(`  Total: ${results.length}`)
-  console.log(`  Success: ${successCount}`)
-  console.log(`  Failed: ${failCount}`)
-
-  if (failCount > 0) {
-    console.log('\n❌ Failed repositories:')
+  if (failCount === 0) {
+    logger.success(`同步完成: ${successCount}/${results.length} 个仓库成功`)
+  } else {
+    logger.warn(
+      `同步完成: ${successCount} 成功, ${failCount} 失败 (共 ${results.length} 个)`
+    )
+    console.log('\n失败的仓库:')
     results
       .filter((r) => !r.success)
-      .forEach((r) => console.log(`  - ${r.dir}: ${r.error}`))
+      .forEach((r, index) => {
+        const repoName = r.dir.split('\\').pop() || r.dir
+        console.log(`  ${index + 1}. ${repoName}`)
+        console.log(`     错误: ${r.error}`)
+      })
   }
 }
