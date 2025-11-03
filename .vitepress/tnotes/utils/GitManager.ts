@@ -8,6 +8,15 @@ import { Logger } from './logger'
 import { createError, handleError } from './errorHandler'
 
 /**
+ * Git 文件状态接口
+ */
+export interface GitFileStatus {
+  path: string
+  status: 'staged' | 'unstaged' | 'untracked' | 'modified'
+  statusCode: string
+}
+
+/**
  * Git 状态信息接口
  */
 export interface GitStatus {
@@ -19,6 +28,7 @@ export interface GitStatus {
   branch: string
   ahead: number
   behind: number
+  files: GitFileStatus[]
 }
 
 /**
@@ -79,9 +89,26 @@ export class GitManager {
       .split('\n')
       .filter((line) => line)
 
-    const staged = lines.filter((line) => /^[MADRC]/.test(line)).length
-    const unstaged = lines.filter((line) => /^.[MD]/.test(line)).length
-    const untracked = lines.filter((line) => line.startsWith('??')).length
+    // 解析文件状态
+    const files: GitFileStatus[] = lines.map((line) => {
+      const statusCode = line.substring(0, 2)
+      const path = line.substring(3)
+
+      let status: GitFileStatus['status'] = 'modified'
+      if (line.startsWith('??')) {
+        status = 'untracked'
+      } else if (/^[MADRC]/.test(statusCode)) {
+        status = 'staged'
+      } else if (/^.[MD]/.test(statusCode)) {
+        status = 'unstaged'
+      }
+
+      return { path, status, statusCode }
+    })
+
+    const staged = files.filter((f) => f.status === 'staged').length
+    const unstaged = files.filter((f) => f.status === 'unstaged').length
+    const untracked = files.filter((f) => f.status === 'untracked').length
 
     // 获取当前分支
     const branch = await runCommand('git branch --show-current', this.dir)
@@ -110,6 +137,7 @@ export class GitManager {
       branch: branch.trim(),
       ahead,
       behind,
+      files,
     }
   }
 
@@ -283,7 +311,7 @@ export class GitManager {
 
     try {
       const status = await this.getStatus()
-      this.logger.progress(`Pushing to remote (branch: ${status.branch})...`)
+      this.logger.progress(`正在推送到远程 (${status.branch})...`)
 
       let cmd = 'git push'
       if (force) cmd += ' --force'
@@ -293,12 +321,12 @@ export class GitManager {
 
       const remoteInfo = await this.getRemoteInfo()
       if (remoteInfo) {
-        this.logger.success(`Pushed to ${remoteInfo.owner}/${remoteInfo.repo}`)
+        this.logger.success(`推送成功 → ${remoteInfo.owner}/${remoteInfo.repo}`)
       } else {
-        this.logger.success('Successfully pushed to remote')
+        this.logger.success('推送成功')
       }
     } catch (error) {
-      this.logger.error('Failed to push to remote')
+      this.logger.error('推送失败')
       handleError(error)
       throw error
     }
@@ -309,7 +337,7 @@ export class GitManager {
    */
   async pushWithCommit(
     commitMessage?: string,
-    options?: { force?: boolean }
+    options?: { force?: boolean; showFiles?: boolean }
   ): Promise<void> {
     await this.ensureValidRepo()
 
@@ -317,25 +345,21 @@ export class GitManager {
 
     // 检查是否有更改
     if (!status.hasChanges) {
-      this.logger.info('No changes to commit')
+      this.logger.info('没有需要提交的更改')
       return
     }
 
     try {
-      // 显示状态摘要
-      this.logger.info(
-        `Changes: ${status.changedFiles} files (${status.staged} staged, ${status.unstaged} unstaged, ${status.untracked} untracked)`
-      )
-
-      // 添加所有更改
-      await this.add('.')
+      // 添加所有更改（静默执行）
+      await runCommand('git add .', this.dir)
 
       // 生成提交信息
       const message =
         commitMessage || `update: ${status.changedFiles} files modified`
 
-      // 提交
-      await this.commit(message)
+      // 提交（静默执行）
+      await runCommand(`git commit -m "${message}"`, this.dir)
+      this.logger.success(`已提交: ${message}`)
 
       // 推送
       await this.push(options)
@@ -370,26 +394,63 @@ export class GitManager {
   /**
    * 显示状态摘要
    */
-  async showStatus(): Promise<void> {
+  async showStatus(options?: { showFiles?: boolean }): Promise<void> {
+    const { showFiles = true } = options || {}
     const status = await this.getStatus()
     const remoteInfo = await this.getRemoteInfo()
 
-    console.log('\n当前Git 状态:')
-    console.log(`- 分支: ${status.branch}`)
+    console.log('\n📊 Git 状态:')
+    console.log(`  分支: ${status.branch}`)
     if (remoteInfo) {
       console.log(
-        `- 远程仓库: ${remoteInfo.owner}/${remoteInfo.repo} (${remoteInfo.type})`
+        `  远程: ${remoteInfo.owner}/${remoteInfo.repo} (${remoteInfo.type})`
       )
     }
-    console.log(`- 变更文件: ${status.changedFiles}`)
-    console.log(
-      `  - 已暂存: ${status.staged}, 未暂存: ${status.unstaged}, 未跟踪: ${status.untracked}`
-    )
-    if (status.ahead > 0 || status.behind > 0) {
+
+    if (status.hasChanges) {
       console.log(
-        `- 同步状态: 领先 ${status.ahead} 个提交, 落后 ${status.behind} 个提交`
+        `  变更: ${status.changedFiles} 个文件 (已暂存 ${status.staged}, 未暂存 ${status.unstaged}, 未跟踪 ${status.untracked})`
       )
+
+      // 显示文件列表
+      if (showFiles && status.files.length > 0) {
+        console.log('  变更文件列表:')
+
+        // 按状态分组显示
+        const stagedFiles = status.files.filter((f) => f.status === 'staged')
+        const unstagedFiles = status.files.filter(
+          (f) => f.status === 'unstaged'
+        )
+        const untrackedFiles = status.files.filter(
+          (f) => f.status === 'untracked'
+        )
+
+        if (stagedFiles.length > 0) {
+          console.log('    已暂存:')
+          stagedFiles.forEach((f) => console.log(`      ✓ ${f.path}`))
+        }
+
+        if (unstagedFiles.length > 0) {
+          console.log('    未暂存:')
+          unstagedFiles.forEach((f) => console.log(`      • ${f.path}`))
+        }
+
+        if (untrackedFiles.length > 0) {
+          console.log('    未跟踪:')
+          untrackedFiles.forEach((f) => console.log(`      ? ${f.path}`))
+        }
+      }
+    } else {
+      console.log('  状态: 工作区干净，没有变更')
     }
+
+    if (status.ahead > 0 || status.behind > 0) {
+      const syncInfo = []
+      if (status.ahead > 0) syncInfo.push(`领先 ${status.ahead} 个提交`)
+      if (status.behind > 0) syncInfo.push(`落后 ${status.behind} 个提交`)
+      console.log(`  同步: ${syncInfo.join(', ')}`)
+    }
+
     console.log()
   }
 }
