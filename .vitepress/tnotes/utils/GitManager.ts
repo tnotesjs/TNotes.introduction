@@ -129,7 +129,7 @@ export class GitManager {
 
       // 解析 HTTPS URL
       const httpsMatch = url.match(
-        /https:\/\/(?:www\.)?github\.com\/([^/]+)\/([^/.]+)/
+        /https:\/\/(?:www\.)?github\.com\/([^/]+)\/(.+?)(?:\.git)?$/
       )
       if (httpsMatch) {
         return {
@@ -141,7 +141,7 @@ export class GitManager {
       }
 
       // 解析 SSH URL
-      const sshMatch = url.match(/git@github\.com:([^/]+)\/([^/.]+)/)
+      const sshMatch = url.match(/git@github\.com:([^/]+)\/(.+?)(?:\.git)?$/)
       if (sshMatch) {
         return {
           url,
@@ -374,20 +374,20 @@ export class GitManager {
     const status = await this.getStatus()
     const remoteInfo = await this.getRemoteInfo()
 
-    console.log('\n📊 Git Status:')
-    console.log(`  Branch: ${status.branch}`)
+    console.log('\n📊 Git 状态:')
+    console.log(`  分支: ${status.branch}`)
     if (remoteInfo) {
       console.log(
-        `  Remote: ${remoteInfo.owner}/${remoteInfo.repo} (${remoteInfo.type})`
+        `  远程仓库: ${remoteInfo.owner}/${remoteInfo.repo} (${remoteInfo.type})`
       )
     }
-    console.log(`  Changed files: ${status.changedFiles}`)
+    console.log(`  变更文件: ${status.changedFiles}`)
     console.log(
-      `    - Staged: ${status.staged}, Unstaged: ${status.unstaged}, Untracked: ${status.untracked}`
+      `    - 已暂存: ${status.staged}, 未暂存: ${status.unstaged}, 未跟踪: ${status.untracked}`
     )
     if (status.ahead > 0 || status.behind > 0) {
       console.log(
-        `  Sync status: ${status.ahead} ahead, ${status.behind} behind`
+        `  同步状态: 领先 ${status.ahead} 个提交, 落后 ${status.behind} 个提交`
       )
     }
     console.log()
