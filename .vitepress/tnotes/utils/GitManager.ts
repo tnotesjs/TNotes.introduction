@@ -246,17 +246,48 @@ export class GitManager {
 
     try {
       const status = await this.getStatus()
-      this.logger.progress(
-        `Pulling updates from remote (branch: ${status.branch})...`
-      )
+
+      // 获取远程更新前记录当前提交
+      const beforeCommit = await runCommand('git rev-parse HEAD', this.dir)
+
+      this.logger.info('正在拉取远程更新...')
 
       const cmd = `git pull ${rebase ? '--rebase' : ''} ${
         autostash ? '--autostash' : ''
       }`.trim()
       await runCommand(cmd, this.dir)
 
-      this.logger.success('Successfully pulled remote updates')
+      // 获取拉取后的提交
+      const afterCommit = await runCommand('git rev-parse HEAD', this.dir)
+
+      // 如果有更新，显示更新的文件列表
+      if (beforeCommit.trim() !== afterCommit.trim()) {
+        try {
+          const diffOutput = await runCommand(
+            `git diff --name-only ${beforeCommit.trim()}..${afterCommit.trim()}`,
+            this.dir
+          )
+          const changedFiles = diffOutput
+            .trim()
+            .split('\n')
+            .filter((f) => f)
+
+          if (changedFiles.length > 0) {
+            console.log(`  更新了 ${changedFiles.length} 个文件:`)
+            changedFiles.forEach((file, index) => {
+              console.log(`  ${index + 1}. ${file}`)
+            })
+          }
+
+          this.logger.success(`拉取成功: ${changedFiles.length} 个文件已更新`)
+        } catch {
+          this.logger.success('拉取成功')
+        }
+      } else {
+        this.logger.info('已是最新，没有需要拉取的更新')
+      }
     } catch (error) {
+      this.logger.error('拉取失败')
       handleError(error)
       throw error
     } finally {
