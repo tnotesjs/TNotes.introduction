@@ -42,7 +42,10 @@ export class PushCommand extends BaseCommand {
       await this.timestampService.fixAllTimestamps()
 
       // 3. 检查本次 push 是否有笔记 README.md 文件变更
+      this.logger.info(`变更文件: ${changedFiles.join(', ')}`)
       const changedNotes = this.timestampService.getChangedNotes(changedFiles)
+      this.logger.info(`变更笔记: [${changedNotes.join(', ')}]`)
+
       if (changedNotes.length > 0) {
         this.logger.info(
           `检测到 ${changedNotes.length} 篇笔记的 README.md 有变更，更新时间戳...`
