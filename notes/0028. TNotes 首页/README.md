@@ -20,7 +20,7 @@
 TNtoes 首页：
 
 - [github 仓库][1]
-- [GitHub pages 在线访问链接][1]
+- [GitHub pages 在线访问链接][2]
 
 首页核心功能：为所有知识库的笔记提供导航，以便能够更便捷地找到对应的笔记。
 
@@ -42,7 +42,7 @@ TNtoes 首页：
 
 - TNtoes 首页：
   - [github 仓库][1]
-  - [GitHub pages 在线访问链接][1]
+  - [GitHub pages 在线访问链接][2]
 
 [1]: https://github.com/tnotesjs/TNotes
 [2]: https://tnotesjs.github.io/TNotes/
