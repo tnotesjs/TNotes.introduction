@@ -193,3 +193,72 @@ export class TimestampService {
     }
   }
 }
+
+  /**
+   * 更新指定笔记的时间戳为当前时间
+   * @param noteDirNames - 笔记目录名数组
+   * @returns 更新的笔记数量
+   */
+  async updateNotesTimestamp(noteDirNames: string[]): Promise<number> {
+    if (noteDirNames.length === 0) {
+      return 0
+    }
+
+    const now = Date.now()
+    let updatedCount = 0
+
+    for (const noteDir of noteDirNames) {
+      const configPath = path.join(NOTES_DIR_PATH, noteDir, '.tnotes.json')
+
+      if (!fs.existsSync(configPath)) {
+        continue
+      }
+
+      try {
+        // 读取配置
+        const configContent = fs.readFileSync(configPath, 'utf-8')
+        const config: NoteConfig = JSON.parse(configContent)
+
+        // 更新 updated_at 为当前时间
+        config.updated_at = now
+
+        // 保持字段顺序写回文件
+        const lines: string[] = ['{']
+        const keys = Object.keys(config)
+        keys.forEach((key, index) => {
+          const value = (config as any)[key]
+          const jsonValue = JSON.stringify(value)
+          const comma = index < keys.length - 1 ? ',' : ''
+          lines.push(`  "${key}": ${jsonValue}${comma}`)
+        })
+        lines.push('}')
+
+        fs.writeFileSync(configPath, lines.join('\n') + '\n', 'utf-8')
+        updatedCount++
+      } catch (error) {
+        logger.error(`更新时间戳失败: ${noteDir}`, error)
+      }
+    }
+
+    return updatedCount
+  }
+
+  /**
+   * 获取本次变更中包含 README.md 的笔记列表
+   * @param changedFiles - git status 返回的变更文件列表
+   * @returns 变更的笔记目录名数组
+   */
+  getChangedNotes(changedFiles: string[]): string[] {
+    const changedNotes = new Set<string>()
+
+    for (const file of changedFiles) {
+      // 检查是否是 notes 目录下的 README.md 文件
+      const match = file.match(/^notes\/([^/]+)\/README\.md$/)
+      if (match) {
+        changedNotes.add(match[1])
+      }
+    }
+
+    return Array.from(changedNotes)
+  }
+}

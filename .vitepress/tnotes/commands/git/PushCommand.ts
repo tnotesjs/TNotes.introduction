@@ -25,20 +25,32 @@ export class PushCommand extends BaseCommand {
     }
 
     try {
-      // 1. 先修复时间戳
-      this.logger.info('正在检查并修复时间戳...')
-      await this.timestampService.fixAllTimestamps()
-
-      // 2. 检查是否有更改
+      // 1. 检查是否有更改
       this.logger.info('检查是否有更改...')
-      const hasChanges = await this.gitService.hasChanges()
+      const status = await this.gitService.getStatus()
 
-      if (!hasChanges) {
+      if (!status.hasChanges) {
         this.logger.info('没有更改需要推送')
         return
       }
 
-      // 3. 推送到远程仓库
+      // 获取变更的文件列表
+      const changedFiles = status.files.map((f) => f.path)
+
+      // 2. 扫描所有笔记，修复那些创建时间和最近更新时间错误的笔记配置
+      this.logger.info('正在修复历史错误的时间戳...')
+      await this.timestampService.fixAllTimestamps()
+
+      // 3. 检查本次 push 是否有笔记 README.md 文件变更
+      const changedNotes = this.timestampService.getChangedNotes(changedFiles)
+      if (changedNotes.length > 0) {
+        this.logger.info(
+          `检测到 ${changedNotes.length} 篇笔记的 README.md 有变更，更新时间戳...`
+        )
+        await this.timestampService.updateNotesTimestamp(changedNotes)
+      }
+
+      // 4. 推送到远程仓库
       this.logger.info('正在推送到远程仓库...')
       await this.gitService.quickPush()
 
