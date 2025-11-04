@@ -57,9 +57,13 @@ export class TimestampService {
   /**
    * 修复单个笔记的时间戳
    * @param noteDir - 笔记目录名
+   * @param forceUpdate - 是否强制更新（忽略现有值）
    * @returns 是否进行了修复
    */
-  private fixNoteTimestamps(noteDir: string): boolean {
+  private fixNoteTimestamps(
+    noteDir: string,
+    forceUpdate: boolean = false
+  ): boolean {
     const configPath = path.join(NOTES_DIR_PATH, noteDir, '.tnotes.json')
 
     if (!fs.existsSync(configPath)) {
@@ -82,22 +86,35 @@ export class TimestampService {
       let modified = false
 
       // 修复 created_at（设置为首次提交时间）
-      if (!config.created_at || config.created_at !== timestamps.created_at) {
+      if (
+        forceUpdate ||
+        !config.created_at ||
+        config.created_at !== timestamps.created_at
+      ) {
         config.created_at = timestamps.created_at
         modified = true
       }
 
-      // 修复 updated_at（只在 git 时间戳更新时更新，避免覆盖用户手动修改）
-      if (!config.updated_at) {
-        // 如果没有 updated_at，初始化为 git 时间戳
-        config.updated_at = timestamps.updated_at
-        modified = true
-      } else if (timestamps.updated_at > config.updated_at) {
-        // 如果 git 显示有更新（README.md 被修改），才更新时间戳
-        config.updated_at = timestamps.updated_at
-        modified = true
+      // 修复 updated_at
+      if (forceUpdate) {
+        // 强制更新：直接使用 git 时间戳
+        if (config.updated_at !== timestamps.updated_at) {
+          config.updated_at = timestamps.updated_at
+          modified = true
+        }
+      } else {
+        // 常规更新：只在 git 时间戳更新时更新，避免覆盖用户手动修改
+        if (!config.updated_at) {
+          // 如果没有 updated_at，初始化为 git 时间戳
+          config.updated_at = timestamps.updated_at
+          modified = true
+        } else if (timestamps.updated_at > config.updated_at) {
+          // 如果 git 显示有更新（README.md 被修改），才更新时间戳
+          config.updated_at = timestamps.updated_at
+          modified = true
+        }
+        // 如果 git 时间戳 <= config 时间戳，说明没有新的提交，保持原值
       }
-      // 如果 git 时间戳 <= config 时间戳，说明没有新的提交，保持原值
 
       if (modified) {
         // 保持字段顺序写回文件
@@ -124,14 +141,19 @@ export class TimestampService {
 
   /**
    * 修复所有笔记的时间戳
+   * @param forceUpdate - 是否强制更新（忽略现有值，用于修复历史错误数据）
    * @returns 修复统计信息
    */
-  async fixAllTimestamps(): Promise<{
+  async fixAllTimestamps(forceUpdate: boolean = false): Promise<{
     fixed: number
     skipped: number
     total: number
   }> {
-    logger.info('正在修复笔记时间戳...')
+    if (forceUpdate) {
+      logger.info('正在强制修复笔记时间戳（使用 git 真实时间）...')
+    } else {
+      logger.info('正在修复笔记时间戳...')
+    }
 
     if (!fs.existsSync(NOTES_DIR_PATH)) {
       logger.error('notes 目录不存在')
@@ -150,7 +172,7 @@ export class TimestampService {
     let skippedCount = 0
 
     for (const noteDir of noteDirs) {
-      const fixed = this.fixNoteTimestamps(noteDir)
+      const fixed = this.fixNoteTimestamps(noteDir, forceUpdate)
       if (fixed) {
         fixedCount++
       } else {
