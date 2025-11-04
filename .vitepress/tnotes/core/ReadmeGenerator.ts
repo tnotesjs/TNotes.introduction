@@ -28,7 +28,7 @@ export class ReadmeGenerator {
    */
   updateNoteReadme(noteInfo: NoteInfo): void {
     if (!noteInfo.config) {
-      logger.warn(`No config found for note: ${noteInfo.dirName}`)
+      logger.warn(`笔记 ${noteInfo.dirName} 缺少配置文件`)
       return
     }
 
@@ -46,7 +46,7 @@ export class ReadmeGenerator {
     const updatedContent = lines.join(EOL)
     fs.writeFileSync(noteInfo.readmePath, updatedContent, 'utf-8')
 
-    logger.info(`Updated README for note: ${noteInfo.dirName}`)
+    // 不再输出每个笔记的日志，由 ReadmeService 统一输出汇总
   }
 
   /**
@@ -62,12 +62,16 @@ export class ReadmeGenerator {
         this.updateNoteReadme(note)
         successCount++
       } catch (error) {
-        logger.error(`Failed to update README for note: ${note.dirName}`, error)
+        logger.error(`更新笔记 ${note.dirName} 失败`, error)
         failCount++
       }
     }
 
-    logger.info(`Updated ${successCount} READMEs, ${failCount} failed`)
+    if (failCount > 0) {
+      logger.warn(`更新完成：成功 ${successCount} 篇，失败 ${failCount} 篇`)
+    } else {
+      logger.info(`成功更新 ${successCount} 篇笔记`)
+    }
   }
 
   /**
@@ -197,7 +201,7 @@ export class ReadmeGenerator {
     const updatedContent = lines.join(EOL)
     fs.writeFileSync(homeReadmePath, updatedContent, 'utf-8')
 
-    logger.info('Updated home README')
+    logger.info('已更新首页 README')
   }
 
   /**

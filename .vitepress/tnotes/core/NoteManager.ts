@@ -75,7 +75,7 @@ export class NoteManager {
       })
     }
 
-    logger.info(`Scanned ${notes.length} notes`)
+    // 移除日志输出，由调用方决定是否输出
     return notes
   }
 

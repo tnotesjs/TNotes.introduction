@@ -42,6 +42,22 @@ import { logger } from './utils/logger'
       throw createError.commandNotFound(commandName)
     }
 
+    // 处理 quiet 模式（适用于 update 命令）
+    if (commandName === 'update' && args.quiet) {
+      const updateCommand = command as any
+      if (typeof updateCommand.setQuiet === 'function') {
+        updateCommand.setQuiet(true)
+      }
+    }
+
+    // 处理 watch 模式（适用于 dev 命令）
+    if (commandName === 'dev' && args['no-watch']) {
+      const devCommand = command as any
+      if (typeof devCommand.setEnableWatch === 'function') {
+        devCommand.setEnableWatch(false)
+      }
+    }
+
     // 执行命令
     await command.execute()
   } catch (error) {

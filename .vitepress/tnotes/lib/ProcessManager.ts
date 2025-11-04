@@ -65,8 +65,9 @@ export class ProcessManager {
       this.kill(id)
     }
 
-    this.logger.info(`启动进程: ${id} - ${command} ${args.join(' ')}`)
-
+    /**
+     * 不在这里输出命令日志，由调用方输出更合适，可以看到服务执行过程中的一些实时 log，比如 hmr
+     */
     const proc = spawn(command, args, {
       stdio: 'inherit',
       shell: true,

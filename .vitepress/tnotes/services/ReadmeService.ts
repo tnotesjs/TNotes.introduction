@@ -55,31 +55,101 @@ export class ReadmeService {
       updateHome = true,
     } = options
 
-    logger.info('Starting README update process...')
+    logger.info('开始更新知识库...')
 
     // 1. 扫描所有笔记
     const notes = this.noteManager.scanNotes()
-    logger.info(`Found ${notes.length} notes`)
+    logger.info(`扫描到 ${notes.length} 篇笔记`)
 
-    // 2. 更新每个笔记的 README
-    this.readmeGenerator.updateAllNoteReadmes(notes)
+    // 2. 检测变更的笔记（增量更新优化）
+    const changedIds = await this.getChangedNoteIds()
+    const shouldIncrementalUpdate =
+      changedIds.size > 0 && changedIds.size < notes.length * 0.3 // 少于30%变更才增量更新
 
-    // 3. 更新侧边栏配置
+    let notesToUpdate = notes
+    if (shouldIncrementalUpdate) {
+      notesToUpdate = notes.filter((note) => changedIds.has(note.id))
+      logger.info(`检测到 ${changedIds.size} 篇笔记有变更，使用增量更新模式`)
+    } else {
+      logger.info('使用全量更新模式')
+    }
+
+    // 3. 并行更新笔记的 README
+    const startTime = Date.now()
+    await this.updateNoteReadmesInParallel(notesToUpdate)
+    const updateTime = Date.now() - startTime
+
+    logger.info(`更新了 ${notesToUpdate.length} 篇笔记 (耗时 ${updateTime}ms)`)
+
+    // 4. 更新侧边栏配置（始终更新，因为需要全局视图）
     if (updateSidebar) {
       await this.updateSidebar(notes)
     }
 
-    // 4. 更新目录文件
+    // 5. 更新目录文件（始终更新）
     if (updateToc) {
       await this.updateTocFile(notes)
     }
 
-    // 5. 更新首页 README
+    // 6. 更新首页 README（始终更新）
     if (updateHome) {
       await this.updateHomeReadme(notes)
     }
 
-    logger.info('README update complete!')
+    logger.info('知识库更新完成！')
+  }
+
+  /**
+   * 获取变更的笔记 ID 集合
+   * @returns 变更的笔记 ID 集合
+   */
+  private async getChangedNoteIds(): Promise<Set<string>> {
+    try {
+      const { getChangedIds } = await import('../utils/getChangedIds')
+      return getChangedIds()
+    } catch (error) {
+      // 如果获取失败（比如不在 Git 仓库中），返回空集合，触发全量更新
+      return new Set()
+    }
+  }
+
+  /**
+   * 并行更新多个笔记的 README
+   * @param notes - 笔记信息数组
+   */
+  private async updateNoteReadmesInParallel(notes: NoteInfo[]): Promise<void> {
+    const batchSize = 10 // 每批处理10个，避免过多并发
+    const batches: NoteInfo[][] = []
+
+    for (let i = 0; i < notes.length; i += batchSize) {
+      batches.push(notes.slice(i, i + batchSize))
+    }
+
+    let successCount = 0
+    let failCount = 0
+
+    for (const batch of batches) {
+      const results = await Promise.allSettled(
+        batch.map((note) =>
+          Promise.resolve().then(() => {
+            this.readmeGenerator.updateNoteReadme(note)
+          })
+        )
+      )
+
+      for (const result of results) {
+        if (result.status === 'fulfilled') {
+          successCount++
+        } else {
+          failCount++
+          logger.error('更新笔记失败', result.reason)
+        }
+      }
+    }
+
+    if (failCount > 0) {
+      logger.warn(`更新完成：成功 ${successCount} 篇，失败 ${failCount} 篇`)
+    }
   }
 
   /**
@@ -103,7 +173,7 @@ export class ReadmeService {
   private async updateSidebar(notes: NoteInfo[]): Promise<void> {
     // 读取 README.md 解析层次结构
     if (!fs.existsSync(ROOT_README_PATH)) {
-      logger.error('Home README not found, cannot generate sidebar')
+      logger.error('未找到首页 README，无法生成侧边栏')
       return
     }
 
@@ -206,7 +276,7 @@ export class ReadmeService {
       'utf-8'
     )
 
-    logger.info('Updated sidebar.json')
+    logger.info('已更新侧边栏配置')
   }
   /**
    * 更新目录文件 (TOC.md)
@@ -215,7 +285,7 @@ export class ReadmeService {
    */
   private async updateTocFile(notes: NoteInfo[]): Promise<void> {
     if (!fs.existsSync(ROOT_README_PATH)) {
-      logger.error('Home README not found, cannot generate TOC')
+      logger.error('未找到首页 README，无法生成目录')
       return
     }
 
@@ -237,9 +307,9 @@ export class ReadmeService {
     }
 
     if (startIdx === -1 || endIdx === -1) {
-      logger.warn('Cannot find region:toc in README.md, using full content')
+      logger.warn('未找到 region:toc 区域，使用完整内容')
       fs.writeFileSync(VP_TOC_PATH, content, 'utf-8')
-      logger.info('Updated TOC.md')
+      logger.info('已更新目录文件')
       return
     }
 
@@ -250,7 +320,7 @@ export class ReadmeService {
     const tocContent = tocLines.join('\n')
 
     fs.writeFileSync(VP_TOC_PATH, tocContent, 'utf-8')
-    logger.info('Updated TOC.md')
+    logger.info('已更新目录文件')
   }
 
   /**

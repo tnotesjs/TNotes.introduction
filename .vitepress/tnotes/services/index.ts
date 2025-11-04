@@ -8,6 +8,7 @@ export { NoteService } from './NoteService'
 export { ReadmeService } from './ReadmeService'
 export { VitepressService } from './VitepressService'
 export { GitService } from './GitService'
+export { FileWatcherService } from './FileWatcherService'
 
 export type { CreateNoteOptions } from './NoteService'
 export type { UpdateReadmeOptions } from './ReadmeService'

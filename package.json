@@ -6,6 +6,7 @@
     "tn:dev": "         tsx ./.vitepress/tnotes/index.ts --dev",
     "tn:dev:safe": "    tsx ./.vitepress/tnotes/index.ts --safeDev",
     "tn:update": "      tsx ./.vitepress/tnotes/index.ts --update",
+    "tn:update:quiet": "tsx ./.vitepress/tnotes/index.ts --update --quiet",
     "tn:update:safe": " tsx ./.vitepress/tnotes/index.ts --safeUpdate",
     "tn:push": "        tsx ./.vitepress/tnotes/index.ts --push",
     "tn:pull": "        tsx ./.vitepress/tnotes/index.ts --pull",
