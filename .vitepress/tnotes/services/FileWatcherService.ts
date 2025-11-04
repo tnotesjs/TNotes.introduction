@@ -317,4 +317,26 @@ export class FileWatcherService {
   isWatching(): boolean {
     return this.watcher !== null
   }
+
+  /**
+   * 暂停文件监听（用于 push 等批量操作）
+   */
+  pause(): void {
+    if (!this.watcher) return
+    this.isUpdating = true
+    logger.info('文件监听已暂停')
+  }
+
+  /**
+   * 恢复文件监听
+   */
+  resume(): void {
+    if (!this.watcher) return
+    // 重新初始化哈希缓存，确保下次检测准确
+    this.initializeFileHashes()
+    this.isUpdating = false
+    this.changedFiles.clear()
+    this.recentChanges = []
+    logger.info('文件监听已恢复')
+  }
 }

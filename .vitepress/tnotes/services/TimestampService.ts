@@ -24,15 +24,17 @@ export class TimestampService {
     updated_at: number
   } | null {
     try {
-      // 获取首次提交时间（创建时间）
-      const createdAtCmd = `git log --diff-filter=A --follow --format=%ct -- "${noteDirPath}" | tail -1`
+      const readmePath = path.join(noteDirPath, 'README.md')
+
+      // 获取 README.md 的首次提交时间（创建时间）
+      const createdAtCmd = `git log --diff-filter=A --follow --format=%ct -- "${readmePath}" | tail -1`
       const createdAtOutput = execSync(createdAtCmd, {
         encoding: 'utf-8',
         stdio: ['pipe', 'pipe', 'ignore'],
       }).trim()
 
-      // 获取最后修改时间
-      const updatedAtCmd = `git log -1 --format=%ct -- "${noteDirPath}"`
+      // 获取 README.md 的最后修改时间（只看 README.md，忽略 .tnotes.json）
+      const updatedAtCmd = `git log -1 --format=%ct -- "${readmePath}"`
       const updatedAtOutput = execSync(updatedAtCmd, {
         encoding: 'utf-8',
         stdio: ['pipe', 'pipe', 'ignore'],
@@ -85,11 +87,17 @@ export class TimestampService {
         modified = true
       }
 
-      // 修复 updated_at（设置为最后修改时间）
-      if (!config.updated_at || config.updated_at !== timestamps.updated_at) {
+      // 修复 updated_at（只在 git 时间戳更新时更新，避免覆盖用户手动修改）
+      if (!config.updated_at) {
+        // 如果没有 updated_at，初始化为 git 时间戳
+        config.updated_at = timestamps.updated_at
+        modified = true
+      } else if (timestamps.updated_at > config.updated_at) {
+        // 如果 git 显示有更新（README.md 被修改），才更新时间戳
         config.updated_at = timestamps.updated_at
         modified = true
       }
+      // 如果 git 时间戳 <= config 时间戳，说明没有新的提交，保持原值
 
       if (modified) {
         // 保持字段顺序写回文件
