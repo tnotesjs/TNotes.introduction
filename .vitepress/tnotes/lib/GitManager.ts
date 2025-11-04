@@ -83,7 +83,11 @@ export class GitManager {
   async getStatus(): Promise<GitStatus> {
     await this.ensureValidRepo()
 
-    const statusOutput = await runCommand('git status --porcelain', this.dir)
+    // 使用 -c core.quotePath=false 禁用路径转义，正确显示中文文件名
+    const statusOutput = await runCommand(
+      'git -c core.quotePath=false status --porcelain',
+      this.dir
+    )
     const lines = statusOutput
       .trim()
       .split('\n')
