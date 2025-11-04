@@ -413,7 +413,7 @@ export class GitManager {
       const remoteInfo = await this.getRemoteInfo()
       if (remoteInfo) {
         this.logger.success(
-          `推送成功: ${status.changedFiles} 个文件 → ${remoteInfo.owner}/${remoteInfo.repo}`
+          `推送成功: ${status.changedFiles} 个文件 → https://github.com/${remoteInfo.owner}/${remoteInfo.repo}`
         )
       } else {
         this.logger.success(`推送成功: ${status.changedFiles} 个文件`)

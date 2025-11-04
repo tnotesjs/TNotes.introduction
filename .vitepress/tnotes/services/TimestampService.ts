@@ -250,7 +250,10 @@ export class TimestampService {
   getChangedNotes(changedFiles: string[]): string[] {
     const changedNotes = new Set<string>()
 
-    for (const file of changedFiles) {
+    for (let file of changedFiles) {
+      // 移除 git 添加的引号（git 对包含特殊字符的路径会加引号）
+      file = file.replace(/^"(.*)"$/, '$1')
+
       // 检查是否是 notes 目录下的 README.md 文件
       const match = file.match(/^notes\/([^/]+)\/README\.md$/)
       if (match) {
