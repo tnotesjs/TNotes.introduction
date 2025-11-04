@@ -2,21 +2,6 @@
 
 <!-- region:toc -->
 
-::: details 📚 相关资源
-
-- [📺 bilibili（笔记视频资源）](https://space.bilibili.com/407241004)
-  - [bilibili.TNotes.introduction.0022.1](https://www.bilibili.com/video/111)
-  - [bilibili.TNotes.introduction.0022.2](https://www.bilibili.com/video/222)
-- [📒 TNotes（相关知识库）](https://tnotesjs.github.io/TNotes/)
-  - [TNotes.111](https://tnotesjs.github.io/TNotes.111/)
-  - [TNotes.222](https://tnotesjs.github.io/TNotes.222/)
-- [📂 TNotes.yuque（笔记附件资源）](https://www.yuque.com/tdahuyou/tnotes.yuque/)
-  - [TNotes.yuque.introduction.0022](https://www.yuque.com/tdahuyou/tnotes.yuque/123)
-  - [TNotes.yuque.introduction.0022](https://www.yuque.com/tdahuyou/tnotes.yuque/222)
-  - [TNotes.yuque.introduction.0022](https://www.yuque.com/tdahuyou/tnotes.yuque/333)
-
-:::
-
 - [1. 🎯 本节内容](#1--本节内容)
 - [2. 🫧 评价](#2--评价)
 - [3. ⚙️ 脚本简介](#3-️-脚本简介)
