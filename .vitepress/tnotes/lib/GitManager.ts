@@ -96,7 +96,10 @@ export class GitManager {
     // 解析文件状态
     const files: GitFileStatus[] = lines.map((line) => {
       const statusCode = line.substring(0, 2)
-      const path = line.substring(3)
+      let path = line.substring(3)
+
+      // 移除 git 添加的引号（即使设置了 core.quotePath=false，某些情况下仍会加引号）
+      path = path.replace(/^"(.*)"$/, '$1')
 
       let status: GitFileStatus['status'] = 'modified'
       if (line.startsWith('??')) {
