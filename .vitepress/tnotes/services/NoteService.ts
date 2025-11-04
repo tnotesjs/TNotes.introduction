@@ -88,8 +88,8 @@ export class NoteService {
       done: false,
       category,
       enableDiscussions,
-      created_at: Date.now(),
-      updated_at: Date.now(),
+      created_at: -1,
+      updated_at: -1,
     }
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8')
 

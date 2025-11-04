@@ -1,22 +1,28 @@
 /**
  * .vitepress/tnotes/commands/git/PushCommand.ts
  *
- * Git Push 命令 - 使用 GitService
+ * Git Push 命令 - 使用 GitService 和 TimestampService
  */
 import { BaseCommand } from '../BaseCommand'
-import { GitService } from '../../services'
+import { GitService, TimestampService } from '../../services'
 
 export class PushCommand extends BaseCommand {
   private gitService: GitService
+  private timestampService: TimestampService
 
   constructor() {
     super('push', '将知识库推送到 GitHub')
     this.gitService = new GitService()
+    this.timestampService = new TimestampService()
   }
 
   protected async run(): Promise<void> {
-    this.logger.info('检查是否有更改...')
+    // 1. 先修复时间戳
+    this.logger.info('正在检查并修复时间戳...')
+    await this.timestampService.fixAllTimestamps()
 
+    // 2. 检查是否有更改
+    this.logger.info('检查是否有更改...')
     const hasChanges = await this.gitService.hasChanges()
 
     if (!hasChanges) {
@@ -24,8 +30,8 @@ export class PushCommand extends BaseCommand {
       return
     }
 
+    // 3. 推送到远程仓库
     this.logger.info('正在推送到远程仓库...')
-
     await this.gitService.quickPush()
 
     this.logger.success('推送完成')
