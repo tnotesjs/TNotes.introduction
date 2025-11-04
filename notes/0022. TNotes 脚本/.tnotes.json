@@ -2,8 +2,8 @@
   "bilibili": [],
   "tnotes": [],
   "yuque": [],
-  "done": true,
-  "enableDiscussions": true,
+  "done": false,
+  "enableDiscussions": false,
   "id": "68f8bdfa-24bd-427e-a284-20448c031a24",
   "created_at": 1759507196451,
   "updated_at": 1759507196451

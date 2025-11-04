@@ -11,7 +11,6 @@ import {
   pushAllRepos,
   pullAllRepos,
   syncAllRepos,
-  GitManager,
 } from '../utils'
 import { ROOT_DIR_PATH } from '../config/constants'
 

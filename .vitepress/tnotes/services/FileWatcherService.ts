@@ -18,6 +18,9 @@ export class FileWatcherService {
   private updateTimer: NodeJS.Timeout | null = null
   private readonly debounceDelay = 1000 // 防抖延迟（毫秒）
   private changedFiles: Set<string> = new Set()
+  private isUpdating: boolean = false // 标记是否正在更新，避免循环触发
+  private lastUpdateTime: number = 0 // 上次更新时间
+  private readonly minUpdateInterval = 2000 // 最小更新间隔（毫秒）
 
   constructor() {
     this.readmeService = new ReadmeService()
@@ -41,6 +44,11 @@ export class FileWatcherService {
       (eventType, filename) => {
         if (!filename) return
 
+        // 如果正在更新，忽略所有变更
+        if (this.isUpdating) {
+          return
+        }
+
         // 只监听 README.md 和 .tnotes.json 文件
         if (
           !filename.endsWith('README.md') &&
@@ -55,6 +63,12 @@ export class FileWatcherService {
         }
 
         const fullPath = path.join(NOTES_DIR_PATH, filename)
+
+        // 避免重复添加同一文件
+        if (this.changedFiles.has(fullPath)) {
+          return
+        }
+
         this.changedFiles.add(fullPath)
 
         logger.info(`检测到文件变更: ${filename}`)
@@ -100,6 +114,21 @@ export class FileWatcherService {
   private async handleFileChange(): Promise<void> {
     if (this.changedFiles.size === 0) return
 
+    // 检查是否在最小更新间隔内
+    const now = Date.now()
+    if (now - this.lastUpdateTime < this.minUpdateInterval) {
+      logger.warn('更新触发过于频繁，跳过本次更新')
+      this.changedFiles.clear()
+      return
+    }
+
+    // 防止循环更新
+    if (this.isUpdating) {
+      logger.warn('正在更新中，跳过本次更新')
+      return
+    }
+
+    this.isUpdating = true
     const fileCount = this.changedFiles.size
     this.changedFiles.clear()
 
@@ -116,9 +145,15 @@ export class FileWatcherService {
       })
 
       const duration = Date.now() - startTime
+      this.lastUpdateTime = Date.now()
       logger.success(`更新完成 (耗时 ${duration}ms)`)
     } catch (error) {
       logger.error('自动更新失败', error)
+    } finally {
+      // 延迟重置更新标志，确保由更新引起的文件变更不会触发新的更新
+      setTimeout(() => {
+        this.isUpdating = false
+      }, 500)
     }
   }
 

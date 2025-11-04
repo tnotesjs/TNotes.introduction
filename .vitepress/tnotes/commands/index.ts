@@ -13,8 +13,6 @@ import { PushCommand, PullCommand, SyncCommand } from './git'
 import { NewCommand } from './note'
 
 // 旧命令（暂时保持向后兼容）
-import { SafeDevCommand } from './SafeDevCommand'
-import { SafeUpdateCommand } from './SafeUpdateCommand'
 import { PushAllCommand, PullAllCommand, SyncAllCommand } from './GitCommands'
 import { MergeCommand, DistributeCommand } from './NoteCommands'
 import { TempSyncCommand } from './TempSyncCommand'
@@ -25,11 +23,9 @@ import { HelpCommand } from './HelpCommand'
  */
 export const commands: Record<CommandName, Command> = {
   dev: new DevCommand(),
-  safeDev: new SafeDevCommand(),
   build: new BuildCommand(),
   preview: new PreviewCommand(),
   update: new UpdateCommand(),
-  safeUpdate: new SafeUpdateCommand(),
   push: new PushCommand(),
   pushAll: new PushAllCommand(),
   pull: new PullCommand(),
@@ -70,8 +66,6 @@ export * from './git'
 export * from './note'
 
 // 旧命令导出（向后兼容，仅导出不冲突的部分）
-export * from './SafeDevCommand'
-export * from './SafeUpdateCommand'
 export { PushAllCommand, PullAllCommand, SyncAllCommand } from './GitCommands'
 export { MergeCommand, DistributeCommand } from './NoteCommands'
 export * from './TempSyncCommand'

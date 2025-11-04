@@ -10,7 +10,7 @@ import {
   EN_WORDS_DIR,
 } from '../config/constants'
 import { getTargetDirs } from './getTargetDirs'
-import { GitManager } from './GitManager'
+import { GitManager } from '../lib/GitManager'
 import { logger } from './logger'
 import { handleError } from './errorHandler'
 

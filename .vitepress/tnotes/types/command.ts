@@ -9,11 +9,9 @@
  */
 export type CommandName =
   | 'dev'
-  | 'safeDev'
   | 'build'
   | 'preview'
   | 'update'
-  | 'safeUpdate'
   | 'push'
   | 'pushAll'
   | 'pull'
@@ -33,11 +31,9 @@ export interface CommandArgs {
   _: string[]
   [key: string]: any
   dev?: boolean
-  safeDev?: boolean
   build?: boolean
   preview?: boolean
   update?: boolean
-  safeUpdate?: boolean
   push?: boolean
   pushAll?: boolean
   pull?: boolean
@@ -66,11 +62,9 @@ export interface Command {
 export function isValidCommand(cmd: string): cmd is CommandName {
   return [
     'dev',
-    'safeDev',
     'build',
     'preview',
     'update',
-    'safeUpdate',
     'push',
     'pushAll',
     'pull',
