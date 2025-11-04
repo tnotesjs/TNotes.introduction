@@ -10,7 +10,7 @@
 - [x] [0001. TNotes 简介](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0001.%20TNotes%20%E7%AE%80%E4%BB%8B/README.md)
 - [x] [0028. TNotes 首页](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0028.%20TNotes%20%E9%A6%96%E9%A1%B5/README.md)
 - [x] [0014. 分仓库模式](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0014.%20%E5%88%86%E4%BB%93%E5%BA%93%E6%A8%A1%E5%BC%8F/README.md)
-- [x] [0022. TNotes 脚本](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0022.%20TNotes%20%E8%84%9A%E6%9C%AC/README.md)
+- [ ] [0022. TNotes 脚本](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0022.%20TNotes%20%E8%84%9A%E6%9C%AC/README.md)
 - [x] [0002. TNotes 公式支持](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0002.%20TNotes%20%E5%85%AC%E5%BC%8F%E6%94%AF%E6%8C%81/README.md)
 - [x] [0027. TNotes 中常用的 emoji](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0027.%20TNotes%20%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84%20emoji/README.md)
 - [ ] [0011. TNotes 笔记配置文件](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0011.%20TNotes%20%E7%AC%94%E8%AE%B0%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/README.md)
