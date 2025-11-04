@@ -47,6 +47,9 @@ export interface CommandArgs {
   tempSync?: boolean
   'timestamp-fix'?: boolean
   help?: boolean
+  force?: boolean
+  quiet?: boolean
+  'no-watch'?: boolean
 }
 
 /**

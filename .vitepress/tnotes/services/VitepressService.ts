@@ -70,10 +70,18 @@ export class VitepressService {
     const args = ['vitepress', 'dev', '--port', port.toString()]
     logger.info(`执行命令：${command} ${args.join(' ')}`)
 
+    // 显示启动阶段标识（在启动进程之前）
+    console.log('\n🚀 启动阶段：')
+    // 立即显示初始进度（注意：这里不换行，后续进度会覆盖这一行）
+    process.stdout.write('⏳ 启动进度: [░░░░░░░░░░░░░░░░░░░░] 0% - 初始化')
+
     const processInfo = this.processManager.spawn(processId, command, args, {
       cwd: ROOT_DIR_PATH,
       stdio: ['inherit', 'pipe', 'pipe'], // stdin 继承，stdout/stderr 管道捕获
     })
+
+    // 进程已启动，输出换行，让后续日志从新行开始
+    console.log()
 
     // 启动进度追踪
     const progressTracker = this.createProgressTracker(onReady)
@@ -151,17 +159,21 @@ export class VitepressService {
       const elapsed = Date.now() - startTime
       const timeSinceLastOutput = Date.now() - lastOutputTime
 
-      // 如果长时间没有输出更新，说明可能在处理大量文件，缓慢增加进度
-      if (timeSinceLastOutput > 1000 && currentProgress < 90 && hasSeenOutput) {
-        const timeBasedProgress = Math.min(
-          90,
-          20 + Math.floor((elapsed / 60000) * 70)
-        )
-        if (timeBasedProgress > currentProgress) {
-          updateProgress(timeBasedProgress, `处理中...`)
-        }
+      // 基于时间的进度估算（假设 15 秒完成）
+      const timeBasedProgress = Math.min(90, Math.floor((elapsed / 15000) * 90))
+
+      // 如果基于时间的进度超过当前进度，更新它
+      if (timeBasedProgress > currentProgress) {
+        let stage = '处理中...'
+        if (timeBasedProgress < 20) stage = '启动 VitePress'
+        else if (timeBasedProgress < 40) stage = '初始化 Vite'
+        else if (timeBasedProgress < 60) stage = '转换文件中'
+        else if (timeBasedProgress < 80) stage = '构建页面'
+        else stage = '即将完成'
+
+        updateProgress(timeBasedProgress, stage)
       }
-    }, 500)
+    }, 300)
 
     const parseOutput = (data: string): boolean => {
       if (serverReady) return true // 服务已就绪，显示所有输出
@@ -261,12 +273,6 @@ export class VitepressService {
       // 默认返回 true，显示其他输出
       return true
     }
-
-    // 显示启动阶段标识
-    console.log('\n🚀 启动阶段：')
-
-    // 启动初始进度
-    updateProgress(0, '初始化')
 
     // 监听服务就绪后，延迟显示 100% 完成信息
     let readyCheckInterval: NodeJS.Timeout | null = null

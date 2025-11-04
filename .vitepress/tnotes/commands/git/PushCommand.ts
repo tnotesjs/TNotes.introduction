@@ -50,8 +50,12 @@ export class PushCommand extends BaseCommand {
       }
 
       // 3. 推送到远程仓库
+      const force = this.options.force === true
+      if (force) {
+        this.logger.warn('使用强制推送模式 (--force)')
+      }
       this.logger.info('正在推送到远程仓库...')
-      await this.gitService.quickPush()
+      await this.gitService.quickPush({ force })
 
       this.logger.success('推送完成')
     } finally {
