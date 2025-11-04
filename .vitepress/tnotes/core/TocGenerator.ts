@@ -70,18 +70,15 @@ export class TocGenerator {
           )
         })
       }
-      if (noteConfig.tnotes.length > 0) {
-        noteConfig.tnotes.forEach(([tnotesName, notesID, notesName], i) => {
-          tnotesTOCItems.push(
-            `  - [TNotes.${tnotesName} - ${
-              notesID + (notesName ? `. ${notesName}/README` : '')
-            }](${
-              `https://tnotesjs.github.io/TNotes.${tnotesName}/notes/` +
-              notesID +
-              (notesName ? `.%20${encodeURIComponent(notesName)}/README` : '')
-            })`
+      if (noteConfig.tnotes && noteConfig.tnotes.length > 0) {
+        // 生成相关知识库的链接
+        const tnotesLinks = noteConfig.tnotes
+          .map(
+            (repoName) =>
+              `[TNotes.${repoName}](https://tnotesjs.github.io/TNotes.${repoName}/)`
           )
-        })
+          .join('、')
+        tnotesTOCItems.push(`- 相关知识库：${tnotesLinks}`)
       }
       if (noteConfig.yuque.length > 0) {
         noteConfig.yuque.forEach((slug, i) => {
@@ -104,10 +101,8 @@ export class TocGenerator {
     }
 
     if (tnotesTOCItems.length > 0) {
-      insertTocItems.push(
-        `- [📒 TNotes](https://tnotesjs.github.io/TNotes/)`,
-        ...tnotesTOCItems
-      )
+      // 直接添加相关知识库，不需要父级标题
+      insertTocItems.push(...tnotesTOCItems)
     }
 
     if (yuqueTOCItems.length > 0) {
@@ -116,6 +111,11 @@ export class TocGenerator {
         ...yuqueTOCItems
       )
     }
+
+    console.log(
+      `[DEBUG] Note ${noteId} - Final insertTocItems:`,
+      JSON.stringify(insertTocItems, null, 2)
+    )
 
     lines.splice(
       startLineIdx + 1,

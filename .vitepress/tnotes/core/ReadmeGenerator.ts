@@ -43,8 +43,17 @@ export class ReadmeGenerator {
       repoName
     )
 
+    console.log(
+      `[DEBUG] ${noteInfo.id} - Lines after updateNoteToc:`,
+      lines.slice(0, 15)
+    )
+
     const updatedContent = lines.join(EOL)
     fs.writeFileSync(noteInfo.readmePath, updatedContent, 'utf-8')
+
+    console.log(
+      `[DEBUG] ${noteInfo.id} - File written to ${noteInfo.readmePath}`
+    )
 
     // 不再输出每个笔记的日志，由 ReadmeService 统一输出汇总
   }

@@ -2,6 +2,8 @@
 
 <!-- region:toc -->
 
+- [📒 TNotes](https://tnotesjs.github.io/TNotes/)
+  - [TNotes.v - s. c/README](https://tnotesjs.github.io/TNotes.v/notes/s.%20c/README)
 - [1. 🎯 本节内容](#1--本节内容)
 - [2. 🫧 评价](#2--评价)
 - [3. ⚙️ 脚本简介](#3-️-脚本简介)

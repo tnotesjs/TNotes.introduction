@@ -1,6 +1,6 @@
 {
   "bilibili": [],
-  "tnotes": [],
+  "tnotes": ["vscode"],
   "yuque": [],
   "done": false,
   "enableDiscussions": false,

@@ -1,0 +1,31 @@
+
+> @ tn:update C:\tnotesjs\TNotes.introduction
+>       tsx ./.vitepress/tnotes/index.ts --update
+
+馃殌 [update] 鏍规嵁绗旇鍐呭鏇存柊鐭ヨ瘑搴?鈩癸笍  寮€濮嬫洿鏂扮煡璇嗗簱...
+鈩癸笍  鎵弿鍒?21 绡囩瑪璁?鈩癸笍  妫€娴嬪埌 1 绡囩瑪璁版湁鍙樻洿锛屼娇鐢ㄥ閲忔洿鏂版ā寮?[DEBUG] Note 0022 - Final insertTocItems: [
+  "- 鐩稿叧鐭ヨ瘑搴擄細[TNotes.vscode](https://tnotesjs.github.io/TNotes.vscode/)"
+]
+[DEBUG] 0022 - Lines after updateNoteToc: [
+  '# [0022. TNotes 鑴氭湰](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0022.%20TNotes%20%E8%84%9A%E6%9C%AC)',
+  '',
+  '<!-- region:toc -->',
+  '',
+  '- 鐩稿叧鐭ヨ瘑搴擄細[TNotes.vscode](https://tnotesjs.github.io/TNotes.vscode/)',
+  '- [1. 馃幆 鏈妭鍐呭](#1--鏈妭鍐呭)',
+  '- [2. 馃 璇勪环](#2--璇勪环)',
+  '- [3. 鈿欙笍 鑴氭湰绠€浠媇(#3-锔?鑴氭湰绠€浠?',
+  '- [4. 馃捇 浣跨敤 VSCode 浠诲姟蹇€熻皟鐢ㄥ懡浠(#4--浣跨敤-vscode-浠诲姟蹇€熻皟鐢ㄥ懡浠?',
+  '',
+  '<!-- endregion:toc -->',
+  '',
+  '## 1. 馃幆 鏈妭鍐呭',
+  '',
+  '- TNotes 鏍稿績鑴氭湰绠€浠?
+]
+[DEBUG] 0022 - File written to C:\tnotesjs\TNotes.introduction\notes\0022. TNotes 鑴氭湰\README.md
+鈩癸笍  鏇存柊浜?1 绡囩瑪璁?(鑰楁椂 3ms)
+鈩癸笍  宸叉洿鏂颁晶杈规爮閰嶇疆
+鈩癸笍  宸叉洿鏂扮洰褰曟枃浠?鈩癸笍  宸叉洿鏂伴椤?README
+鈩癸笍  鐭ヨ瘑搴撴洿鏂板畬鎴愶紒
+鉁?[update] 鐭ヨ瘑搴撴洿鏂板畬鎴?鉁?[update] 鍛戒护鎵ц鑰楁椂锛?48 ms
