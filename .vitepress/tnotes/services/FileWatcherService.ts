@@ -10,6 +10,16 @@ import { ReadmeService } from './ReadmeService'
 import { NOTES_DIR_PATH } from '../config/constants'
 
 /**
+ * 文件变更类型
+ */
+interface FileChange {
+  path: string
+  type: 'readme' | 'config'
+  noteId: string
+  noteDirName: string
+}
+
+/**
  * 文件监听服务类
  */
 export class FileWatcherService {
@@ -17,10 +27,10 @@ export class FileWatcherService {
   private watcher: fs.FSWatcher | null = null
   private updateTimer: NodeJS.Timeout | null = null
   private readonly debounceDelay = 1000 // 防抖延迟（毫秒）
-  private changedFiles: Set<string> = new Set()
+  private changedFiles: Map<string, FileChange> = new Map()
   private isUpdating: boolean = false // 标记是否正在更新，避免循环触发
   private lastUpdateTime: number = 0 // 上次更新时间
-  private readonly minUpdateInterval = 2000 // 最小更新间隔（毫秒）
+  private readonly minUpdateInterval = 1000 // 最小更新间隔（毫秒），减少到 1s
 
   constructor() {
     this.readmeService = new ReadmeService()
@@ -64,12 +74,27 @@ export class FileWatcherService {
 
         const fullPath = path.join(NOTES_DIR_PATH, filename)
 
+        // 解析笔记信息
+        const noteDirName = path.basename(path.dirname(fullPath))
+        const noteIdMatch = noteDirName.match(/^(\d{4})\./)
+        if (!noteIdMatch) {
+          return // 不是有效的笔记目录
+        }
+
+        const noteId = noteIdMatch[1]
+        const fileType = filename.endsWith('README.md') ? 'readme' : 'config'
+
         // 避免重复添加同一文件
         if (this.changedFiles.has(fullPath)) {
           return
         }
 
-        this.changedFiles.add(fullPath)
+        this.changedFiles.set(fullPath, {
+          path: fullPath,
+          type: fileType,
+          noteId,
+          noteDirName,
+        })
 
         logger.info(`检测到文件变更: ${filename}`)
 
@@ -129,24 +154,39 @@ export class FileWatcherService {
     }
 
     this.isUpdating = true
-    const fileCount = this.changedFiles.size
+    const changes = Array.from(this.changedFiles.values())
     this.changedFiles.clear()
-
-    logger.info(`开始更新 (检测到 ${fileCount} 个文件变更)...`)
 
     try {
       const startTime = Date.now()
 
-      // 执行增量更新
-      await this.readmeService.updateAllReadmes({
-        updateSidebar: true,
-        updateToc: true,
-        updateHome: true,
-      })
+      // 分析变更类型
+      const hasReadmeChanges = changes.some((c) => c.type === 'readme')
+      const hasConfigChanges = changes.some((c) => c.type === 'config')
 
-      const duration = Date.now() - startTime
+      // 策略1：只有 README.md 变更 - 只更新笔记内 TOC，不触发全局更新
+      if (hasReadmeChanges && !hasConfigChanges) {
+        logger.info(`检测到 ${changes.length} 个笔记内容变更，执行快速更新...`)
+        await this.readmeService.updateNoteReadmesOnly(
+          changes.map((c) => c.noteId)
+        )
+        const duration = Date.now() - startTime
+        logger.success(`快速更新完成 (耗时 ${duration}ms)`)
+      }
+      // 策略2：有配置文件变更 - 需要根据配置变更类型决定更新范围
+      else if (hasConfigChanges) {
+        logger.info(`检测到 ${changes.length} 个文件变更，执行完整更新...`)
+        // 暂时使用全量更新，后续优化为根据配置字段差异来决定
+        await this.readmeService.updateAllReadmes({
+          updateSidebar: true,
+          updateToc: true,
+          updateHome: true,
+        })
+        const duration = Date.now() - startTime
+        logger.success(`更新完成 (耗时 ${duration}ms)`)
+      }
+
       this.lastUpdateTime = Date.now()
-      logger.success(`更新完成 (耗时 ${duration}ms)`)
     } catch (error) {
       logger.error('自动更新失败', error)
     } finally {

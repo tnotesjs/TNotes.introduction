@@ -100,6 +100,34 @@ export class ReadmeService {
   }
 
   /**
+   * 只更新指定笔记的 README（不更新 sidebar、TOC、home）
+   * @param noteIds - 笔记 ID 数组
+   */
+  async updateNoteReadmesOnly(noteIds: string[]): Promise<void> {
+    if (noteIds.length === 0) return
+
+    // 1. 扫描所有笔记
+    const allNotes = this.noteManager.scanNotes()
+
+    // 2. 过滤出需要更新的笔记
+    const notesToUpdate = allNotes.filter((note) => noteIds.includes(note.id))
+
+    if (notesToUpdate.length === 0) {
+      logger.warn('没有找到需要更新的笔记')
+      return
+    }
+
+    // 3. 只更新笔记的 README 内容（TOC 等）
+    for (const note of notesToUpdate) {
+      try {
+        this.readmeGenerator.updateNoteReadme(note)
+      } catch (error) {
+        logger.error(`更新笔记 ${note.dirName} 失败`, error)
+      }
+    }
+  }
+
+  /**
    * 获取变更的笔记 ID 集合
    * @returns 变更的笔记 ID 集合
    */
