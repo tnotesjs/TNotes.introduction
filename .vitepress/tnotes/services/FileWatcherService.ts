@@ -6,8 +6,10 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import { logger } from '../utils/logger'
+import { ConfigValidator } from '../utils/ConfigValidator'
 import { ReadmeService } from './ReadmeService'
 import { NOTES_DIR_PATH } from '../config/constants'
+import type { NoteConfig } from '../types'
 
 /**
  * 文件变更类型
@@ -17,6 +19,8 @@ interface FileChange {
   type: 'readme' | 'config'
   noteId: string
   noteDirName: string
+  noteDirPath: string
+  configChangeType?: 'toc-only' | 'full' // 配置变更类型
 }
 
 /**
@@ -82,6 +86,7 @@ export class FileWatcherService {
         }
 
         const noteId = noteIdMatch[1]
+        const noteDirPath = path.dirname(fullPath)
         const fileType = filename.endsWith('README.md') ? 'readme' : 'config'
 
         // 避免重复添加同一文件
@@ -94,6 +99,7 @@ export class FileWatcherService {
           type: fileType,
           noteId,
           noteDirName,
+          noteDirPath,
         })
 
         logger.info(`检测到文件变更: ${filename}`)
@@ -162,10 +168,51 @@ export class FileWatcherService {
 
       // 分析变更类型
       const hasReadmeChanges = changes.some((c) => c.type === 'readme')
-      const hasConfigChanges = changes.some((c) => c.type === 'config')
+      const configChanges = changes.filter((c) => c.type === 'config')
 
-      // 策略1：只有 README.md 变更 - 只更新笔记内 TOC，不触发全局更新
-      if (hasReadmeChanges && !hasConfigChanges) {
+      // 处理配置文件变更：验证并检测变更类型
+      if (configChanges.length > 0) {
+        for (const change of configChanges) {
+          const configPath = path.join(change.noteDirPath, '.tnotes.json')
+
+          // 读取变更前的配置（从文件系统缓存或重新读取）
+          let oldConfig: NoteConfig | null = null
+          try {
+            const oldContent = fs.readFileSync(configPath, 'utf-8')
+            oldConfig = JSON.parse(oldContent)
+          } catch {
+            // 无法读取旧配置，跳过变更类型检测
+          }
+
+          // 验证并修复配置文件
+          const newConfig = ConfigValidator.validateAndFix(
+            configPath,
+            change.noteDirPath
+          )
+
+          // 检测变更类型
+          if (oldConfig && newConfig) {
+            change.configChangeType = ConfigValidator.detectChangeType(
+              oldConfig,
+              newConfig
+            )
+          } else {
+            // 无法检测，默认为全局更新
+            change.configChangeType = 'full'
+          }
+        }
+      }
+
+      // 判断更新策略
+      const hasTocOnlyChanges = configChanges.some(
+        (c) => c.configChangeType === 'toc-only'
+      )
+      const hasFullChanges = configChanges.some(
+        (c) => c.configChangeType === 'full'
+      )
+
+      // 策略1：只有 README.md 变更或仅 TOC 相关配置变更 - 只更新笔记内 TOC
+      if ((hasReadmeChanges || hasTocOnlyChanges) && !hasFullChanges) {
         logger.info(`检测到 ${changes.length} 个笔记内容变更，执行快速更新...`)
         await this.readmeService.updateNoteReadmesOnly(
           changes.map((c) => c.noteId)
@@ -173,10 +220,11 @@ export class FileWatcherService {
         const duration = Date.now() - startTime
         logger.success(`快速更新完成 (耗时 ${duration}ms)`)
       }
-      // 策略2：有配置文件变更 - 需要根据配置变更类型决定更新范围
-      else if (hasConfigChanges) {
-        logger.info(`检测到 ${changes.length} 个文件变更，执行完整更新...`)
-        // 暂时使用全量更新，后续优化为根据配置字段差异来决定
+      // 策略2：有全局配置变更 - 执行完整更新
+      else if (hasFullChanges) {
+        logger.info(
+          `检测到 ${configChanges.length} 个配置文件变更，执行完整更新...`
+        )
         await this.readmeService.updateAllReadmes({
           updateSidebar: true,
           updateToc: true,

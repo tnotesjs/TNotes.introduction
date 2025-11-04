@@ -12,6 +12,7 @@ import {
   README_FILENAME,
 } from '../config/constants'
 import { logger } from '../utils/logger'
+import { ConfigValidator } from '../utils/ConfigValidator'
 import { ConfigManager } from '../config/ConfigManager'
 
 /**
@@ -57,10 +58,11 @@ export class NoteManager {
       let config: NoteConfig | undefined
       if (fs.existsSync(configPath)) {
         try {
-          const configContent = fs.readFileSync(configPath, 'utf-8')
-          config = JSON.parse(configContent) as NoteConfig
+          // 使用 ConfigValidator 验证并修复配置
+          config =
+            ConfigValidator.validateAndFix(configPath, notePath) || undefined
         } catch (error) {
-          logger.error(`Failed to parse config for note: ${dirName}`, error)
+          logger.error(`Failed to validate config for note: ${dirName}`, error)
         }
       }
 

@@ -5,6 +5,8 @@
 - [1. 🫧 评价](#1--评价)
 - [2. 💻 数学公式支持测试](#2--数学公式支持测试)
   - [2.1. test 1](#21-test-1)
+    - [输入](#输入)
+    - [输出](#输出)
   - [2.2. test 2](#22-test-2)
 - [3. 🔗 引用](#3--引用)
 
@@ -22,14 +24,14 @@
 
 ### 2.1. test 1
 
-- **输入**
+#### 输入
 
 ```md
 When $a \ne 0$, there are two solutions to $(ax^2 + bx + c = 0)$ and they are
 
 $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
 
-**Maxwell's equations:**
+Maxwell's equations:
 
 | equation | description |
 | --- | --- |
@@ -38,13 +40,13 @@ $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
 | $\nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} = \frac{4\pi}{c}\vec{\mathbf{j}}    \nabla \cdot \vec{\mathbf{E}} = 4 \pi \rho$ | _wha?_ |
 ```
 
-- **输出**
+#### 输出
 
 When $a \ne 0$, there are two solutions to $(ax^2 + bx + c = 0)$ and they are
 
 $$ x = {-b \pm \sqrt{b^2-4ac} \over 2a} $$
 
-**Maxwell's equations:**
+Maxwell's equations:
 
 | equation | description |
 | --- | --- |
