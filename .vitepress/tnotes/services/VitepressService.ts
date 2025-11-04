@@ -122,7 +122,7 @@ export class VitepressService {
 
       currentProgress = progress
 
-      // 清除之前的进度行
+      // 清除之前的进度行（使用 \r 覆盖当前行）
       if (progressLine) {
         process.stdout.write(`\r${' '.repeat(progressLine.length)}\r`)
       }
@@ -131,10 +131,12 @@ export class VitepressService {
       const bar =
         '█'.repeat(Math.floor(currentProgress / 5)) +
         '░'.repeat(20 - Math.floor(currentProgress / 5))
-      progressLine = `⏳ 启动进度: [${bar}] ${currentProgress}%${
+      const fileInfo = totalFiles > 0 ? ` (${totalFiles} 个文件)` : ''
+      progressLine = `⏳ 启动进度: [${bar}] ${currentProgress}%${fileInfo}${
         message ? ' - ' + message : ''
       }`
 
+      // 写入进度行（不换行，保持在同一行）
       process.stdout.write(progressLine)
       lastOutputTime = Date.now()
     }
@@ -193,7 +195,7 @@ export class VitepressService {
         text.includes('press h to show help') ||
         text.includes('➜')
       ) {
-        // 清除进度条
+        // 清除进度条并换行，让 VitePress 输出显示在新行
         if (progressLine) {
           process.stdout.write(`\r${' '.repeat(progressLine.length)}\r`)
           progressLine = ''
@@ -259,6 +261,9 @@ export class VitepressService {
       // 默认返回 true，显示其他输出
       return true
     }
+
+    // 显示启动阶段标识
+    console.log('\n🚀 启动阶段：')
 
     // 启动初始进度
     updateProgress(0, '初始化')
