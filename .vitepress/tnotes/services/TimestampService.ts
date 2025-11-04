@@ -252,7 +252,10 @@ export class TimestampService {
 
     for (let file of changedFiles) {
       // 移除 git 添加的引号（git 对包含特殊字符的路径会加引号）
-      file = file.replace(/^"(.*)"$/, '$1')
+      // 支持两种格式：
+      // 1. "notes/xxx/README.md" (完整包裹)
+      // 2. notes/xxx/README.md" (只有末尾引号)
+      file = file.replace(/^"(.*)"$/, '$1').replace(/"$/, '')
 
       // 检查是否是 notes 目录下的 README.md 文件
       const match = file.match(/^notes\/([^/]+)\/README\.md$/)
