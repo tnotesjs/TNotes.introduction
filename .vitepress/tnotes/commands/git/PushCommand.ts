@@ -37,11 +37,7 @@ export class PushCommand extends BaseCommand {
       // 获取变更的文件列表
       const changedFiles = status.files.map((f) => f.path)
 
-      // 2. 扫描所有笔记，修复那些创建时间和最近更新时间错误的笔记配置
-      this.logger.info('正在修复历史错误的时间戳...')
-      await this.timestampService.fixAllTimestamps()
-
-      // 3. 检查本次 push 是否有笔记 README.md 文件变更
+      // 2. 检查本次 push 是否有笔记 README.md 文件变更
       this.logger.info(`变更文件: ${changedFiles.join(', ')}`)
       const changedNotes = this.timestampService.getChangedNotes(changedFiles)
       this.logger.info(`变更笔记: [${changedNotes.join(', ')}]`)
@@ -53,7 +49,7 @@ export class PushCommand extends BaseCommand {
         await this.timestampService.updateNotesTimestamp(changedNotes)
       }
 
-      // 4. 推送到远程仓库
+      // 3. 推送到远程仓库
       this.logger.info('正在推送到远程仓库...')
       await this.gitService.quickPush()
 
