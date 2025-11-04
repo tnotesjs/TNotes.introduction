@@ -192,7 +192,6 @@ export class TimestampService {
       total: noteDirs.length,
     }
   }
-}
 
   /**
    * 更新指定笔记的时间戳为当前时间
