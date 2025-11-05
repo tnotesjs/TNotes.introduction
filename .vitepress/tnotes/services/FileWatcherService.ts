@@ -9,6 +9,7 @@ import * as crypto from 'crypto'
 import { logger } from '../utils/logger'
 import { ConfigValidator } from '../utils/ConfigValidator'
 import { ReadmeService } from './ReadmeService'
+import { NoteService } from './NoteService'
 import { NOTES_DIR_PATH } from '../config/constants'
 import type { NoteConfig } from '../types'
 
@@ -28,6 +29,7 @@ interface FileChange {
  */
 export class FileWatcherService {
   private readmeService: ReadmeService
+  private noteService: NoteService
   private watcher: fs.FSWatcher | null = null
   private updateTimer: NodeJS.Timeout | null = null
   private readonly debounceDelay = 1000 // 防抖延迟（毫秒）
@@ -44,6 +46,7 @@ export class FileWatcherService {
 
   constructor() {
     this.readmeService = new ReadmeService()
+    this.noteService = new NoteService()
   }
 
   /**
@@ -280,6 +283,20 @@ export class FileWatcherService {
 
       // 收集所有需要更新的笔记 ID（README 变更 + 配置变更）
       const noteIdsToUpdate = [...new Set(changes.map((c) => c.noteId))]
+
+      // 先修正 README 变更笔记的标题
+      const readmeChangedIds = changes
+        .filter((c) => c.type === 'readme')
+        .map((c) => c.noteId)
+
+      if (readmeChangedIds.length > 0) {
+        for (const noteId of readmeChangedIds) {
+          const noteInfo = this.noteService.getNoteById(noteId)
+          if (noteInfo) {
+            await this.noteService.fixNoteTitle(noteInfo)
+          }
+        }
+      }
 
       // 只更新变更笔记的 README（包含 TOC）
       logger.info(
