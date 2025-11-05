@@ -8,7 +8,7 @@ import markdownItContainer from 'markdown-it-container'
 import mila from 'markdown-it-link-attributes'
 import markdownItTaskLists from 'markdown-it-task-lists'
 import { MarkdownOptions } from 'vitepress'
-import { generateAnchor } from '../tnotes/utils'
+import { generateAnchor } from '../../utils'
 import fs from 'fs'
 import path from 'path'
 

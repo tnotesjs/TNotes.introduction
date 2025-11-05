@@ -1,4 +1,9 @@
-import { author, ignore_dirs, repoName, root_item } from '../../.tnotes.json'
+import {
+  author,
+  ignore_dirs,
+  repoName,
+  root_item,
+} from '../../../../.tnotes.json'
 
 /**
  * 笔记仓库名儿

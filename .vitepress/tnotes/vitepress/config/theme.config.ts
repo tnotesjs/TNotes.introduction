@@ -4,8 +4,8 @@
  * 主题配置
  */
 import { DefaultTheme } from 'vitepress'
-import { menuItems, socialLinks } from '../../.tnotes.json'
-import sidebar from '../../sidebar.json'
+import { menuItems, socialLinks } from '../../../../.tnotes.json'
+import sidebar from '../../../../sidebar.json'
 
 export function getThemeConfig(): DefaultTheme.Config {
   const themeConfig: DefaultTheme.Config = {

@@ -34,6 +34,7 @@ export default {
     app.component('Footprints', Footprints)
     app.component('F', Footprints)
     app.component('Settings', Settings)
+    app.component('S', Settings)
     app.component('SidebarCard', SidebarCard)
     app.component('MarkMap', MarkMap)
     app.component('Mermaid', Mermaid)

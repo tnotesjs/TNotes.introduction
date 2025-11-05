@@ -13,16 +13,13 @@ export type CommandName =
   | 'preview'
   | 'update'
   | 'push'
-  | 'pushAll'
   | 'pull'
-  | 'pullAll'
   | 'sync'
-  | 'syncAll'
-  | 'new'
-  | 'merge'
-  | 'distribute'
-  | 'tempSync'
-  | 'timestamp-fix'
+  | 'create-note'
+  | 'merge-notes'
+  | 'split-notes'
+  | 'sync-scripts'
+  | 'fix-timestamps'
   | 'help'
 
 /**
@@ -36,17 +33,15 @@ export interface CommandArgs {
   preview?: boolean
   update?: boolean
   push?: boolean
-  pushAll?: boolean
   pull?: boolean
-  pullAll?: boolean
   sync?: boolean
-  syncAll?: boolean
-  new?: boolean
-  merge?: boolean
-  distribute?: boolean
-  tempSync?: boolean
-  'timestamp-fix'?: boolean
+  'create-note'?: boolean
+  'merge-notes'?: boolean
+  'split-notes'?: boolean
+  'sync-scripts'?: boolean
+  'fix-timestamps'?: boolean
   help?: boolean
+  all?: boolean
   force?: boolean
   quiet?: boolean
   'no-watch'?: boolean
@@ -71,16 +66,13 @@ export function isValidCommand(cmd: string): cmd is CommandName {
     'preview',
     'update',
     'push',
-    'pushAll',
     'pull',
-    'pullAll',
     'sync',
-    'syncAll',
-    'new',
-    'merge',
-    'distribute',
-    'tempSync',
-    'timestamp-fix',
+    'create-note',
+    'merge-notes',
+    'split-notes',
+    'sync-scripts',
+    'fix-timestamps',
     'help',
   ].includes(cmd)
 }

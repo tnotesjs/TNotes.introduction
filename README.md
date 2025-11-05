@@ -41,7 +41,7 @@
 
 - [ ] [0003. 评论功能的技术实现](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0003.%20%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD%E7%9A%84%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0/README.md)
 - [ ] [0009. 优化搜索配置](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0009.%20%E4%BC%98%E5%8C%96%E6%90%9C%E7%B4%A2%E9%85%8D%E7%BD%AE/README.md)
-- [ ] [0023. 处理笨重的 git log 问题](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0023.%20%E5%A4%84%E7%90%86%E7%AC%A8%E9%87%8D%E7%9A%84%20git%20log%20%E9%97%AE%E9%A2%98/README.md) ❌
+- [x] [0023. 处理笨重的 git log 问题](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0023.%20%E5%A4%84%E7%90%86%E7%AC%A8%E9%87%8D%E7%9A%84%20git%20log%20%E9%97%AE%E9%A2%98/README.md)
 
 ## 5. 关于作者
 

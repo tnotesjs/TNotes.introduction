@@ -1,10 +1,10 @@
 /**
- * .vitepress/tnotes/commands/HelpCommand.ts
+ * .vitepress/tnotes/commands/misc/HelpCommand.ts
  *
  * 帮助命令
  */
-import { BaseCommand } from './BaseCommand'
-import { getAllCommands } from './index'
+import { BaseCommand } from '../BaseCommand'
+import { getAllCommands } from '../index'
 
 export class HelpCommand extends BaseCommand {
   constructor() {
@@ -25,9 +25,9 @@ export class HelpCommand extends BaseCommand {
     // 按类别组织命令
     const categories = {
       开发和构建: ['dev', 'build', 'preview'],
-      内容管理: ['update', 'new', 'merge', 'distribute'],
-      'Git 操作': ['push', 'pull', 'sync', 'pushAll', 'pullAll', 'syncAll'],
-      其他: ['tempSync', 'help'],
+      内容管理: ['update', 'create-note', 'merge-notes', 'split-notes'],
+      'Git 操作': ['push', 'pull', 'sync'],
+      其他: ['sync-scripts', 'fix-timestamps', 'help'],
     }
 
     for (const [category, cmdNames] of Object.entries(categories)) {
@@ -48,7 +48,7 @@ export class HelpCommand extends BaseCommand {
     this.logger.info('  pnpm tn:update')
     this.logger.info('')
     this.logger.info('环境变量:')
-    this.logger.info('  DEBUG=1        启用调试模式，显示详细日志')
+    this.logger.info('  DEBUG=1        启用调试模式,显示详细日志')
     this.logger.info('')
     this.logger.info('更多信息请查看: .vitepress/tnotes/README.md')
   }

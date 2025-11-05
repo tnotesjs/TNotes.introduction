@@ -3,7 +3,7 @@
  *
  * 常量配置
  */
-import { author, ignore_dirs, repoName } from '../../.tnotes.json'
+import { author, ignore_dirs, repoName } from '../../../../.tnotes.json'
 
 /**
  * 忽略的文件和目录列表

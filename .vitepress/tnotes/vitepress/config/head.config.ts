@@ -4,7 +4,7 @@
  * HTML head 标签配置
  */
 import { HeadConfig } from 'vitepress'
-import { author, keywords } from '../../.tnotes.json'
+import { author, keywords } from '../../../../.tnotes.json'
 import { GITHUB_PAGE_URL } from './constants'
 
 export function getHeadConfig(): HeadConfig[] {
