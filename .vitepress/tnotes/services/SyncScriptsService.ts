@@ -18,9 +18,6 @@ import { runCommand } from '../utils/runCommand'
  * 需要同步的文件/目录列表（相对于项目根目录的路径）
  */
 const SYNC_LIST = [
-  '.vitepress/components',
-  '.vitepress/config',
-  '.vitepress/plugins',
   '.vitepress/theme',
   '.vitepress/tnotes',
   '.vitepress/config.mts',

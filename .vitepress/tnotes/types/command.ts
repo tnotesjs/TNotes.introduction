@@ -8,19 +8,19 @@
  * 命令名称类型
  */
 export type CommandName =
-  | 'dev'
   | 'build'
-  | 'preview'
-  | 'update'
-  | 'push'
-  | 'pull'
-  | 'sync'
   | 'create-note'
-  | 'merge-notes'
-  | 'split-notes'
-  | 'sync-scripts'
+  | 'dev'
   | 'fix-timestamps'
   | 'help'
+  | 'merge-notes'
+  | 'preview'
+  | 'pull'
+  | 'push'
+  | 'split-notes'
+  | 'sync-scripts'
+  | 'sync'
+  | 'update'
 
 /**
  * 命令参数接口
@@ -28,23 +28,26 @@ export type CommandName =
 export interface CommandArgs {
   _: string[]
   [key: string]: any
-  dev?: boolean
+  // cmds
   build?: boolean
-  preview?: boolean
-  update?: boolean
-  push?: boolean
-  pull?: boolean
-  sync?: boolean
   'create-note'?: boolean
-  'merge-notes'?: boolean
-  'split-notes'?: boolean
-  'sync-scripts'?: boolean
+  dev?: boolean
   'fix-timestamps'?: boolean
   help?: boolean
+  'merge-notes'?: boolean
+  preview?: boolean
+  pull?: boolean
+  push?: boolean
+  'split-notes'?: boolean
+  'sync-scripts'?: boolean
+  update?: boolean
+
+  // options
+  'no-watch'?: boolean
   all?: boolean
   force?: boolean
   quiet?: boolean
-  'no-watch'?: boolean
+  sync?: boolean
 }
 
 /**
