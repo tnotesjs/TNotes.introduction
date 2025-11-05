@@ -1,15 +1,12 @@
 /**
- * .vitepress/components/global-components.css
- *
- * 全局样式文件
- * 用于管理跨组件的全局样式，避免在各个 CSS Modules 中重复使用 :global()
+ * Swiper 组件全局样式
+ * 由于 Swiper 组件动态生成 DOM，所有样式都需要是全局的
  */
 
 /* ===================================== */
-/* #region Swiper 组件全局样式           */
+/* #region Swiper Tabs                   */
 /* ===================================== */
 
-/* 顶部 tabs */
 .tn-swiper-tabs {
   position: relative;
   z-index: 20;
@@ -41,7 +38,12 @@
   background: var(--vp-c-text-3);
 }
 
-/* tab 按钮 */
+/* #endregion */
+
+/* ===================================== */
+/* #region Tab 按钮                      */
+/* ===================================== */
+
 .tn-tab {
   position: relative;
   padding: 0.25rem 0.75rem;
@@ -83,7 +85,12 @@
   background-color: var(--vp-code-tab-active-bar-color);
 }
 
-/* tab 导航按钮 */
+/* #endregion */
+
+/* ===================================== */
+/* #region Tab 导航按钮                  */
+/* ===================================== */
+
 .tn-tab-nav {
   position: absolute;
   top: 50%;
@@ -96,9 +103,6 @@
   padding: 0 0.3rem;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   user-select: none;
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  -webkit-touch-callout: none;
   border-radius: 4px;
   line-height: 1;
 }
@@ -132,7 +136,12 @@
   left: 1.5rem;
 }
 
-/* swiper 容器 */
+/* #endregion */
+
+/* ===================================== */
+/* #region Swiper 容器                   */
+/* ===================================== */
+
 .swiper-container {
   width: 100%;
   position: relative;
@@ -168,107 +177,10 @@
   animation: swiperFadeIn 0.3s ease-out;
 }
 
-@keyframes swiperFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
+/* #endregion */
 
 /* ===================================== */
-/* #endregion Swiper 组件全局样式        */
-/* ===================================== */
-
-/* ===================================== */
-/* #region MarkMap 组件全局样式          */
-/* ===================================== */
-
-.mm-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 6px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-  backdrop-filter: blur(8px);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  color: var(--vp-c-tip-1);
-  font-weight: 700;
-}
-
-.mm-toolbar-item {
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  font-weight: 500;
-}
-
-.mm-toolbar-item:hover {
-  background-color: rgba(0, 0, 0, 0.08);
-  transform: scale(1.1);
-}
-
-.mm-toolbar-item:active {
-  transform: scale(0.95);
-}
-
-.markmap g {
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.mm-toolbar-item svg {
-  color: var(--vp-c-tip-1);
-}
-
-/* ===================================== */
-/* #endregion MarkMap 组件全局样式       */
-/* ===================================== */
-
-/* ===================================== */
-/* #region 404 页面全局样式              */
-/* ===================================== */
-
-.not-found-container {
-  text-align: center;
-  padding: 2rem;
-  min-height: calc(100vh - var(--vp-nav-height));
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  animation: fadeIn 0.4s ease-out;
-}
-
-.not-found-container h1 {
-  font-size: 4rem;
-  margin-bottom: 1rem;
-  background: linear-gradient(135deg, var(--vp-c-brand-1), var(--vp-c-brand-2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.not-found-container p {
-  font-size: 1.5rem;
-  color: var(--vp-c-text-2);
-}
-
-/* ===================================== */
-/* #endregion 404 页面全局样式           */
-/* ===================================== */
-
-/* ===================================== */
-/* #region 暗色模式样式                  */
+/* #region 暗色模式                      */
 /* ===================================== */
 
 html.dark .tn-swiper {
@@ -283,35 +195,11 @@ html.dark .swiper-container {
   background: var(--vp-c-bg);
 }
 
-.markmap-dark .mm-toolbar {
-  background: rgba(30, 30, 30, 0.9);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-}
-
-.markmap-dark .mm-toolbar-item:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
+/* #endregion */
 
 /* ===================================== */
-/* #endregion 暗色模式样式               */
+/* #region 响应式                        */
 /* ===================================== */
-
-/* ===================================== */
-/* #region 响应式设计                    */
-/* ===================================== */
-
-@media (max-width: 768px) {
-  .mm-toolbar {
-    scale: 0.9;
-    gap: 6px;
-    padding: 4px;
-  }
-
-  .mm-toolbar-item {
-    width: 24px;
-    height: 24px;
-  }
-}
 
 @media (max-width: 640px) {
   .tn-swiper-tabs {
@@ -346,21 +234,13 @@ html.dark .swiper-container {
   }
 }
 
-@media (max-width: 480px) {
-  .mm-toolbar {
-    scale: 0.8;
-  }
-}
+/* #endregion */
 
 /* ===================================== */
-/* #endregion 响应式设计                 */
+/* #region 动画                          */
 /* ===================================== */
 
-/* ===================================== */
-/* #region 通用动画                      */
-/* ===================================== */
-
-@keyframes fadeIn {
+@keyframes swiperFadeIn {
   from {
     opacity: 0;
   }
@@ -369,6 +249,4 @@ html.dark .swiper-container {
   }
 }
 
-/* ===================================== */
-/* #endregion 通用动画                   */
-/* ===================================== */
+/* #endregion */

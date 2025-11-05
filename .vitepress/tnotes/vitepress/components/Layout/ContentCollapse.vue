@@ -6,7 +6,6 @@
 import { onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vitepress'
 import icon__collapse from '/icon__collapse.svg'
-import './ContentCollapse.module.scss'
 
 const route = useRoute()
 
@@ -48,7 +47,7 @@ function toggleCollapse(
 
 // 初始化 TOC 折叠功能
 function initTocCollapse() {
-  console.log('[ContentCollapse] 初始化 TOC 折叠功能')
+  // console.log('[ContentCollapse] 初始化 TOC 折叠功能')
 
   // 查找 region:toc 注释
   const walker = document.createTreeWalker(
@@ -64,16 +63,16 @@ function initTocCollapse() {
     const comment = walker.currentNode as Comment
     if (comment.textContent?.trim() === 'region:toc') {
       tocStartComment = comment
-      console.log('[ContentCollapse] 找到 TOC 开始注释')
+      // console.log('[ContentCollapse] 找到 TOC 开始注释')
     } else if (comment.textContent?.trim() === 'endregion:toc') {
       tocEndComment = comment
-      console.log('[ContentCollapse] 找到 TOC 结束注释')
+      // console.log('[ContentCollapse] 找到 TOC 结束注释')
       break
     }
   }
 
   if (!tocStartComment || !tocEndComment) {
-    console.log('[ContentCollapse] 未找到 TOC 注释区域')
+    // console.log('[ContentCollapse] 未找到 TOC 注释区域')
     return
   }
 
@@ -171,7 +170,7 @@ function initTocCollapse() {
     const hasSelection = window.getSelection()?.toString().length ?? 0 > 0
 
     if (isClick && !hasSelection) {
-      console.log('[ContentCollapse] TOC 折叠区域被点击')
+      // console.log('[ContentCollapse] TOC 折叠区域被点击')
       const isCollapsed = contentWrapper.classList.contains('collapsed')
       contentWrapper.classList.toggle('collapsed')
       collapseHeader.classList.toggle('collapsed')
@@ -179,21 +178,21 @@ function initTocCollapse() {
     }
   })
 
-  console.log('[ContentCollapse] TOC 折叠功能初始化完成')
+  // console.log('[ContentCollapse] TOC 折叠功能初始化完成')
 }
 
 // 初始化二级标题折叠功能
 function initH2Collapse() {
-  console.log('[ContentCollapse] 初始化 H2 折叠功能')
+  // console.log('[ContentCollapse] 初始化 H2 折叠功能')
 
   const vpDoc = document.querySelector('.vp-doc')
   if (!vpDoc) {
-    console.log('[ContentCollapse] 未找到 .vp-doc 容器')
+    // console.log('[ContentCollapse] 未找到 .vp-doc 容器')
     return
   }
 
   const h2Elements = vpDoc.querySelectorAll('h2')
-  console.log(`[ContentCollapse] 找到 ${h2Elements.length} 个 h2 标题`)
+  // console.log(`[ContentCollapse] 找到 ${h2Elements.length} 个 h2 标题`)
 
   h2Elements.forEach((h2) => {
     // 跳过已经处理过的
@@ -249,9 +248,9 @@ function initH2Collapse() {
 
     // 恢复折叠状态（默认展开）
     const isCollapsed = getCollapseState(`h2_${h2Id}`)
-    console.log(
-      `[ContentCollapse] H2 ${h2Id} 初始状态: ${isCollapsed ? '折叠' : '展开'}`
-    )
+    // console.log(
+    //   `[ContentCollapse] H2 ${h2Id} 初始状态: ${isCollapsed ? '折叠' : '展开'}`
+    // )
     if (isCollapsed) {
       contentWrapper.classList.add('collapsed')
       h2.classList.add('collapsed')
@@ -293,7 +292,7 @@ function initH2Collapse() {
       const hasSelection = window.getSelection()?.toString().length ?? 0 > 0
 
       if (isClick && !hasSelection) {
-        console.log(`[ContentCollapse] H2 被点击: ${h2Id}`)
+        // console.log(`[ContentCollapse] H2 被点击: ${h2Id}`)
         const isCollapsed = contentWrapper.classList.contains('collapsed')
         contentWrapper.classList.toggle('collapsed')
         h2.classList.toggle('collapsed')
@@ -302,7 +301,7 @@ function initH2Collapse() {
     })
   })
 
-  console.log('[ContentCollapse] H2 折叠功能初始化完成')
+  // console.log('[ContentCollapse] H2 折叠功能初始化完成')
 }
 
 // 初始化所有折叠功能
@@ -337,7 +336,7 @@ function clearAllCollapseStates() {
     key.startsWith(COLLAPSE_STATE_PREFIX)
   )
   keys.forEach((key) => localStorage.removeItem(key))
-  console.log(`已清除 ${keys.length} 个折叠状态`)
+  // console.log(`已清除 ${keys.length} 个折叠状态`)
   // 重新初始化
   cleanupCollapse()
   initAllCollapse()

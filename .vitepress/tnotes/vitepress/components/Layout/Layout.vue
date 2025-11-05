@@ -85,7 +85,6 @@
               <img :src="icon__fold" alt="collapse all" />
             </button>
           </div>
-
           <!-- 单个图标，点击打开 modal，只在有笔记数据的页面显示 -->
           <div
             :class="$style.aboutBtn"

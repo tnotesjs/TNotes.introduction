@@ -9,7 +9,7 @@ interface NoteConfig {
 
 export default {
   // 监听笔记目录下的 .tnotes.json 文件变化
-  watch: ['../../notes/**/.tnotes.json'],
+  watch: ['../../../../notes/**/.tnotes.json'],
   load(watchedFiles: string[]): Record<string, NoteConfig> {
     // console.log('watchedFiles', watchedFiles)
 

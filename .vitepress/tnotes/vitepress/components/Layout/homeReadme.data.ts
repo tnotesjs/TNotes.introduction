@@ -13,7 +13,7 @@ interface ReadmeData {
 }
 
 export default {
-  watch: ['../../../README.md', '../../notes'],
+  watch: ['../../../../../README.md', '../../../../../notes'],
   load(watchedFiles: string[]): ReadmeData {
     let readmeData: ReadmeData = {
       fileContent: '',

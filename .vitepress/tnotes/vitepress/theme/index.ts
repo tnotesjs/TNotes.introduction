@@ -13,8 +13,7 @@ import MarkMap from '../components/MarkMap/MarkMap.vue'
 import Mermaid from '../components/Mermaid/Mermaid.vue'
 import Settings from '../components/Settings/Settings.vue'
 import SidebarCard from '../components/SidebarCard/SidebarCard.vue'
-import './custom.css'
-import '../components/global-components.css'
+import './styles/index.scss'
 
 export default {
   extends: DefaultTheme,

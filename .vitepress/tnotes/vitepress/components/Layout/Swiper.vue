@@ -167,5 +167,3 @@ watch(
   }
 )
 </script>
-
-<style module src="./Swiper.module.scss"></style>
