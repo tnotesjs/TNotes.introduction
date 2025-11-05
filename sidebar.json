@@ -4,8 +4,8 @@
     "collapsed": true,
     "items": [
       {
-        "text": "✅ 知识库简介",
-        "link": "/notes/0015. 知识库简介/README"
+        "text": "✅ TNotes.introduction 简介",
+        "link": "/notes/0015. TNotes.introduction 简介/README"
       }
     ]
   },
@@ -14,7 +14,7 @@
     "collapsed": true,
     "items": [
       {
-        "text": "⏰ TNotes 简介",
+        "text": "✅ TNotes 简介",
         "link": "/notes/0001. TNotes 简介/README"
       },
       {
@@ -94,7 +94,7 @@
         "link": "/notes/0009. 优化搜索配置/README"
       },
       {
-        "text": "⏰ 处理笨重的 git log 问题",
+        "text": "❌ 处理笨重的 git log 问题",
         "link": "/notes/0023. 处理笨重的 git log 问题/README"
       }
     ]

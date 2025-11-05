@@ -1,11 +1,11 @@
 {
   "bilibili": [],
-  "tnotes": [],
+  "tnotes": ["git-notes"],
   "yuque": [],
   "done": false,
-  "deprecated": false,
+  "deprecated": true,
   "enableDiscussions": false,
   "id": "0b6a3de8-f369-428b-8157-29750f8b3732",
   "created_at": 1748866888000,
-  "updated_at": 1757172142000
+  "updated_at": 1762330129883
 }
