@@ -75,7 +75,10 @@
         </div>
         <div :class="$style.rightArea">
           <!-- 全局折叠/展开按钮 -->
-          <div :class="$style.collapseAllBtn" v-show="currentNoteId">
+          <div
+            :class="$style.collapseAllBtn"
+            v-show="currentNoteId || isHomeReadme"
+          >
             <button
               :class="$style.collapseAllButton"
               @click="toggleAllCollapse"

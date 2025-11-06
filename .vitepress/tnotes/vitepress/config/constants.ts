@@ -9,7 +9,6 @@ import { author, ignore_dirs, repoName } from '../../../../.tnotes.json'
  * 忽略的文件和目录列表
  */
 export const IGNORE_LIST = [
-  './README.md',
   './MERGED_README.md',
   ...ignore_dirs.map((dir) => `**/${dir}/**`),
 ]

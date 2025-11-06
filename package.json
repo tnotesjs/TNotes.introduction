@@ -13,8 +13,7 @@
     "tn:split-notes": "   tsx ./.vitepress/tnotes/index.ts --split-notes",
     "tn:sync": "          tsx ./.vitepress/tnotes/index.ts --sync",
     "tn:sync-scripts": "  tsx ./.vitepress/tnotes/index.ts --sync-scripts",
-    "tn:update": "        tsx ./.vitepress/tnotes/index.ts --update",
-    "tn:update-all": "    tsx ./.vitepress/tnotes/index.ts --update --all"
+    "tn:update": "        tsx ./.vitepress/tnotes/index.ts --update"
   },
   "devDependencies": {
     "@types/markdown-it": "^14.1.2",

@@ -19,6 +19,9 @@ function getCurrentNoteKey(): string {
 
 // 保存折叠状态
 function saveCollapseState(key: string, collapsed: boolean) {
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+    return
+  }
   const noteKey = getCurrentNoteKey()
   const storageKey = `${COLLAPSE_STATE_PREFIX}${noteKey}_${key}`
   localStorage.setItem(storageKey, collapsed ? '1' : '0')
@@ -26,6 +29,9 @@ function saveCollapseState(key: string, collapsed: boolean) {
 
 // 获取折叠状态
 function getCollapseState(key: string): boolean {
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+    return false
+  }
   const noteKey = getCurrentNoteKey()
   const storageKey = `${COLLAPSE_STATE_PREFIX}${noteKey}_${key}`
   return localStorage.getItem(storageKey) === '1'
@@ -47,35 +53,50 @@ function toggleCollapse(
 
 // 初始化 TOC 折叠功能
 function initTocCollapse() {
-  // console.log('[ContentCollapse] 初始化 TOC 折叠功能')
+  console.log('[ContentCollapse] 初始化 TOC 折叠功能')
 
-  // 查找 region:toc 注释
-  const walker = document.createTreeWalker(
-    document.querySelector('.vp-doc') || document.body,
-    NodeFilter.SHOW_COMMENT,
-    null
-  )
+  const vpDoc = document.querySelector('.vp-doc')
+  if (!vpDoc) {
+    console.log('[ContentCollapse] 未找到 .vp-doc 容器')
+    return false
+  }
+
+  // 方案1: 查找 region:toc 注释
+  const walker = document.createTreeWalker(vpDoc, NodeFilter.SHOW_COMMENT, null)
 
   let tocStartComment: Comment | null = null
   let tocEndComment: Comment | null = null
 
   while (walker.nextNode()) {
     const comment = walker.currentNode as Comment
-    if (comment.textContent?.trim() === 'region:toc') {
+    const commentText = comment.textContent?.trim()
+    // console.log('[ContentCollapse] 找到注释:', commentText)
+
+    if (commentText === 'region:toc') {
       tocStartComment = comment
-      // console.log('[ContentCollapse] 找到 TOC 开始注释')
-    } else if (comment.textContent?.trim() === 'endregion:toc') {
+      console.log('[ContentCollapse] ✓ 找到 TOC 开始注释')
+    } else if (commentText === 'endregion:toc') {
       tocEndComment = comment
-      // console.log('[ContentCollapse] 找到 TOC 结束注释')
+      console.log('[ContentCollapse] ✓ 找到 TOC 结束注释')
       break
     }
   }
 
-  if (!tocStartComment || !tocEndComment) {
-    // console.log('[ContentCollapse] 未找到 TOC 注释区域')
-    return
+  // 如果找到注释,使用注释方式处理
+  if (tocStartComment && tocEndComment) {
+    return initTocCollapseByComments(tocStartComment, tocEndComment)
   }
 
+  // 方案2: 如果注释不存在(生产构建可能移除注释),使用结构化查找
+  console.log('[ContentCollapse] 注释方式失败,尝试结构化查找 TOC')
+  return initTocCollapseByStructure(vpDoc)
+}
+
+// 通过注释初始化 TOC 折叠
+function initTocCollapseByComments(
+  tocStartComment: Comment,
+  tocEndComment: Comment
+): boolean {
   // 获取 TOC 区域的所有内容
   const tocElements: Node[] = []
   let current: Node | null = tocStartComment.nextSibling
@@ -85,7 +106,12 @@ function initTocCollapse() {
     current = current.nextSibling
   }
 
-  if (tocElements.length === 0) return
+  console.log(`[ContentCollapse] 找到 ${tocElements.length} 个 TOC 元素`)
+
+  if (tocElements.length === 0) {
+    console.log('[ContentCollapse] TOC 区域为空')
+    return false
+  }
 
   // 创建折叠容器
   const collapseWrapper = document.createElement('div')
@@ -178,12 +204,147 @@ function initTocCollapse() {
     }
   })
 
-  // console.log('[ContentCollapse] TOC 折叠功能初始化完成')
+  console.log('[ContentCollapse] ✓ TOC 折叠功能初始化完成')
+  return true
+}
+
+// 通过结构化查找初始化 TOC 折叠(用于生产环境)
+function initTocCollapseByStructure(vpDoc: Element): boolean {
+  console.log('[ContentCollapse] 使用结构化方式查找 TOC')
+
+  // 在生产环境中,尝试查找第一个 h2 之前的所有 ul/ol 元素作为 TOC
+  // 通常 TOC 会在文档开头,第一个 h2 之前
+  const firstH2 = vpDoc.querySelector('h2')
+  if (!firstH2) {
+    console.log('[ContentCollapse] 未找到 h2 标题,可能没有 TOC')
+    return false
+  }
+
+  // 查找第一个 h2 之前的所有列表元素
+  const tocElements: Element[] = []
+  let current = firstH2.previousElementSibling
+
+  while (current) {
+    // 如果是列表,可能是 TOC
+    if (current.tagName === 'UL' || current.tagName === 'OL') {
+      tocElements.unshift(current) // 添加到开头保持顺序
+    }
+    // 如果遇到其他块级元素(如 p, h1 等),停止查找
+    else if (
+      current.tagName === 'P' ||
+      current.tagName === 'H1' ||
+      current.tagName === 'DIV'
+    ) {
+      // 如果是空的 p 标签或只有空白,继续
+      if (current.textContent?.trim()) {
+        break
+      }
+    }
+    current = current.previousElementSibling
+  }
+
+  if (tocElements.length === 0) {
+    console.log('[ContentCollapse] 未找到 TOC 列表元素')
+    return false
+  }
+
+  console.log(`[ContentCollapse] 找到 ${tocElements.length} 个 TOC 列表元素`)
+
+  // 保存第一个 TOC 元素的位置信息
+  const firstTocElement = tocElements[0]
+  const insertParent = firstTocElement.parentNode
+  const insertBefore = firstTocElement
+
+  // 创建折叠容器
+  const collapseWrapper = document.createElement('div')
+  collapseWrapper.className = 'toc-collapse-wrapper'
+
+  // 创建折叠头部
+  const collapseHeader = document.createElement('div')
+  collapseHeader.className = 'collapse-header toc-collapse-header'
+  collapseHeader.setAttribute('role', 'button')
+  collapseHeader.setAttribute('aria-label', '折叠/展开目录')
+  collapseHeader.setAttribute('title', '点击折叠/展开目录')
+
+  // 创建标签
+  const collapseLabel = document.createElement('span')
+  collapseLabel.className = 'collapse-label'
+  collapseLabel.textContent = '目录'
+
+  // 创建折叠按钮
+  const collapseButton = document.createElement('button')
+  collapseButton.className = 'collapse-toggle toc-collapse-toggle'
+  collapseButton.setAttribute('aria-hidden', 'true')
+
+  // 使用 SVG 图标
+  const collapseIcon = document.createElement('img')
+  collapseIcon.src = icon__collapse
+  collapseIcon.alt = 'collapse icon'
+  collapseIcon.className = 'collapse-icon'
+  collapseButton.appendChild(collapseIcon)
+
+  // 组装头部
+  collapseHeader.appendChild(collapseLabel)
+  collapseHeader.appendChild(collapseButton)
+
+  // 创建内容容器
+  const contentWrapper = document.createElement('div')
+  contentWrapper.className = 'collapse-content toc-collapse-content'
+
+  // 组装结构
+  collapseWrapper.appendChild(collapseHeader)
+  collapseWrapper.appendChild(contentWrapper)
+
+  // 先插入折叠容器
+  insertParent?.insertBefore(collapseWrapper, insertBefore)
+
+  // 再移动 TOC 内容到容器中
+  tocElements.forEach((el) => {
+    contentWrapper.appendChild(el)
+  })
+
+  // 恢复折叠状态
+  const isCollapsed = getCollapseState('toc')
+  if (isCollapsed) {
+    contentWrapper.classList.add('collapsed')
+    collapseHeader.classList.add('collapsed')
+  }
+
+  // 绑定点击事件
+  let mouseDownTime = 0
+  let mouseDownX = 0
+  let mouseDownY = 0
+
+  collapseHeader.addEventListener('mousedown', (e) => {
+    mouseDownTime = Date.now()
+    mouseDownX = e.clientX
+    mouseDownY = e.clientY
+  })
+
+  collapseHeader.addEventListener('mouseup', (e) => {
+    const mouseUpTime = Date.now()
+    const duration = mouseUpTime - mouseDownTime
+    const moveX = Math.abs(e.clientX - mouseDownX)
+    const moveY = Math.abs(e.clientY - mouseDownY)
+
+    const isClick = duration < 200 && moveX < 5 && moveY < 5
+    const hasSelection = window.getSelection()?.toString().length ?? 0 > 0
+
+    if (isClick && !hasSelection) {
+      const isCollapsed = contentWrapper.classList.contains('collapsed')
+      contentWrapper.classList.toggle('collapsed')
+      collapseHeader.classList.toggle('collapsed')
+      saveCollapseState('toc', !isCollapsed)
+    }
+  })
+
+  console.log('[ContentCollapse] ✓ TOC 折叠功能初始化完成(结构化方式)')
+  return true
 }
 
 // 初始化二级标题折叠功能
 function initH2Collapse() {
-  // console.log('[ContentCollapse] 初始化 H2 折叠功能')
+  console.log('[ContentCollapse] 初始化 H2 折叠功能')
 
   const vpDoc = document.querySelector('.vp-doc')
   if (!vpDoc) {
@@ -307,10 +468,23 @@ function initH2Collapse() {
 // 初始化所有折叠功能
 function initAllCollapse() {
   // 延迟执行以确保 DOM 已经渲染完成
-  setTimeout(() => {
-    initTocCollapse()
+  // 在生产构建中,DOM 渲染可能需要更长时间
+  const attempts = [100, 300, 500, 1000] // 多次尝试,间隔递增
+  let attemptIndex = 0
+
+  function tryInit() {
+    console.log(`[ContentCollapse] 尝试初始化 (第 ${attemptIndex + 1} 次)`)
+    const tocSuccess = initTocCollapse()
     initH2Collapse()
-  }, 100)
+
+    // 如果 TOC 初始化失败且还有重试次数,继续尝试
+    if (!tocSuccess && attemptIndex < attempts.length - 1) {
+      attemptIndex++
+      setTimeout(tryInit, attempts[attemptIndex])
+    }
+  }
+
+  setTimeout(tryInit, attempts[attemptIndex])
 }
 
 // 清理折叠功能
@@ -332,6 +506,9 @@ function cleanupCollapse() {
 
 // 清除所有折叠状态
 function clearAllCollapseStates() {
+  if (typeof window === 'undefined' || typeof localStorage === 'undefined') {
+    return
+  }
   const keys = Object.keys(localStorage).filter((key) =>
     key.startsWith(COLLAPSE_STATE_PREFIX)
   )
@@ -344,10 +521,11 @@ function clearAllCollapseStates() {
 
 // 组件挂载时初始化
 onMounted(() => {
-  initAllCollapse()
-
-  // 添加全局函数，方便调试
+  // 确保在客户端环境中才初始化
   if (typeof window !== 'undefined') {
+    initAllCollapse()
+
+    // 添加全局函数，方便调试
     ;(window as any).clearAllCollapseStates = clearAllCollapseStates
   }
 })
