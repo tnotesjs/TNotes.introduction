@@ -1,4 +1,4 @@
-# [0022. TNotes 脚本](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0022.%20TNotes%20%E8%84%9A%E6%9C%AC)
+# [0022. TNotes 脚本（待更新）](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0022.%20TNotes%20%E8%84%9A%E6%9C%AC%EF%BC%88%E5%BE%85%E6%9B%B4%E6%96%B0%EF%BC%89)
 
 <!-- region:toc -->
 

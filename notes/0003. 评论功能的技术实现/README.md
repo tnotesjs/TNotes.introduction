@@ -48,4 +48,6 @@
 
 ## 4. 🔗 引用
 
+- [Giscus][1]
+
 [1]: https://giscus.app/zh-CN

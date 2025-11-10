@@ -1,4 +1,4 @@
-# [0023. 处理笨重的 git log 问题](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0023.%20%E5%A4%84%E7%90%86%E7%AC%A8%E9%87%8D%E7%9A%84%20git%20log%20%E9%97%AE%E9%A2%98)
+# [0023. 处理笨重的 git log 问题（待迁移到 git-notes 中）](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0023.%20%E5%A4%84%E7%90%86%E7%AC%A8%E9%87%8D%E7%9A%84%20git%20log%20%E9%97%AE%E9%A2%98%EF%BC%88%E5%BE%85%E8%BF%81%E7%A7%BB%E5%88%B0%20git-notes%20%E4%B8%AD%EF%BC%89)
 
 <!-- region:toc -->
 
