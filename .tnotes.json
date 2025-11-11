@@ -19,11 +19,11 @@
       "src": "https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/assets/icon--introduction.svg"
     },
     "title": "introduction",
-    "completed_notes_count": 15,
+    "completed_notes_count": 14,
     "details": "TNotes 说明文档",
     "link": "https://tnotesjs.github.io/TNotes.introduction/",
     "created_at": 1740850835000,
-    "updated_at": 1762780376870,
+    "updated_at": 1762875041968,
     "days_since_birth": 9629
   },
   "port": 9379,

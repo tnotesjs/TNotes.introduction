@@ -4,7 +4,7 @@
     "collapsed": true,
     "items": [
       {
-        "text": "✅ TNotes.introduction 简介",
+        "text": "❌ TNotes.introduction 简介",
         "link": "/notes/0015. TNotes.introduction 简介/README"
       }
     ]
@@ -26,7 +26,7 @@
         "link": "/notes/0014. 分仓库模式/README"
       },
       {
-        "text": "⏰ TNotes 脚本（待更新）",
+        "text": "✅ TNotes 脚本（待更新）",
         "link": "/notes/0022. TNotes 脚本（待更新）/README"
       },
       {
@@ -68,7 +68,7 @@
         "link": "/notes/0012. Mermaid 图表/README"
       },
       {
-        "text": "✅ MarkMap 思维导图",
+        "text": "⏰ MarkMap 思维导图",
         "link": "/notes/0013. MarkMap 思维导图/README"
       },
       {
