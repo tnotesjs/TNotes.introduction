@@ -205,11 +205,15 @@ import { useNoteValidation } from './composables/useNoteValidation'
 import { useNoteSave } from './composables/useNoteSave'
 import { useCollapseControl } from './composables/useCollapseControl'
 import { useVSCodeIntegration } from './composables/useVSCodeIntegration'
+import { useCodeBlockFullscreen } from '../CodeBlockFullscreen'
 
 const { Layout } = DefaultTheme
 const vpData = useData()
 const router = useRouter()
 const route = useRoute()
+
+// 启用代码块全屏功能
+useCodeBlockFullscreen()
 
 // 自定义侧边栏引用
 const customSidebarRef = ref(null)
@@ -513,5 +517,9 @@ watch(
   }
 )
 </script>
+
+<style>
+@import '../CodeBlockFullscreen/styles.css';
+</style>
 
 <style module src="./Layout.module.scss"></style>
