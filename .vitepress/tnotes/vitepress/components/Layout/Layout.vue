@@ -123,7 +123,12 @@
       <!-- 自定义 DocFooter -->
       <DocFooter />
       <!-- {{ REPO_NAME + '.' + currentNoteId }} -->
-      <Discussions v-if="isDiscussionsVisible" :id="currentNoteConfig.id" />
+      <Discussions
+        v-if="isDiscussionsVisible"
+        :id="currentNoteConfig.id"
+        :note-number="currentNoteId || ''"
+        :note-title="currentNoteTitle"
+      />
     </template>
     <!-- <template #doc-bottom>
             <Discussions id="TNotes.template.0003" />
@@ -262,8 +267,19 @@ function focusCurrentNote() {
 
 // 提取当前笔记的 ID（前 4 个数字）
 const currentNoteId = computed(() => {
-  const match = vpData.page.value.relativePath.match(/notes\/(\d{4})\./)
-  return match ? match[1] : null
+  const relativePath = vpData.page.value.relativePath
+  // relativePath 格式: notes/0001. 标题/README.md
+  const match = relativePath.match(/notes\/(\d{4})/)
+  const id = match ? match[1] : null
+
+  if (relativePath.startsWith('notes/')) {
+    console.log('[Layout] 提取笔记 ID:', {
+      relativePath,
+      extractedId: id,
+    })
+  }
+
+  return id
 })
 
 // 判断是否是笔记页面（notes 目录下）
@@ -273,11 +289,19 @@ const isNotesPage = computed(() => {
 
 // 提取当前笔记的标题（从 relativePath）
 const currentNoteTitle = computed(() => {
+  const relativePath = vpData.page.value.relativePath
   // relativePath 格式: notes/0001. 标题/README.md
-  const match = vpData.page.value.relativePath.match(
-    /notes\/\d{4}\.\s+([^/]+)\//
-  )
-  return match ? match[1] : ''
+  const match = relativePath.match(/notes\/\d{4}\.\s+([^/]+)\//)
+  const title = match ? match[1] : ''
+
+  if (relativePath.startsWith('notes/')) {
+    console.log('[Layout] 提取笔记标题:', {
+      relativePath,
+      extractedTitle: title,
+    })
+  }
+
+  return title
 })
 
 // 根据当前笔记 ID 获取配置数据
