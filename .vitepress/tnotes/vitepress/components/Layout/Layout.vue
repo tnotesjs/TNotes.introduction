@@ -65,6 +65,7 @@
           :modal-created-at="modalCreatedAt"
           :modal-updated-at="modalUpdatedAt"
           :modal-github-url="modalGithubUrl"
+          :modal-github-page-url="modalGithubPageUrl"
           :completion-percentage="completionPercentage"
           :done-notes-len="doneNotesLen"
           :total-notes-len="totalNotesLen"
@@ -445,6 +446,21 @@ const modalGithubUrl = computed(() => {
     return `https://github.com/tnotesjs/${repoName}`
   }
   return currentNoteGithubUrl.value
+})
+
+// modal 中显示的 GitHub Page 链接
+const modalGithubPageUrl = computed(() => {
+  if (isHomeReadme.value) {
+    const repoName = vpData.site.value.title // 保持原始大小写
+    return `https://tnotesjs.github.io/${repoName}/`
+  }
+  // 笔记页面的 GitHub Page 链接
+  if (currentNoteId.value && currentNoteTitle.value) {
+    const repoName = vpData.site.value.title // 保持原始大小写
+    const encodedTitle = encodeURIComponent(currentNoteTitle.value)
+    return `https://tnotesjs.github.io/${repoName}/notes/${currentNoteId.value}.%20${encodedTitle}/README`
+  }
+  return ''
 })
 
 // modal 中显示的创建时间
