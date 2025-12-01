@@ -12,7 +12,9 @@
     "tn:sync": "          tsx ./.vitepress/tnotes/index.ts --sync",
     "tn:sync-scripts": "  tsx ./.vitepress/tnotes/index.ts --sync-scripts",
     "tn:update": "        tsx ./.vitepress/tnotes/index.ts --update",
-    "tn:update-all": "    tsx ./.vitepress/tnotes/index.ts --update --all"
+    "tn:update-all": "    tsx ./.vitepress/tnotes/index.ts --update --all",
+    "tn:update-completed-count": "tsx ./.vitepress/tnotes/index.ts --update-completed-count",
+    "tn:update-completed-count-all": "tsx ./.vitepress/tnotes/index.ts --update-completed-count --all"
   },
   "devDependencies": {
     "@types/markdown-it": "^14.1.2",
