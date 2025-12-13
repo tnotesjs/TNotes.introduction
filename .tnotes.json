@@ -1,9 +1,7 @@
 {
   "author": "tnotesjs",
   "repoName": "TNotes.introduction",
-  "keywords": [
-    "TNotes.introduction"
-  ],
+  "keywords": ["TNotes.introduction"],
   "sidebarShowNoteId": false,
   "ignore_dirs": [
     ".vscode",
@@ -49,7 +47,7 @@
     },
     {
       "text": "📒 TNotes",
-      "link": "https://tnotesjs.github.io/notes"
+      "link": "https://tnotesjs.github.io/TNotes/"
     },
     {
       "text": "📂 TNotes.yuque",
