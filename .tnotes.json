@@ -1,7 +1,9 @@
 {
   "author": "tnotesjs",
   "repoName": "TNotes.introduction",
-  "keywords": ["TNotes.introduction"],
+  "keywords": [
+    "TNotes.introduction"
+  ],
   "sidebarShowNoteId": false,
   "ignore_dirs": [
     ".vscode",
@@ -18,6 +20,8 @@
     },
     "title": "introduction",
     "completed_notes_count": {
+      "25.01": 0,
+      "25.02": 0,
       "25.03": 5,
       "25.04": 5,
       "25.05": 5,
@@ -32,7 +36,7 @@
     "details": "TNotes 说明文档",
     "link": "https://tnotesjs.github.io/TNotes.introduction/",
     "created_at": 1740850835000,
-    "updated_at": 1765611405444,
+    "updated_at": 1765702281789,
     "days_since_birth": 9653
   },
   "port": 9379,
