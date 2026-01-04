@@ -4,6 +4,7 @@
  * README 更新的公共辅助函数
  */
 import type { NoteInfo } from '../types'
+import { extractNoteId } from './noteId'
 
 /**
  * 笔记行匹配正则表达式
@@ -46,8 +47,7 @@ export function parseNoteLine(line: string): ParsedNoteLine {
   const [, , text] = noteMatch // 第一个捕获组是缩进，第二个是文本
 
   // 提取笔记 ID
-  const idMatch = text.match(/^(\d{4})\./)
-  const noteId = idMatch ? idMatch[1] : null
+  const noteId = extractNoteId(text)
 
   return {
     isMatch: true,

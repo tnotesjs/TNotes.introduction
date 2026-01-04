@@ -1,12 +1,16 @@
 /**
  * .vitepress/tnotes/services/FileWatcherService.ts
  *
- * 文件监听服务 - 监听笔记文件变化并自动更新
+ * 文件监听服务
+ *
+ * - 监听笔记文件标题的变化并自动更新 toc
+ * - 监听笔记配置文件的变化并自动更新笔记的状态
  */
 import * as fs from 'fs'
 import * as path from 'path'
 import * as crypto from 'crypto'
 import { logger } from '../utils/logger'
+import { extractNoteId, warnInvalidNoteId } from '../utils/noteId'
 import { ReadmeService } from './ReadmeService'
 import { NoteService } from './NoteService'
 import { NoteIndexCache } from '../core/NoteIndexCache'
@@ -34,22 +38,103 @@ export class FileWatcherService {
   private noteIndexCache: NoteIndexCache
   private watcher: fs.FSWatcher | null = null
   private updateTimer: NodeJS.Timeout | null = null
-  private readonly debounceDelay = 1000 // 防抖延迟（毫秒）
+
+  /**
+   * 防抖延迟（毫秒）
+   *
+   * 1s 内多次变更只触发一次更新
+   */
+  private readonly debounceDelay = 1000
+
+  /**
+   * 最小更新间隔（毫秒），减少到 1s
+   */
+  private readonly minUpdateInterval = 1000
+
+  /**
+   * 标记是否正在更新，避免循环触发
+   */
+  private isUpdating: boolean = false
+
+  /**
+   * 上次更新时间
+   */
+  private lastUpdateTime: number = 0
+
+  /**
+   * 文件变更信息
+   *
+   * - key: 文件路径
+   * - val: 变更信息
+   */
   private changedFiles: Map<string, FileChange> = new Map()
-  private isUpdating: boolean = false // 标记是否正在更新，避免循环触发
-  private lastUpdateTime: number = 0 // 上次更新时间
-  private readonly minUpdateInterval = 1000 // 最小更新间隔（毫秒），减少到 1s
-  private initializationTime: number = 0 // 初始化时间
-  private readonly initializationPeriod = 3000 // 初始化期（毫秒），忽略启动后的变更事件
-  private fileHashes: Map<string, string> = new Map() // 文件内容哈希缓存
-  private batchUpdateThreshold = 5 // 批量更新阈值（文件数）
-  private batchUpdateWindow = 2000 // 批量更新检测窗口（毫秒）
-  private recentChanges: Array<{ time: number; path: string }> = [] // 记录最近的变更
-  private noteDirCache: Set<string> = new Set() // 缓存所有笔记文件夹名称
-  private folderRenameTimer: NodeJS.Timeout | null = null // 文件夹重命名检测定时器
-  private pendingFolderRename: { oldName: string; time: number } | null = null // 待处理的文件夹重命名
+
+  /**
+   * 文件内容哈希缓存
+   *
+   * - key: 文件路径
+   * - val: 文件内容的哈希值
+   *
+   * 示例：
+   *
+   * 笔记 README.md 文件：
+   * - key: 'C:\tnotesjs\TNotes.introduction\notes\0001. TNotes 简介\README.md'
+   * - val: 'f74ce0d9fd0bb1a150d2015e750786f2'
+   *
+   * 笔记 .tnotes.json 配置文件：
+   * - key: 'C:\tnotesjs\TNotes.introduction\notes\0001. TNotes 简介\.tnotes.json'
+   * - val: '901a6c270876661408c3e94ca8de14a4'
+   */
+  private fileHashes: Map<string, string> = new Map()
+
+  /**
+   * 缓存所有笔记文件夹名称
+   */
+  private noteDirCache: Set<string> = new Set()
+
+  /**
+   * 文件夹重命名检测定时器
+   */
+  private folderRenameTimer: NodeJS.Timeout | null = null
+
+  /**
+   * 待处理的文件夹重命名
+   */
+  private pendingFolderRename: { oldName: string; time: number } | null = null
+
+  /**
+   * 缓存配置状态
+   */
   private configCache: Map<string, { done: boolean; deprecated: boolean }> =
-    new Map() // 缓存配置状态
+    new Map()
+
+  // #region - 批量更新检测
+
+  /**
+   * 批量更新检测窗口（毫秒）
+   *
+   * - 如果在 batchUpdateWindow 时间内检测到超过 batchUpdateThreshold 个文件变更，则判定为是批量更新
+   * - 暂定是 1s 内 3 个文件变更的阈值，正常编写笔记的情况下，1s 内不会超过 3 个文件同时变更，通常不会误判
+   * - 当批量更新的行为被检测到之后，会暂停监听服务（batchUpdateWindow + batchUpdateBuffer）后再恢复
+   */
+  private batchUpdateWindow = 1000
+
+  /**
+   * 批量更新阈值（文件数）
+   */
+  private batchUpdateThreshold = 3
+
+  /**
+   * 批量更新安全缓冲（毫秒）
+   */
+  private batchUpdateBuffer = 1000
+
+  /**
+   * 记录最近的变更时间戳
+   */
+  private recentChanges: number[] = []
+
+  // #endregion - 批量更新检测
 
   constructor() {
     this.readmeService = new ReadmeService()
@@ -131,30 +216,18 @@ export class FileWatcherService {
    */
   start(): void {
     if (this.watcher) {
-      logger.warn('文件监听已启动')
+      logger.warn('文件监听服务已启动')
       return
     }
-
-    logger.info('启动文件监听...')
-    logger.info(`监听目录: ${NOTES_DIR_PATH}`)
 
     // 初始化文件哈希缓存
     this.initializeFileHashes()
 
-    // 记录初始化时间
-    this.initializationTime = Date.now()
-
     this.watcher = fs.watch(
-      NOTES_DIR_PATH,
-      { recursive: true },
+      NOTES_DIR_PATH, // 监听目录
+      { recursive: true }, // 递归监听子目录
       (eventType, filename) => {
         if (!filename) return
-
-        // 忽略初始化期间的变更事件（避免启动时的误报）
-        const timeSinceInit = Date.now() - this.initializationTime
-        if (timeSinceInit < this.initializationPeriod) {
-          return
-        }
 
         // 如果正在更新，忽略所有变更
         if (this.isUpdating) {
@@ -172,11 +245,6 @@ export class FileWatcherService {
           !filename.endsWith('README.md') &&
           !filename.endsWith('.tnotes.json')
         ) {
-          return
-        }
-
-        // 忽略临时文件和备份文件
-        if (filename.includes('~') || filename.includes('.swp')) {
           return
         }
 
@@ -198,19 +266,22 @@ export class FileWatcherService {
 
         // 记录此次变更时间
         const now = Date.now()
-        this.recentChanges.push({ time: now, path: fullPath })
+        this.recentChanges.push(now)
 
         // 清理超出窗口期的变更记录
         this.recentChanges = this.recentChanges.filter(
-          (change) => now - change.time < this.batchUpdateWindow
+          (time) => now - time < this.batchUpdateWindow
         )
 
         // 检测是否为批量更新（如 pnpm tn:update）
         if (this.recentChanges.length >= this.batchUpdateThreshold) {
           // 检测到批量更新，临时暂停监听
           logger.warn(
-            `检测到批量文件变更 (${this.recentChanges.length} 个文件)，可能是 pnpm tn:update 执行中，暂停自动更新`
+            `检测到批量文件变更 - ${this.recentChanges.length} 个文件)`
           )
+          logger.warn('可能是 pnpm tn:update 执行中...')
+          logger.warn('或者其它批量更新操作...')
+          logger.warn('监听服务暂停 3s 等待批量更新完成...')
 
           // 清空变更记录和待处理队列
           this.changedFiles.clear()
@@ -224,20 +295,20 @@ export class FileWatcherService {
             this.isUpdating = false
             // 重新初始化哈希缓存，确保下次检测准确
             this.initializeFileHashes()
-            logger.info('批量更新完成，恢复自动监听')
-          }, this.batchUpdateWindow + 1000)
+            logger.info('恢复自动监听')
+          }, this.batchUpdateWindow + this.batchUpdateBuffer)
 
           return
         }
 
         // 解析笔记信息
         const noteDirName = path.basename(path.dirname(fullPath))
-        const noteIdMatch = noteDirName.match(/^(\d{4})\./)
-        if (!noteIdMatch) {
-          return // 不是有效的笔记目录
+        const noteId = extractNoteId(noteDirName)
+        if (!noteId) {
+          warnInvalidNoteId(noteDirName)
+          return
         }
 
-        const noteId = noteIdMatch[1]
         const noteDirPath = path.dirname(fullPath)
         const fileType = filename.endsWith('README.md') ? 'readme' : 'config'
 
@@ -267,37 +338,8 @@ export class FileWatcherService {
       }
     )
 
-    logger.success('文件监听已启动')
-  }
-
-  /**
-   * 停止文件监听
-   */
-  stop(): void {
-    if (!this.watcher) {
-      logger.warn('文件监听未启动')
-      return
-    }
-
-    if (this.updateTimer) {
-      clearTimeout(this.updateTimer)
-      this.updateTimer = null
-    }
-
-    if (this.folderRenameTimer) {
-      clearTimeout(this.folderRenameTimer)
-      this.folderRenameTimer = null
-    }
-
-    this.watcher.close()
-    this.watcher = null
-    this.changedFiles.clear()
-    this.fileHashes.clear()
-    this.recentChanges = []
-    this.noteDirCache.clear()
-    this.pendingFolderRename = null
-
-    logger.info('文件监听已停止')
+    logger.success(`文件监听服务已启动`)
+    logger.success(`监听目录 - ${NOTES_DIR_PATH}`)
   }
 
   /**
@@ -308,12 +350,10 @@ export class FileWatcherService {
     const folderExists = fs.existsSync(folderPath)
 
     // 检查是否是有效的笔记文件夹（以 4 位数字开头）
-    const noteIdMatch = folderName.match(/^(\d{4})\./)
-    if (!noteIdMatch) {
+    const noteId = extractNoteId(folderName)
+    if (!noteId) {
       return // 不是有效的笔记文件夹
     }
-
-    const noteId = noteIdMatch[1]
 
     if (!folderExists) {
       // 文件夹被删除或重命名（旧名称）
@@ -354,10 +394,10 @@ export class FileWatcherService {
           Date.now() - this.pendingFolderRename.time < 500
         ) {
           const oldName = this.pendingFolderRename.oldName
-          const oldNoteIdMatch = oldName.match(/^(\d{4})\./)
+          const oldNoteId = extractNoteId(oldName)
 
           // 确保是同一个笔记（ID 相同）
-          if (oldNoteIdMatch && oldNoteIdMatch[1] === noteId) {
+          if (oldNoteId && oldNoteId === noteId) {
             logger.success(`检测到文件夹重命名: ${oldName} → ${folderName}`)
 
             // 清除定时器
@@ -400,8 +440,7 @@ export class FileWatcherService {
       const startTime = Date.now()
 
       // 从文件夹名称提取笔记 ID
-      const noteIdMatch = deletedFolderName.match(/^(\d{4})\./)
-      const noteId = noteIdMatch ? noteIdMatch[1] : null
+      const noteId = extractNoteId(deletedFolderName)
 
       if (!noteId) {
         logger.warn(`无法从文件夹名称提取笔记 ID: ${deletedFolderName}`)
@@ -473,11 +512,8 @@ export class FileWatcherService {
       const startTime = Date.now()
 
       // 提取新旧的笔记 ID
-      const oldNoteIdMatch = oldName.match(/^(\d{4})\./)
-      const newNoteIdMatch = newName.match(/^(\d{4})\./)
-
-      const oldNoteId = oldNoteIdMatch ? oldNoteIdMatch[1] : null
-      const newNoteId = newNoteIdMatch ? newNoteIdMatch[1] : null
+      const oldNoteId = extractNoteId(oldName)
+      const newNoteId = extractNoteId(newName)
 
       if (!oldNoteId || !newNoteId) {
         logger.error(`无效的文件夹重命名: ${oldName} → ${newName}`)

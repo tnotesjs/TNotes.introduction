@@ -81,7 +81,8 @@ export default defineConfig({
       },
     },
     build: {
-      chunkSizeWarningLimit: 1000, // 提高 chunk 大小警告阈值到 1000KB
+      // 提高 chunk 大小警告阈值到 1000KB
+      chunkSizeWarningLimit: 1000,
     },
   },
   router: {

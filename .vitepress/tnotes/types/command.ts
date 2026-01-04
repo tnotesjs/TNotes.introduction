@@ -5,23 +5,29 @@
  */
 
 /**
- * TNotes 内置命令列表
+ * TNotes 内置命令名称常量
  */
-export type CommandName =
-  | 'build'
-  | 'create-notes'
-  | 'dev'
-  | 'fix-timestamps'
-  | 'help'
-  | 'preview'
-  | 'pull'
-  | 'push'
-  | 'rename-note'
-  | 'sync-scripts'
-  | 'sync'
-  | 'update'
-  | 'update-completed-count'
-  | 'update-note-config'
+export const COMMAND_NAMES = {
+  BUILD: 'build',
+  CREATE_NOTES: 'create-notes',
+  DEV: 'dev',
+  FIX_TIMESTAMPS: 'fix-timestamps',
+  HELP: 'help',
+  PREVIEW: 'preview',
+  PULL: 'pull',
+  PUSH: 'push',
+  RENAME_NOTE: 'rename-note',
+  SYNC_SCRIPTS: 'sync-scripts',
+  SYNC: 'sync',
+  UPDATE: 'update',
+  UPDATE_COMPLETED_COUNT: 'update-completed-count',
+  UPDATE_NOTE_CONFIG: 'update-note-config',
+} as const
+
+/**
+ * TNotes 内置命令名称类型（从常量派生）
+ */
+export type CommandName = (typeof COMMAND_NAMES)[keyof typeof COMMAND_NAMES]
 
 /**
  * 命令参数类型
@@ -68,20 +74,5 @@ export interface Command {
  * 检查是否为有效命令
  */
 export function isValidCommand(command: string): command is CommandName {
-  return [
-    'dev',
-    'build',
-    'preview',
-    'update',
-    'update-completed-count',
-    'push',
-    'pull',
-    'sync',
-    'create-notes',
-    'sync-scripts',
-    'fix-timestamps',
-    'update-note-config',
-    'rename-note',
-    'help',
-  ].includes(command)
+  return Object.values(COMMAND_NAMES).includes(command as CommandName)
 }

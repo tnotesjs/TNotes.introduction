@@ -4,7 +4,6 @@
  * 常量定义（从配置中派生的路径和URL常量）
  */
 import path from 'path'
-import { fileURLToPath } from 'url'
 import { getConfigManager } from './ConfigManager'
 
 const configManager = getConfigManager()
@@ -82,7 +81,6 @@ export const CONSTANTS = {
   // 文件名配置
   README_FILENAME: 'README.md',
   CONFIG_FILENAME: '.tnotes.json',
-  PID_FILENAME: '.vitepress-pid',
 
   // 笔记 ID 配置
   NOTE_ID_LENGTH: 4,
@@ -128,7 +126,6 @@ export const CONSTANTS = {
 // 导出常用的文件名常量（便于直接导入）
 export const README_FILENAME = CONSTANTS.README_FILENAME
 export const TNOTES_JSON_FILENAME = CONSTANTS.CONFIG_FILENAME
-export const VITEPRESS_PID_FILENAME = CONSTANTS.PID_FILENAME
 
 // 导出路径常量别名（向后兼容）
 export const NOTES_PATH = NOTES_DIR_PATH

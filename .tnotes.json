@@ -1,19 +1,9 @@
 {
   "author": "tnotesjs",
   "repoName": "TNotes.introduction",
-  "keywords": [
-    "TNotes.introduction"
-  ],
+  "keywords": ["TNotes.introduction"],
   "sidebarShowNoteId": false,
-  "ignore_dirs": [
-    ".vscode",
-    "0000",
-    "assets",
-    "node_modules",
-    "hidden",
-    "demos",
-    "assets"
-  ],
+  "ignore_dirs": [".vscode", "0000", "assets", "node_modules", "demos"],
   "root_item": {
     "icon": {
       "src": "https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/assets/icon--introduction.svg"

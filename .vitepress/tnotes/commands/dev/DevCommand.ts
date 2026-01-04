@@ -15,26 +15,14 @@ export class DevCommand extends BaseCommand {
   }
 
   protected async run(): Promise<void> {
-    this.logger.info('服务启动中...')
-
-    // 启动 VitePress 服务器
+    // 启动 VitePress 服务器（会等待服务就绪后返回）
     const pid = await this.vitepressService.startServer()
 
     if (pid) {
-      const newStatus = this.vitepressService.getServerStatus()
-      this.logger.success(`服务器已启动 - PID: ${pid}`)
-      if (newStatus.port) {
-        this.logger.info(`🔗 访问地址：`)
-        this.logger.info(`  http://localhost:${newStatus.port}`)
-      }
+      this.logger.success(`笔记服务已启动 - PID: ${pid}`)
 
-      this.logger.info('启用自动更新模式...')
       const fileWatcherService = serviceManager.getFileWatcherService()
       fileWatcherService.start()
-      this.logger.info('💡 提示: ')
-      this.logger.info(
-        `修改笔记后保存笔记文件（README.md），笔记的目录将会自动更新`
-      )
     } else {
       this.logger.error('启动服务器失败')
     }

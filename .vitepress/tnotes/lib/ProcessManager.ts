@@ -156,7 +156,7 @@ export class ProcessManager {
 
   /**
    * 检查进程是否在运行
-   * @param id - 进程ID
+   * @param id - 进程 ID
    * @returns 是否在运行
    */
   isRunning(id: string): boolean {

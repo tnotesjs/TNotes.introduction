@@ -56,10 +56,11 @@ export class ConfigManager {
       validateAndCompleteConfig(rawConfig)
 
     if (modified) {
-      logger.warn('检测到配置缺失字段，已自动补全')
+      logger.warn(`检测到知识库配置缺失字段，已自动补全`)
       // 写回配置文件
       fs.writeFileSync(path, JSON.stringify(validatedConfig, null, 2), 'utf-8')
-      logger.info('配置文件已更新')
+      logger.info('知识库配置文件已更新')
+      logger.info(`知识库配置文件路径: ${path}`)
     }
 
     this.config = validatedConfig
@@ -85,14 +86,6 @@ export class ConfigManager {
       this.loadConfig()
     }
     return this.config!
-  }
-
-  /**
-   * 重新加载配置
-   */
-  reload(): TNotesConfig {
-    this.config = null
-    return this.loadConfig()
   }
 
   /**

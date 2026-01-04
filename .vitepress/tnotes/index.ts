@@ -5,11 +5,14 @@
  */
 import minimist from 'minimist'
 import { getCommand } from './commands'
-import { isValidCommand, type CommandArgs } from './types/command'
+import {
+  isValidCommand,
+  COMMAND_NAMES,
+  type CommandArgs,
+} from './types/command'
 import { handleError, createError } from './utils/errorHandler'
 import type {
   UpdateCommand,
-  DevCommand,
   UpdateCompletedCountCommand,
   PushCommand,
   PullCommand,
@@ -31,7 +34,7 @@ import type {
 
     // 如果没有找到命令，显示帮助信息
     if (!commandName) {
-      const helpCommand = getCommand('help')
+      const helpCommand = getCommand(COMMAND_NAMES.HELP)
       if (helpCommand) {
         await helpCommand.execute()
       }
@@ -49,51 +52,24 @@ import type {
       throw createError.commandNotFound(commandName)
     }
 
-    // 处理 quiet 模式（适用于 update 命令）
-    if (commandName === 'update' && args.quiet) {
-      const updateCommand = command as UpdateCommand
-      if (typeof updateCommand.setQuiet === 'function') {
-        updateCommand.setQuiet(true)
-      }
-    }
-
-    // 处理 force 模式（适用于 push 命令）
-    if (commandName === 'push' && args.force) {
-      const baseCommand = command as PushCommand
-      if (typeof baseCommand.setOptions === 'function') {
-        baseCommand.setOptions({ force: true })
-      }
-    }
-
-    // 处理 --all 参数（适用于 update/update-completed-count/push/pull/sync 命令）
-    if (args.all) {
-      if (commandName === 'update') {
-        const updateCommand = command as UpdateCommand
-        if (typeof updateCommand.setUpdateAll === 'function') {
-          updateCommand.setUpdateAll(true)
-        }
-      } else if (commandName === 'update-completed-count') {
-        const updateCompletedCountCommand =
-          command as UpdateCompletedCountCommand
-        if (typeof updateCompletedCountCommand.setUpdateAll === 'function') {
-          updateCompletedCountCommand.setUpdateAll(true)
-        }
-      } else if (commandName === 'push') {
-        const pushCommand = command as PushCommand
-        if (typeof pushCommand.setPushAll === 'function') {
-          pushCommand.setPushAll(true)
-        }
-      } else if (commandName === 'pull') {
-        const pullCommand = command as PullCommand
-        if (typeof pullCommand.setPullAll === 'function') {
-          pullCommand.setPullAll(true)
-        }
-      } else if (commandName === 'sync') {
-        const syncCommand = command as SyncCommand
-        if (typeof syncCommand.setSyncAll === 'function') {
-          syncCommand.setSyncAll(true)
-        }
-      }
+    // 处理命令选项
+    if (commandName === COMMAND_NAMES.UPDATE) {
+      const cmd = command as UpdateCommand
+      if (args.quiet) cmd.setQuiet(true)
+      if (args.all) cmd.setUpdateAll(true)
+    } else if (commandName === COMMAND_NAMES.UPDATE_COMPLETED_COUNT) {
+      const cmd = command as UpdateCompletedCountCommand
+      if (args.all) cmd.setUpdateAll(true)
+    } else if (commandName === COMMAND_NAMES.PUSH) {
+      const cmd = command as PushCommand
+      if (args.force) cmd.setOptions({ force: true })
+      if (args.all) cmd.setPushAll(true)
+    } else if (commandName === COMMAND_NAMES.PULL) {
+      const cmd = command as PullCommand
+      if (args.all) cmd.setPullAll(true)
+    } else if (commandName === COMMAND_NAMES.SYNC) {
+      const cmd = command as SyncCommand
+      if (args.all) cmd.setSyncAll(true)
     }
 
     // 执行命令

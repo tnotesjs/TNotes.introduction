@@ -2,6 +2,7 @@ import { exec } from 'child_process'
 import { promisify } from 'util'
 import path from 'path'
 import { getChangedIds } from './getChangedIds'
+import { extractNoteId } from './noteId'
 import type { GitTimestamp } from '../types'
 
 const execAsync = promisify(exec)
@@ -19,8 +20,7 @@ function parseNoteId(filePath: string): string | null {
 
   if (notesIndex >= 0 && parts.length > notesIndex + 1) {
     const dirName = parts[notesIndex + 1]
-    const match = dirName.match(/^(\d{4})\./) // 匹配开头的 4 个数字
-    if (match) return match[1]
+    return extractNoteId(dirName)
   }
 
   return null

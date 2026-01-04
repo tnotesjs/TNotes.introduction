@@ -5,7 +5,7 @@
  */
 
 /**
- * .tnotes.json 配置文件类型
+ * 知识库的 .tnotes.json 配置文件类型
  */
 export interface TNotesConfig {
   id?: string
