@@ -22,10 +22,11 @@ export interface NoteConfig {
 }
 
 /**
- * 笔记目录信息
+ * 笔记信息
  *
- * 示例：
- * {
+ * ```js
+ * // 示例
+ * const noteInfo = {
  *   id: '0001',
  *   path: 'C:\\tnotesjs\\TNotes.introduction\\notes\\0001. TNotes 简介',
  *   dirName: '0001. TNotes 简介',
@@ -44,6 +45,7 @@ export interface NoteConfig {
  *     updated_at: 1762784039909
  *   }
  * }
+ * ```
  */
 export interface NoteInfo {
   id: string

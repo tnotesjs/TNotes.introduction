@@ -54,61 +54,6 @@ export class ReadmeGenerator {
   }
 
   /**
-   * 批量更新所有笔记 README
-   * @param notes - 笔记信息数组
-   */
-  updateAllNoteReadmes(notes: NoteInfo[]): void {
-    let successCount = 0
-    let failCount = 0
-
-    for (const note of notes) {
-      try {
-        this.updateNoteReadme(note)
-        successCount++
-      } catch (error) {
-        logger.error(`更新笔记 ${note.dirName} 失败`, error)
-        failCount++
-      }
-    }
-
-    if (failCount > 0) {
-      logger.warn(`更新完成：成功 ${successCount} 篇，失败 ${failCount} 篇`)
-    } else {
-      logger.info(`成功更新 ${successCount} 篇笔记`)
-    }
-  }
-
-  /**
-   * 生成首页 README 的笔记列表部分
-   * @param notes - 笔记信息数组
-   * @returns 笔记列表的 Markdown 内容
-   */
-  generateHomeNoteList(notes: NoteInfo[]): string {
-    const titles: string[] = []
-    const titlesNotesCount: number[] = []
-
-    const repoName = this.configManager.get('repoName')
-    const sidebarShowNoteId = this.configManager.get('sidebarShowNoteId')
-
-    for (const note of notes) {
-      const { dirName, config } = note
-      if (!config) continue
-
-      const notesID = config.id
-      const notesName = dirName.replace(/^\d+\.\s*/, '') // 移除前缀编号
-
-      const title = sidebarShowNoteId
-        ? `## [${notesID}. ${notesName}](/notes/${dirName}/README.md)`
-        : `## [${notesName}](/notes/${dirName}/README.md)`
-
-      titles.push(title)
-      titlesNotesCount.push(1)
-    }
-
-    return titles.join(EOL + EOL)
-  }
-
-  /**
    * 更新首页 README
    * 更新笔记链接的状态标记（[x] 或 [ ]），同时更新 TOC 区域
    * @param notes - 笔记信息数组
@@ -259,38 +204,5 @@ export class ReadmeGenerator {
     fs.writeFileSync(homeReadmePath, updatedContent, 'utf-8')
 
     logger.info('已更新首页 README')
-  }
-
-  /**
-   * 生成笔记摘要信息
-   * @param noteInfo - 笔记信息
-   * @returns 笔记摘要文本
-   */
-  generateNoteSummary(noteInfo: NoteInfo): string {
-    if (!noteInfo.config) {
-      return `# ${noteInfo.dirName}\n\nNo configuration found.`
-    }
-
-    const { id, config } = noteInfo
-    const bilibiliCount = config.bilibili.length
-    const tnotesCount = config.tnotes.length
-    const yuqueCount = config.yuque.length
-    const status = config.done ? '✅ Complete' : '⏳ In Progress'
-
-    return `# ${noteInfo.dirName}
-
-**ID**: ${id}
-**Status**: ${status}
-**Deprecated**: ${config.deprecated ? 'Yes' : 'No'}
-**Discussions**: ${config.enableDiscussions ? 'Enabled' : 'Disabled'}
-
-**External Resources**:
-- Bilibili videos: ${bilibiliCount}
-- TNotes references: ${tnotesCount}
-- Yuque articles: ${yuqueCount}
-
-**Created**: ${new Date(config.created_at).toLocaleString()}
-**Updated**: ${new Date(config.updated_at).toLocaleString()}
-`
   }
 }

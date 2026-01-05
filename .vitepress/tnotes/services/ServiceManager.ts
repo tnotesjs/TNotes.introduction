@@ -3,7 +3,7 @@
  *
  * 服务管理器 - 管理全局共享服务实例
  */
-import { FileWatcherService } from './FileWatcherService'
+import { FileWatcherService } from './file-watcher'
 import { NoteIndexCache } from '../core/NoteIndexCache'
 import { NoteManager } from '../core/NoteManager'
 import { logger } from '../utils/logger'

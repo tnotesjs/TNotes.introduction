@@ -9,12 +9,7 @@ import { ReadmeGenerator } from '../core/ReadmeGenerator'
 import { ConfigManager } from '../config/ConfigManager'
 import { NoteIndexCache } from '../core/NoteIndexCache'
 import { logger } from '../utils/logger'
-import { formatWithPrettier } from '../utils/prettier'
-import {
-  parseNoteLine,
-  buildNoteLineMarkdown,
-  processEmptyLines,
-} from '../utils/readmeHelpers'
+import { parseNoteLine, buildNoteLineMarkdown } from '../utils/readmeHelpers'
 import { ROOT_README_PATH, VP_SIDEBAR_PATH } from '../config/constants'
 import * as fs from 'fs'
 
@@ -92,7 +87,7 @@ export class ReadmeService {
 
   /**
    * 只更新指定笔记的 README（不更新 sidebar、home）
-   * @param noteIndexes - 笔记索引数组
+   * @param noteIndexes - 笔记索引数组，例如 ['0001', '0002']
    */
   async updateNoteReadmesOnly(noteIndexes: string[]): Promise<void> {
     if (noteIndexes.length === 0) return
@@ -122,123 +117,6 @@ export class ReadmeService {
         logger.error(`更新笔记 ${note.dirName} 失败`, error)
       }
     }
-  }
-
-  /**
-   * 只更新全局文件（sidebar、README）
-   * 用于文件夹重命名、删除等场景
-   * @param notes - 所有笔记信息数组
-   */
-  async updateGlobalFiles(notes: NoteInfo[]): Promise<void> {
-    await this.syncHomeReadmeWithNotes(notes)
-
-    // 更新侧边栏配置（基于更新后的 README.md）
-    await this.updateSidebar(notes)
-  }
-
-  /**
-   * 同步首页 README 与笔记状态
-   * 保持原有章节结构，只更新笔记链接的路径和文本，自动移除已删除的笔记
-   * @param notes - 所有笔记信息数组
-   */
-  private async syncHomeReadmeWithNotes(notes: NoteInfo[]): Promise<void> {
-    if (!fs.existsSync(ROOT_README_PATH)) {
-      logger.error('未找到首页 README')
-      return
-    }
-
-    const content = fs.readFileSync(ROOT_README_PATH, 'utf-8')
-    const lines = content.split('\n')
-
-    // 创建笔记映射：索引 -> NoteInfo
-    const noteByIndexMap = new Map<string, NoteInfo>()
-    for (const note of notes) {
-      noteByIndexMap.set(note.id, note)
-    }
-
-    // 获取仓库信息
-    const repoOwner = this.configManager.get('author')
-    const repoName = this.configManager.get('repoName')
-
-    let inTocRegion = false
-    const titles: string[] = []
-    const titlesNotesCount: number[] = []
-    let currentNoteCount = 0
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i]
-
-      // 跳过 TOC region
-      if (line.includes('<!-- region:toc -->')) {
-        inTocRegion = true
-        continue
-      }
-      if (line.includes('<!-- endregion:toc -->')) {
-        inTocRegion = false
-        continue
-      }
-      if (inTocRegion) {
-        continue
-      }
-
-      // 使用公共方法解析笔记链接
-      const parsed = parseNoteLine(line)
-      if (parsed.isMatch && parsed.noteIndex) {
-        const note = noteByIndexMap.get(parsed.noteIndex)
-
-        if (note) {
-          lines[i] = buildNoteLineMarkdown(note, repoOwner, repoName)
-          currentNoteCount++
-        } else {
-          // 笔记不存在，标记为删除
-          logger.warn(`笔记不存在: ${parsed.noteIndex}，将从 README 中移除`)
-          lines[i] = '' // 标记为空行
-        }
-        continue
-      }
-
-      // 匹配标题
-      const titleMatch = line.match(/^(#{2,})\s+(.+)$/)
-      if (titleMatch) {
-        if (titles.length > 0) {
-          titlesNotesCount.push(currentNoteCount)
-        }
-        titles.push(line)
-        currentNoteCount = 0
-      }
-    }
-
-    // 保存最后一个标题的笔记数量
-    if (titles.length > 0) {
-      titlesNotesCount.push(currentNoteCount)
-    }
-
-    // 更新 TOC 区域（内联实现，不再依赖 TocGenerator）
-    const { generateToc } = await import('../utils/markdown')
-    let startLineIdx = -1,
-      endLineIdx = -1
-    for (let i = 0; i < lines.length; i++) {
-      if (lines[i].includes('<!-- region:toc -->')) startLineIdx = i
-      if (lines[i].includes('<!-- endregion:toc -->')) endLineIdx = i
-    }
-    if (startLineIdx !== -1 && endLineIdx !== -1) {
-      const toc = generateToc(titles)
-      const tocLines = toc.split('\n')
-      lines.splice(startLineIdx + 1, endLineIdx - startLineIdx - 1, ...tocLines)
-    }
-
-    const filteredLines = processEmptyLines(lines)
-
-    const updatedContent = filteredLines.join('\n')
-    fs.writeFileSync(ROOT_README_PATH, updatedContent, 'utf-8')
-
-    // 使用 Prettier 格式化 README
-    await formatWithPrettier(ROOT_README_PATH, {
-      silent: true,
-      ignoreErrors: true,
-    })
-
-    logger.info('已更新首页 README')
   }
 
   /**
@@ -292,20 +170,6 @@ export class ReadmeService {
     if (failCount > 0) {
       logger.warn(`更新完成：成功 ${successCount} 篇，失败 ${failCount} 篇`)
     }
-  }
-
-  /**
-   * 更新单个笔记的 README
-   * @param noteIndex - 笔记索引
-   */
-  async updateNoteReadme(noteIndex: string): Promise<void> {
-    const note = this.noteManager.getNoteByIndex(noteIndex)
-    if (!note) {
-      throw new Error(`Note not found: ${noteIndex}`)
-    }
-
-    this.readmeGenerator.updateNoteReadme(note)
-    logger.info(`Updated README for note: ${noteIndex}`)
   }
 
   /**
@@ -553,54 +417,4 @@ export class ReadmeService {
     await this.updateSidebar(notes)
     logger.info('重新生成 sidebar.json')
   }
-
-  // ============================================================
-  // #region - Deprecated
-  // ============================================================
-
-  // /**
-  //  * 生成 VitePress 文档
-  //  * @returns 生成的文件路径数组
-  //  */
-  // async generateVitepressDocs(): Promise<string[]> {
-  //   const notes = this.noteManager.scanNotes()
-  //   const generatedFiles: string[] = []
-
-  //   // 更新侧边栏
-  //   await this.updateSidebar(notes)
-  //   generatedFiles.push(VP_SIDEBAR_PATH)
-
-  //   // 更新首页
-  //   await this.updateHomeReadme(notes)
-  //   generatedFiles.push(ROOT_README_PATH)
-
-  //   logger.info(`Generated ${generatedFiles.length} files`)
-  //   return generatedFiles
-  // }
-
-  // /**
-  //  * 验证所有 README 文件是否存在
-  //  * @returns 验证结果 { valid: 有效数量, missing: 缺失数量 }
-  //  */
-  // validateReadmeFiles(): { valid: number; missing: number } {
-  //   const notes = this.noteManager.scanNotes()
-  //   let valid = 0
-  //   let missing = 0
-
-  //   for (const note of notes) {
-  //     if (fs.existsSync(note.readmePath)) {
-  //       valid++
-  //     } else {
-  //       missing++
-  //       logger.warn(`README missing for note: ${note.dirName}`)
-  //     }
-  //   }
-
-  //   logger.info(`Validation complete: ${valid} valid, ${missing} missing`)
-  //   return { valid, missing }
-  // }
-
-  // ============================================================
-  // #endregion - Deprecated
-  // ============================================================
 }

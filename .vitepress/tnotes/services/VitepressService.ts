@@ -46,8 +46,13 @@ export class VitepressService {
       logger.warn(`端口 ${port} 被占用，正在清理...`)
       killPortProcess(port)
       const available = await waitForPort(port, 3000)
-      if (!available) {
-        logger.error(`端口 ${port} 无法释放，服务可能会使用其他端口`)
+
+      if (available) {
+        logger.info(`端口 ${port} 已释放，继续启动服务`)
+      } else {
+        logger.warn(
+          `端口 ${port} 未确认释放，仍将尝试启动；如启动失败，请手动清理该端口`
+        )
       }
     }
 
