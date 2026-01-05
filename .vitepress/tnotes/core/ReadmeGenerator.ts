@@ -123,18 +123,18 @@ export class ReadmeGenerator {
     const content = fs.readFileSync(homeReadmePath, 'utf-8')
     const lines = content.split(EOL)
 
-    // 创建笔记配置映射，以笔记 ID 为键
-    const noteByIdMap = new Map<string, NoteInfo>()
+    // 创建笔记配置映射，以笔记索引为键
+    const noteByIndexMap = new Map<string, NoteInfo>()
     for (const note of notes) {
-      noteByIdMap.set(note.id, note)
+      noteByIndexMap.set(note.id, note)
     }
 
     // 获取仓库信息
     const repoOwner = this.configManager.get('author')
     const repoName = this.configManager.get('repoName')
 
-    // 跟踪已存在的笔记 ID 和要移除的行
-    const existingNoteIds = new Set<string>()
+    // 跟踪已存在的笔记索引和要移除的行
+    const existingNoteIndexes = new Set<string>()
     const linesToRemove = new Set<number>()
 
     // 更新笔记链接的状态标记
@@ -165,17 +165,17 @@ export class ReadmeGenerator {
 
       // 使用公共方法解析笔记链接
       const parsed = parseNoteLine(line)
-      if (parsed.isMatch && parsed.noteId) {
-        const note = noteByIdMap.get(parsed.noteId)
+      if (parsed.isMatch && parsed.noteIndex) {
+        const note = noteByIndexMap.get(parsed.noteIndex)
 
         if (!note) {
           // 笔记不存在，标记为移除
           linesToRemove.add(i)
-          logger.warn(`移除不存在的笔记: ${parsed.noteId}`)
+          logger.warn(`移除不存在的笔记: ${parsed.noteIndex}`)
           continue
         }
 
-        existingNoteIds.add(parsed.noteId)
+        existingNoteIndexes.add(parsed.noteIndex)
         lines[i] = buildNoteLineMarkdown(note, repoOwner, repoName)
         currentNoteCount++
         continue
@@ -226,7 +226,7 @@ export class ReadmeGenerator {
     // 查找缺失的笔记（在真实目录中存在但 README 中不存在）
     const missingNotes: NoteInfo[] = []
     for (const note of notes) {
-      if (!existingNoteIds.has(note.id)) {
+      if (!existingNoteIndexes.has(note.id)) {
         missingNotes.push(note)
       }
     }
@@ -235,7 +235,7 @@ export class ReadmeGenerator {
     if (missingNotes.length > 0) {
       logger.info(`添加 ${missingNotes.length} 篇缺失的笔记到 README`)
 
-      // 按笔记 ID 排序
+      // 按笔记索引排序
       missingNotes.sort((a, b) => a.id.localeCompare(b.id))
 
       for (const note of missingNotes) {

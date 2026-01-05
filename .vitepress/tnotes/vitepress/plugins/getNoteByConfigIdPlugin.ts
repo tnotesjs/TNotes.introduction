@@ -74,7 +74,7 @@ export function getNoteByConfigIdPlugin(): PluginOption {
                 success: true,
                 found: true,
                 data: {
-                  noteId: noteItem.noteId,
+                  noteIndex: noteItem.noteIndex,
                   folderName: noteItem.folderName,
                   // 构建笔记的完整 URL（包含 README）
                   url: `/notes/${encodeURIComponent(
@@ -85,7 +85,7 @@ export function getNoteByConfigIdPlugin(): PluginOption {
             )
 
             logger.debug(
-              `查询笔记: configId=${configId}, noteId=${noteItem.noteId}`
+              `查询笔记: configId=${configId}, noteIndex=${noteItem.noteIndex}`
             )
           } catch (error) {
             logger.error('查询笔记失败:', error)

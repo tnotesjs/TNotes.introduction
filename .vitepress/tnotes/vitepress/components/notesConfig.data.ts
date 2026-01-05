@@ -13,7 +13,7 @@ export default {
   load(watchedFiles: string[]): Record<string, NoteConfig> {
     // console.log('watchedFiles', watchedFiles)
 
-    // 初始化一个空对象，用于存储所有笔记的配置数据
+    // 初始化一个空对象，用于存储所有笔记的配置数据（以笔记索引为键）
     const allNotesConfig: Record<string, NoteConfig> = {}
 
     // 遍历所有监听到的 .tnotes.json 文件
@@ -30,12 +30,12 @@ export default {
         const fileContent = fs.readFileSync(filePath, 'utf-8')
         const configData = JSON.parse(fileContent) as NoteConfig
 
-        // 提取笔记 ID（文件路径中前 4 个数字）
-        const noteIdMatch = filePath.match(/notes\/(\d{4})\./)
-        if (noteIdMatch) {
-          const noteId = noteIdMatch[1] // 获取笔记 ID
+        // 提取笔记索引（文件路径中前 4 个数字）
+        const noteIndexMatch = filePath.match(/notes\/(\d{4})\./)
+        if (noteIndexMatch) {
+          const noteIndex = noteIndexMatch[1] // 获取笔记索引
           const redirect = filePath.replace(/\.tnotes\.json$/, 'README')
-          allNotesConfig[noteId] = {
+          allNotesConfig[noteIndex] = {
             ...configData,
             redirect,
           } // 将配置数据存入对象

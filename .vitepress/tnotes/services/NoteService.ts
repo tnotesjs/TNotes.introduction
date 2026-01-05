@@ -37,13 +37,11 @@ export interface CreateNoteOptions {
  */
 export class NoteService {
   private noteManager: NoteManager
-  private configManager: ConfigManager
   private noteIndexCache: NoteIndexCache
   private ignoredConfigPaths: Set<string> = new Set()
 
   constructor() {
     this.noteManager = new NoteManager()
-    this.configManager = ConfigManager.getInstance()
     this.noteIndexCache = NoteIndexCache.getInstance()
   }
 
@@ -77,12 +75,12 @@ export class NoteService {
   }
 
   /**
-   * 获取笔记（通过ID）
-   * @param noteId - 笔记 ID
+   * 获取笔记（通过索引）
+   * @param noteIndex - 笔记索引（文件夹前 4 位数字）
    * @returns 笔记信息，未找到时返回 undefined
    */
-  getNoteById(noteId: string): NoteInfo | undefined {
-    return this.noteManager.getNoteById(noteId)
+  getNoteByIndex(noteIndex: string): NoteInfo | undefined {
+    return this.noteManager.getNoteByIndex(noteIndex)
   }
 
   /**
@@ -98,9 +96,9 @@ export class NoteService {
       configId,
     } = options
 
-    // 生成笔记编号 ID（填充空缺）
-    const noteNumberId = this.generateNextNoteId()
-    const dirName = `${noteNumberId}. ${title}`
+    // 生成笔记索引（填充空缺）
+    const noteIndex = this.generateNextNoteIndex()
+    const dirName = `${noteIndex}. ${title}`
     const notePath = path.join(NOTES_PATH, dirName)
 
     // 确保目录存在
@@ -108,7 +106,7 @@ export class NoteService {
 
     // 创建 README.md（包含一级标题）
     const readmePath = path.join(notePath, README_FILENAME)
-    const noteTitle = generateNoteTitle(noteNumberId, title, REPO_NOTES_URL)
+    const noteTitle = generateNoteTitle(noteIndex, title, REPO_NOTES_URL)
     const readmeContent = noteTitle + '\n' + NEW_NOTES_README_MD_TEMPLATE
     fs.writeFileSync(readmePath, readmeContent, 'utf-8')
 
@@ -132,7 +130,7 @@ export class NoteService {
     logger.info(`Created new note: ${dirName}`)
 
     return {
-      id: noteNumberId, // 返回的 id 是笔记编号 ID
+      id: noteIndex, // 返回的 id 是笔记索引（目录前缀）
       path: notePath,
       dirName,
       readmePath,
@@ -142,10 +140,10 @@ export class NoteService {
   }
 
   /**
-   * 生成下一个笔记编号 ID（填充空缺）
-   * @returns 新的笔记编号 ID（4位数字字符串，从 0001 到 9999）
+   * 生成下一个笔记索引（填充空缺）
+   * @returns 新的笔记索引（4位数字字符串，从 0001 到 9999）
    */
-  private generateNextNoteId(): string {
+  private generateNextNoteIndex(): string {
     const notes = this.getAllNotes()
 
     if (notes.length === 0) {
@@ -164,7 +162,7 @@ export class NoteService {
     // 从 1 开始查找第一个未使用的编号
     for (let i = 1; i <= 9999; i++) {
       if (!usedIds.has(i)) {
-        return i.toString().padStart(CONSTANTS.NOTE_ID_LENGTH, '0')
+        return i.toString().padStart(CONSTANTS.NOTE_INDEX_LENGTH, '0')
       }
     }
 
@@ -174,12 +172,12 @@ export class NoteService {
 
   /**
    * 删除笔记
-   * @param noteId - 笔记ID
+   * @param noteIndex - 笔记索引
    */
-  async deleteNote(noteId: string): Promise<void> {
-    const note = this.getNoteById(noteId)
+  async deleteNote(noteIndex: string): Promise<void> {
+    const note = this.getNoteByIndex(noteIndex)
     if (!note) {
-      throw new Error(`Note not found: ${noteId}`)
+      throw new Error(`Note not found: ${noteIndex}`)
     }
 
     // 删除笔记目录
@@ -189,16 +187,16 @@ export class NoteService {
 
   /**
    * 更新笔记配置
-   * @param noteId - 笔记ID
+   * @param noteIndex - 笔记索引
    * @param updates - 配置更新
    */
   async updateNoteConfig(
-    noteId: string,
+    noteIndex: string,
     updates: Partial<NoteConfig>
   ): Promise<void> {
-    const note = this.getNoteById(noteId)
+    const note = this.getNoteByIndex(noteIndex)
     if (!note || !note.config) {
-      throw new Error(`Note not found or no config: ${noteId}`)
+      throw new Error(`Note not found or no config: ${noteIndex}`)
     }
 
     const oldConfig = { ...note.config }
@@ -215,7 +213,7 @@ export class NoteService {
     this.noteManager.updateNoteConfig(note, updatedConfig)
 
     // 更新内存索引
-    this.noteIndexCache.updateConfig(noteId, updatedConfig)
+    this.noteIndexCache.updateConfig(noteIndex, updatedConfig)
 
     // 检查是否需要更新全局文件
     const needsGlobalUpdate = this.checkNeedsGlobalUpdate(
@@ -224,21 +222,21 @@ export class NoteService {
     )
 
     if (needsGlobalUpdate) {
-      logger.info(`检测到全局字段变更 (${noteId})，正在增量更新全局文件...`)
+      logger.info(`检测到全局字段变更 (${noteIndex})，正在增量更新全局文件...`)
 
       // 使用增量更新
       const ReadmeService = require('./ReadmeService').ReadmeService
       const readmeService = new ReadmeService()
 
       // 增量更新 README.md 中的笔记
-      await readmeService.updateNoteInReadme(noteId, updates)
+      await readmeService.updateNoteInReadme(noteIndex, updates)
 
       // 重新生成 sidebar.json（基于更新后的 README.md）
       await readmeService.regenerateSidebar()
 
-      logger.info(`全局文件增量更新完成 (${noteId})`)
+      logger.info(`全局文件增量更新完成 (${noteIndex})`)
     } else {
-      logger.debug(`配置更新不影响全局文件 (${noteId})`)
+      logger.debug(`配置更新不影响全局文件 (${noteIndex})`)
     }
   }
 
@@ -266,29 +264,29 @@ export class NoteService {
 
   /**
    * 标记笔记为完成
-   * @param noteId - 笔记ID
+   * @param noteIndex - 笔记索引
    */
-  async markNoteAsDone(noteId: string): Promise<void> {
-    await this.updateNoteConfig(noteId, { done: true })
-    logger.info(`Marked note as done: ${noteId}`)
+  async markNoteAsDone(noteIndex: string): Promise<void> {
+    await this.updateNoteConfig(noteIndex, { done: true })
+    logger.info(`Marked note as done: ${noteIndex}`)
   }
 
   /**
    * 标记笔记为未完成
-   * @param noteId - 笔记ID
+   * @param noteIndex - 笔记索引
    */
-  async markNoteAsUndone(noteId: string): Promise<void> {
-    await this.updateNoteConfig(noteId, { done: false })
-    logger.info(`Marked note as undone: ${noteId}`)
+  async markNoteAsUndone(noteIndex: string): Promise<void> {
+    await this.updateNoteConfig(noteIndex, { done: false })
+    logger.info(`Marked note as undone: ${noteIndex}`)
   }
 
   /**
    * 标记笔记为废弃
-   * @param noteId - 笔记ID
+   * @param noteIndex - 笔记索引
    */
-  async deprecateNote(noteId: string): Promise<void> {
-    await this.updateNoteConfig(noteId, { deprecated: true })
-    logger.info(`Deprecated note: ${noteId}`)
+  async deprecateNote(noteIndex: string): Promise<void> {
+    await this.updateNoteConfig(noteIndex, { deprecated: true })
+    logger.info(`Deprecated note: ${noteIndex}`)
   }
 
   /**

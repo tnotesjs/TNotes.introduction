@@ -64,7 +64,7 @@ export function useNoteSave(
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            noteId: currentNoteId.value,
+            noteIndex: currentNoteId.value,
             newTitle: editableNoteTitle.value.trim(),
           }),
         })
@@ -97,7 +97,7 @@ export function useNoteSave(
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            noteId: currentNoteId.value,
+            noteIndex: currentNoteId.value,
             config: {
               done: editableNoteStatus.value,
               enableDiscussions: editableDiscussionsEnabled.value,

@@ -23,17 +23,17 @@ export function renameNotePlugin(): PluginOption {
 
           req.on('end', async () => {
             try {
-              const { noteId, newTitle } = JSON.parse(body)
+              const { noteIndex, newTitle } = JSON.parse(body)
 
-              if (!noteId || !newTitle) {
+              if (!noteIndex || !newTitle) {
                 res.statusCode = 400
-                res.end('Missing noteId or newTitle')
+                res.end('Missing noteIndex or newTitle')
                 return
               }
 
               // 执行重命名
               const startTime = Date.now()
-              await renameCommand.renameNote({ noteId, newTitle })
+              await renameCommand.renameNote({ noteIndex, newTitle })
               const duration = Date.now() - startTime
 
               res.statusCode = 200

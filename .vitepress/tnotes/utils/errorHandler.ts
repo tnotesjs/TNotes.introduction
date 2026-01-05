@@ -19,7 +19,7 @@ export enum ErrorCode {
   GIT_MERGE_CONFLICT = 'GIT_MERGE_CONFLICT',
 
   // 笔记相关错误
-  NOTE_ID_INVALID = 'NOTE_ID_INVALID',
+  NOTE_INDEX_INVALID = 'NOTE_INDEX_INVALID',
   NOTE_CONFIG_INVALID = 'NOTE_CONFIG_INVALID',
   NOTE_NOT_FOUND = 'NOTE_NOT_FOUND',
 
@@ -140,10 +140,14 @@ export const createError = {
       originalError: originalError?.message,
     }),
 
-  noteIdInvalid: (id: string) =>
-    new TNotesError(`无效的笔记 ID：${id}`, ErrorCode.NOTE_ID_INVALID, {
-      id,
-    }),
+  noteIndexInvalid: (noteIndex: string) =>
+    new TNotesError(
+      `无效的笔记索引：${noteIndex}`,
+      ErrorCode.NOTE_INDEX_INVALID,
+      {
+        noteIndex,
+      }
+    ),
 
   noteConfigInvalid: (notePath: string, reason?: string) =>
     new TNotesError(

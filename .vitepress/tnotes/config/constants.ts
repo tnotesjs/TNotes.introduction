@@ -82,10 +82,10 @@ export const CONSTANTS = {
   README_FILENAME: 'README.md',
   CONFIG_FILENAME: '.tnotes.json',
 
-  // 笔记 ID 配置
-  NOTE_ID_LENGTH: 4,
-  NOTE_ID_PATTERN: /^\d{4}\./,
-  NOTE_ID_PREFIX_PATTERN: /^\d{4}/,
+  // 笔记索引配置（文件夹前缀的 4 位数字）
+  NOTE_INDEX_LENGTH: 4,
+  NOTE_INDEX_PATTERN: /^\d{4}\./,
+  NOTE_INDEX_PREFIX_PATTERN: /^\d{4}/,
 
   // Git 配置
   DEFAULT_BRANCH: 'main',

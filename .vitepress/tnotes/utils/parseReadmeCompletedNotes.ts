@@ -8,7 +8,7 @@
  * 笔记状态
  */
 export interface NoteStatus {
-  id: string // 笔记编号（如 "0001"）
+  noteIndex: string // 笔记编号（如 "0001"）
   completed: boolean // 是否完成
   line: string // 原始行内容
 }
@@ -41,14 +41,14 @@ export function parseReadmeCompletedNotes(content: string): ParseResult {
   const noteMap = new Map<string, NoteStatus>()
 
   // 笔记编号正则：匹配 4 位数字（如 0001, 0002）
-  const noteIdRegex = /\[(\d{4})\./
+  const noteIndexRegex = /\[(\d{4})\./
 
   for (const line of lines) {
     // 提取笔记编号
-    const match = line.match(noteIdRegex)
+    const match = line.match(noteIndexRegex)
     if (!match) continue
 
-    const noteId = match[1]
+    const noteIndex = match[1]
 
     // 判断完成状态（按优先级）
     let completed: boolean
@@ -74,11 +74,11 @@ export function parseReadmeCompletedNotes(content: string): ParseResult {
     }
 
     // 检查是否已存在该编号的笔记
-    if (noteMap.has(noteId)) {
-      const existing = noteMap.get(noteId)!
+    if (noteMap.has(noteIndex)) {
+      const existing = noteMap.get(noteIndex)!
       if (existing.completed !== completed) {
         throw new Error(
-          `发现相同编号 ${noteId} 的笔记有不同的完成状态:\n` +
+          `发现相同编号 ${noteIndex} 的笔记有不同的完成状态:\n` +
             `  第一次出现: ${existing.line}\n` +
             `  第二次出现: ${line}`
         )
@@ -88,8 +88,8 @@ export function parseReadmeCompletedNotes(content: string): ParseResult {
     }
 
     // 记录笔记状态
-    noteMap.set(noteId, {
-      id: noteId,
+    noteMap.set(noteIndex, {
+      noteIndex,
       completed,
       line: line.trim(),
     })

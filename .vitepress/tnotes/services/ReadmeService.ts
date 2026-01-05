@@ -56,14 +56,16 @@ export class ReadmeService {
     logger.info(`扫描到 ${notes.length} 篇笔记`)
 
     // 检测变更的笔记（增量更新优化）
-    const changedIds = await this.getChangedNoteIds()
+    const changedIndexes = await this.getChangedNoteIndexes()
     const shouldIncrementalUpdate =
-      changedIds.size > 0 && changedIds.size < notes.length * 0.3 // 少于30%变更才增量更新
+      changedIndexes.size > 0 && changedIndexes.size < notes.length * 0.3 // 少于30%变更才增量更新
 
     let notesToUpdate = notes
     if (shouldIncrementalUpdate) {
-      notesToUpdate = notes.filter((note) => changedIds.has(note.id))
-      logger.info(`检测到 ${changedIds.size} 篇笔记有变更，使用增量更新模式`)
+      notesToUpdate = notes.filter((note) => changedIndexes.has(note.id))
+      logger.info(
+        `检测到 ${changedIndexes.size} 篇笔记有变更，使用增量更新模式`
+      )
     } else {
       logger.info('使用全量更新模式')
     }
@@ -90,20 +92,20 @@ export class ReadmeService {
 
   /**
    * 只更新指定笔记的 README（不更新 sidebar、home）
-   * @param noteIds - 笔记 ID 数组
+   * @param noteIndexes - 笔记索引数组
    */
-  async updateNoteReadmesOnly(noteIds: string[]): Promise<void> {
-    if (noteIds.length === 0) return
+  async updateNoteReadmesOnly(noteIndexes: string[]): Promise<void> {
+    if (noteIndexes.length === 0) return
 
     // 直接根据 ID 获取笔记信息，避免扫描所有笔记
     const notesToUpdate: NoteInfo[] = []
 
-    for (const noteId of noteIds) {
-      const note = this.noteManager.getNoteById(noteId)
+    for (const noteIndex of noteIndexes) {
+      const note = this.noteManager.getNoteByIndex(noteIndex)
       if (note) {
         notesToUpdate.push(note)
       } else {
-        logger.warn(`笔记未找到: ${noteId}`)
+        logger.warn(`笔记未找到: ${noteIndex}`)
       }
     }
 
@@ -148,10 +150,10 @@ export class ReadmeService {
     const content = fs.readFileSync(ROOT_README_PATH, 'utf-8')
     const lines = content.split('\n')
 
-    // 创建笔记映射：ID -> NoteInfo
-    const noteByIdMap = new Map<string, NoteInfo>()
+    // 创建笔记映射：索引 -> NoteInfo
+    const noteByIndexMap = new Map<string, NoteInfo>()
     for (const note of notes) {
-      noteByIdMap.set(note.id, note)
+      noteByIndexMap.set(note.id, note)
     }
 
     // 获取仓库信息
@@ -181,15 +183,15 @@ export class ReadmeService {
 
       // 使用公共方法解析笔记链接
       const parsed = parseNoteLine(line)
-      if (parsed.isMatch && parsed.noteId) {
-        const note = noteByIdMap.get(parsed.noteId)
+      if (parsed.isMatch && parsed.noteIndex) {
+        const note = noteByIndexMap.get(parsed.noteIndex)
 
         if (note) {
           lines[i] = buildNoteLineMarkdown(note, repoOwner, repoName)
           currentNoteCount++
         } else {
           // 笔记不存在，标记为删除
-          logger.warn(`笔记不存在: ${parsed.noteId}，将从 README 中移除`)
+          logger.warn(`笔记不存在: ${parsed.noteIndex}，将从 README 中移除`)
           lines[i] = '' // 标记为空行
         }
         continue
@@ -240,10 +242,10 @@ export class ReadmeService {
   }
 
   /**
-   * 获取变更的笔记 ID 集合
-   * @returns 变更的笔记 ID 集合
+   * 获取变更的笔记索引集合
+   * @returns 变更的笔记索引集合
    */
-  private async getChangedNoteIds(): Promise<Set<string>> {
+  private async getChangedNoteIndexes(): Promise<Set<string>> {
     try {
       const { getChangedIds } = await import('../utils/getChangedIds')
       return getChangedIds()
@@ -294,16 +296,16 @@ export class ReadmeService {
 
   /**
    * 更新单个笔记的 README
-   * @param noteId - 笔记ID
+   * @param noteIndex - 笔记索引
    */
-  async updateNoteReadme(noteId: string): Promise<void> {
-    const note = this.noteManager.getNoteById(noteId)
+  async updateNoteReadme(noteIndex: string): Promise<void> {
+    const note = this.noteManager.getNoteByIndex(noteIndex)
     if (!note) {
-      throw new Error(`Note not found: ${noteId}`)
+      throw new Error(`Note not found: ${noteIndex}`)
     }
 
     this.readmeGenerator.updateNoteReadme(note)
-    logger.info(`Updated README for note: ${noteId}`)
+    logger.info(`Updated README for note: ${noteIndex}`)
   }
 
   /**
@@ -348,11 +350,11 @@ export class ReadmeService {
 
       // 匹配笔记链接: - [x] [0001. xxx](https://github.com/...)
       const parsed = parseNoteLine(line)
-      if (parsed.isMatch && parsed.noteId) {
-        // 通过笔记 ID 查找对应的笔记信息
-        const note = notes.find((n) => n.id === parsed.noteId)
+      if (parsed.isMatch && parsed.noteIndex) {
+        // 通过笔记索引查找对应的笔记信息
+        const note = notes.find((n) => n.id === parsed.noteIndex)
         if (!note) {
-          logger.warn(`未找到笔记 ID: ${parsed.noteId}`)
+          logger.warn(`未找到笔记索引: ${parsed.noteIndex}`)
           continue
         }
 
@@ -429,16 +431,16 @@ export class ReadmeService {
 
   /**
    * 增量更新首页 README 中的单个笔记
-   * @param noteId - 笔记 ID
+   * @param noteIndex - 笔记索引
    * @param updates - 需要更新的配置字段
    */
   async updateNoteInReadme(
-    noteId: string,
+    noteIndex: string,
     updates: Partial<NoteConfig>
   ): Promise<void> {
-    const item = this.noteIndexCache.getByNoteId(noteId)
+    const item = this.noteIndexCache.getByNoteIndex(noteIndex)
     if (!item) {
-      logger.warn(`尝试更新不存在的笔记: ${noteId}`)
+      logger.warn(`尝试更新不存在的笔记: ${noteIndex}`)
       return
     }
 
@@ -450,7 +452,7 @@ export class ReadmeService {
 
     // 构建一个临时的 NoteInfo 对象用于生成 markdown
     const tempNoteInfo: NoteInfo = {
-      id: noteId,
+      id: noteIndex,
       dirName: item.folderName,
       path: '',
       readmePath: '',
@@ -463,7 +465,7 @@ export class ReadmeService {
     // 遍历所有行，更新所有引用该笔记的地方
     for (let i = 0; i < lines.length; i++) {
       const parsed = parseNoteLine(lines[i])
-      if (parsed.noteId === noteId) {
+      if (parsed.noteIndex === noteIndex) {
         lines[i] = buildNoteLineMarkdown(tempNoteInfo, repoOwner, repoName)
         updated = true
       }
@@ -471,17 +473,17 @@ export class ReadmeService {
 
     if (updated) {
       await fs.promises.writeFile(ROOT_README_PATH, lines.join('\n'), 'utf-8')
-      logger.info(`增量更新 README.md 中的笔记: ${noteId}`)
+      logger.info(`增量更新 README.md 中的笔记: ${noteIndex}`)
     } else {
-      logger.warn(`README.md 中未找到笔记: ${noteId}`)
+      logger.warn(`README.md 中未找到笔记: ${noteIndex}`)
     }
   }
 
   /**
    * 从首页 README 中删除笔记
-   * @param noteId - 笔记 ID
+   * @param noteIndex - 笔记索引
    */
-  async deleteNoteFromReadme(noteId: string): Promise<void> {
+  async deleteNoteFromReadme(noteIndex: string): Promise<void> {
     const content = await fs.promises.readFile(ROOT_README_PATH, 'utf-8')
     const lines = content.split('\n')
     const linesToRemove: number[] = []
@@ -489,7 +491,7 @@ export class ReadmeService {
     // 查找所有引用该笔记的行
     for (let i = 0; i < lines.length; i++) {
       const parsed = parseNoteLine(lines[i])
-      if (parsed.noteId === noteId) {
+      if (parsed.noteIndex === noteIndex) {
         linesToRemove.push(i)
       }
     }
@@ -502,21 +504,21 @@ export class ReadmeService {
 
       await fs.promises.writeFile(ROOT_README_PATH, lines.join('\n'), 'utf-8')
       logger.info(
-        `从 README.md 中删除笔记: ${noteId} (${linesToRemove.length} 处引用)`
+        `从 README.md 中删除笔记: ${noteIndex} (${linesToRemove.length} 处引用)`
       )
     } else {
-      logger.warn(`README.md 中未找到笔记: ${noteId}`)
+      logger.warn(`README.md 中未找到笔记: ${noteIndex}`)
     }
   }
 
   /**
    * 在首页 README 末尾添加新笔记
-   * @param noteId - 笔记 ID
+   * @param noteIndex - 笔记索引
    */
-  async appendNoteToReadme(noteId: string): Promise<void> {
-    const item = this.noteIndexCache.getByNoteId(noteId)
+  async appendNoteToReadme(noteIndex: string): Promise<void> {
+    const item = this.noteIndexCache.getByNoteIndex(noteIndex)
     if (!item) {
-      logger.warn(`尝试添加不存在的笔记: ${noteId}`)
+      logger.warn(`尝试添加不存在的笔记: ${noteIndex}`)
       return
     }
 
@@ -527,7 +529,7 @@ export class ReadmeService {
 
     // 构建临时 NoteInfo
     const tempNoteInfo: NoteInfo = {
-      id: noteId,
+      id: noteIndex,
       dirName: item.folderName,
       path: '',
       readmePath: '',
@@ -540,7 +542,7 @@ export class ReadmeService {
     lines.push(noteLine)
 
     await fs.promises.writeFile(ROOT_README_PATH, lines.join('\n'), 'utf-8')
-    logger.info(`在 README.md 末尾添加笔记: ${noteId}`)
+    logger.info(`在 README.md 末尾添加笔记: ${noteIndex}`)
   }
 
   /**

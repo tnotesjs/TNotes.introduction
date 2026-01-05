@@ -4,7 +4,7 @@
  * README 更新的公共辅助函数
  */
 import type { NoteInfo } from '../types'
-import { extractNoteId } from './noteId'
+import { extractNoteIndex } from './noteIndex'
 
 /**
  * 笔记行匹配正则表达式
@@ -23,13 +23,13 @@ export const NOTE_LINE_REGEX = /^( *)- \[.\] \[(\d{4}\. .+?)\]/
  */
 export interface ParsedNoteLine {
   isMatch: boolean // 是否匹配到笔记行
-  noteId: string | null // 笔记 ID (如 "0001")
+  noteIndex: string | null // 笔记索引 (如 "0001")
 }
 
 /**
  * 解析 home readme 笔记链接行，提取笔记 ID
  * @param line - 要解析的行
- * @returns 解析结果 { isMatch, noteId }
+ * @returns 解析结果 { isMatch, noteIndex }
  */
 export function parseNoteLine(line: string): ParsedNoteLine {
   // 匹配笔记链接格式: - [x] [0001. xxx](...)
@@ -40,18 +40,18 @@ export function parseNoteLine(line: string): ParsedNoteLine {
   if (!noteMatch) {
     return {
       isMatch: false,
-      noteId: null,
+      noteIndex: null,
     }
   }
 
   const [, , text] = noteMatch // 第一个捕获组是缩进，第二个是文本
 
   // 提取笔记 ID
-  const noteId = extractNoteId(text)
+  const noteIndex = extractNoteIndex(text)
 
   return {
     isMatch: true,
-    noteId,
+    noteIndex,
   }
 }
 

@@ -17,7 +17,7 @@ export * from './getTargetDirs'
 export * from './getTnotesConfig'
 export * from './logger'
 export { generateToc, extractHeaders } from './markdown' // 只导出 generateToc 和 extractHeaders，避免与其他模块冲突
-export * from './noteId'
+export * from './noteIndex'
 export * from './parseReadmeCompletedNotes'
 export * from './portUtils'
 export * from './runCommand'

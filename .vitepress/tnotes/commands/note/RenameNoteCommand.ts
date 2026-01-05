@@ -17,7 +17,7 @@ import {
 import { generateNoteTitle } from '../../config/templates'
 
 interface RenameNoteParams {
-  noteId: string
+  noteIndex: string
   newTitle: string
 }
 
@@ -33,17 +33,17 @@ export class RenameNoteCommand extends BaseCommand {
 
   protected async run(): Promise<void> {
     // 从命令行参数读取
-    const noteId = process.env.NOTE_ID
+    const noteIndex = process.env.NOTE_ID
     const newTitle = process.env.NOTE_TITLE
 
-    if (!noteId || !newTitle) {
+    if (!noteIndex || !newTitle) {
       this.logger.error('缺少 NOTE_ID 或 NOTE_TITLE 参数')
       process.exit(1)
     }
 
     try {
-      await this.renameNote({ noteId, newTitle })
-      this.logger.success(`笔记 ${noteId} 已重命名为: ${newTitle}`)
+      await this.renameNote({ noteIndex, newTitle })
+      this.logger.success(`笔记 ${noteIndex} 已重命名为: ${newTitle}`)
     } catch (error) {
       this.logger.error('重命名失败', error)
       process.exit(1)
@@ -54,12 +54,12 @@ export class RenameNoteCommand extends BaseCommand {
    * 重命名笔记（可被外部调用）
    */
   async renameNote(params: RenameNoteParams): Promise<void> {
-    const { noteId, newTitle } = params
+    const { noteIndex, newTitle } = params
 
     // 验证笔记是否存在
-    const note = this.noteService.getNoteById(noteId)
+    const note = this.noteService.getNoteByIndex(noteIndex)
     if (!note) {
-      throw new Error(`笔记未找到: ${noteId}`)
+      throw new Error(`笔记未找到: ${noteIndex}`)
     }
 
     // 验证新标题
@@ -69,7 +69,7 @@ export class RenameNoteCommand extends BaseCommand {
     }
 
     // 构建新的文件夹名称
-    const newDirName = `${noteId}. ${newTitle.trim()}`
+    const newDirName = `${noteIndex}. ${newTitle.trim()}`
     const newPath = path.join(NOTES_PATH, newDirName)
 
     // 检查新路径是否已存在
@@ -112,7 +112,7 @@ export class RenameNoteCommand extends BaseCommand {
         if (h1Index !== -1) {
           // 生成新的标题
           const newH1 = generateNoteTitle(
-            noteId,
+            noteIndex,
             newTitle.trim(),
             REPO_NOTES_URL
           )

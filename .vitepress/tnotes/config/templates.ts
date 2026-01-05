@@ -8,17 +8,17 @@
 
 /**
  * 生成笔记一级标题
- * @param noteId - 笔记ID
+ * @param noteIndex - 笔记索引
  * @param title - 笔记标题
  * @param repoUrl - 仓库URL
  * @returns 格式化的一级标题
  */
 export function generateNoteTitle(
-  noteId: string,
+  noteIndex: string,
   title: string,
   repoUrl: string
 ): string {
-  const dirName = `${noteId}. ${title}`
+  const dirName = `${noteIndex}. ${title}`
   const encodedDirName = encodeURIComponent(dirName)
   return `# [${dirName}](${repoUrl}/${encodedDirName})`
 }

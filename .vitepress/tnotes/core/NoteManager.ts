@@ -14,6 +14,7 @@ import {
 import { logger } from '../utils/logger'
 import { ConfigValidator } from '../utils/ConfigValidator'
 import { ConfigManager } from '../config/ConfigManager'
+import { extractNoteIndex as parseNoteIndex } from '../utils/noteIndex'
 
 /**
  * 笔记管理器类
@@ -31,7 +32,7 @@ export class NoteManager {
    */
   scanNotes(): NoteInfo[] {
     const notes: NoteInfo[] = []
-    const noteIdMap = new Map<string, string[]>() // 用于检测重复编号：ID -> [dirNames]
+    const noteIndexMap = new Map<string, string[]>() // 用于检测重复编号：索引 -> [dirNames]
 
     if (!fs.existsSync(NOTES_PATH)) {
       logger.warn(`Notes directory not found: ${NOTES_PATH}`)
@@ -67,13 +68,13 @@ export class NoteManager {
         }
       }
 
-      const id = this.extractNoteId(dirName)
+      const id = this.getNoteIndexFromDir(dirName)
 
       // 记录笔记编号，用于检测重复
-      if (!noteIdMap.has(id)) {
-        noteIdMap.set(id, [])
+      if (!noteIndexMap.has(id)) {
+        noteIndexMap.set(id, [])
       }
-      noteIdMap.get(id)!.push(dirName)
+      noteIndexMap.get(id)!.push(dirName)
 
       notes.push({
         id,
@@ -86,7 +87,7 @@ export class NoteManager {
     }
 
     // 检测并报告重复的笔记编号
-    this.checkDuplicateNoteIds(noteIdMap)
+    this.checkDuplicateNoteIndexes(noteIndexMap)
 
     // 移除日志输出，由调用方决定是否输出
     return notes
@@ -94,12 +95,12 @@ export class NoteManager {
 
   /**
    * 检测重复的笔记编号
-   * @param noteIdMap - 笔记编号映射表（ID -> [dirNames]）
+   * @param noteIndexMap - 笔记编号映射表（索引 -> [dirNames]）
    */
-  private checkDuplicateNoteIds(noteIdMap: Map<string, string[]>): void {
+  private checkDuplicateNoteIndexes(noteIndexMap: Map<string, string[]>): void {
     const duplicates: Array<{ id: string; dirNames: string[] }> = []
 
-    for (const [id, dirNames] of noteIdMap.entries()) {
+    for (const [id, dirNames] of noteIndexMap.entries()) {
       if (dirNames.length > 1) {
         duplicates.push({ id, dirNames })
       }
@@ -122,13 +123,12 @@ export class NoteManager {
   }
 
   /**
-   * 从目录名提取笔记ID
+   * 从目录名提取笔记索引
    * @param dirName - 目录名
-   * @returns 笔记ID
+   * @returns 笔记索引
    */
-  private extractNoteId(dirName: string): string {
-    const match = dirName.match(/^(\d+)\./)
-    return match ? match[1] : dirName
+  private getNoteIndexFromDir(dirName: string): string {
+    return parseNoteIndex(dirName) || dirName
   }
 
   /**
@@ -209,11 +209,11 @@ export class NoteManager {
   }
 
   /**
-   * 获取笔记信息（通过ID）- 优化版本，直接查找不扫描所有笔记
-   * @param noteId - 笔记ID
+   * 获取笔记信息（通过索引）- 优化版本，直接查找不扫描所有笔记
+   * @param noteIndex - 笔记索引
    * @returns 笔记信息，未找到时返回 undefined
    */
-  getNoteById(noteId: string): NoteInfo | undefined {
+  getNoteByIndex(noteIndex: string): NoteInfo | undefined {
     if (!fs.existsSync(NOTES_PATH)) {
       return undefined
     }
@@ -229,11 +229,11 @@ export class NoteManager {
         continue
       }
 
-      // 提取笔记 ID
-      const id = this.extractNoteId(dirName)
+      // 提取笔记索引
+      const id = this.getNoteIndexFromDir(dirName)
 
       // 找到匹配的笔记
-      if (id === noteId) {
+      if (id === noteIndex) {
         const notePath = fullPath
         const readmePath = path.join(notePath, README_FILENAME)
         const configPath = path.join(notePath, TNOTES_JSON_FILENAME)
@@ -271,10 +271,10 @@ export class NoteManager {
 
   /**
    * 检查笔记是否存在
-   * @param noteId - 笔记ID
+   * @param noteIndex - 笔记索引
    * @returns 是否存在
    */
-  noteExists(noteId: string): boolean {
-    return this.getNoteById(noteId) !== undefined
+  noteExists(noteIndex: string): boolean {
+    return this.getNoteByIndex(noteIndex) !== undefined
   }
 }

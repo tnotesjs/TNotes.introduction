@@ -45,17 +45,17 @@ export function updateConfigPlugin(): PluginOption {
           req.on('end', async () => {
             try {
               const data = JSON.parse(body)
-              const { noteId, config } = data
+              const { noteIndex, config } = data
 
-              if (!noteId || !config) {
+              if (!noteIndex || !config) {
                 res.statusCode = 400
-                res.end('Missing noteId or config')
+                res.end('Missing noteIndex or config')
                 return
               }
 
               // 调用命令更新配置
               await updateCommand.updateConfig({
-                noteId,
+                noteIndex,
                 config: {
                   done: config.done,
                   enableDiscussions: config.enableDiscussions,

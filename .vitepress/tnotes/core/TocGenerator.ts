@@ -22,13 +22,13 @@ import {
 export class TocGenerator {
   /**
    * 更新笔记目录
-   * @param noteId - 笔记ID
+   * @param noteIndex - 笔记索引
    * @param lines - 笔记内容行数组
    * @param noteConfig - 笔记配置
    * @param repoName - 仓库名称
    */
   updateNoteToc(
-    noteId: string,
+    noteIndex: string,
     lines: string[],
     noteConfig: NoteConfig,
     repoName: string
@@ -110,7 +110,7 @@ export class TocGenerator {
       if (noteConfig.bilibili.length > 0) {
         noteConfig.bilibili.forEach((bvid, i) => {
           bilibiliTOCItems.push(
-            `  - [bilibili.${repoName}.${noteId}.${i + 1}](${
+            `  - [bilibili.${repoName}.${noteIndex}.${i + 1}](${
               BILIBILI_VIDEO_BASE_URL + bvid
             })`
           )
@@ -130,9 +130,10 @@ export class TocGenerator {
       if (noteConfig.yuque.length > 0) {
         noteConfig.yuque.forEach((slug, i) => {
           yuqueTOCItems.push(
-            `  - [TNotes.yuque.${repoName.replace('TNotes.', '')}.${noteId}](${
-              TNOTES_YUQUE_BASE_URL + slug
-            })`
+            `  - [TNotes.yuque.${repoName.replace(
+              'TNotes.',
+              ''
+            )}.${noteIndex}](${TNOTES_YUQUE_BASE_URL + slug})`
           )
         })
       }
