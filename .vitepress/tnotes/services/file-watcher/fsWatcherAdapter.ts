@@ -46,7 +46,8 @@ export class FsWatcherAdapter {
   }
 
   private handleFsEvent(eventType: string, filename: string | undefined): void {
-    // 1. 需要跳过监听的情况
+    // 过滤无效事件
+    // 处理需要跳过监听的场景
     if (
       !filename || // 忽略无文件变更
       this.isUpdating() // 如果正在更新，忽略所有变更
@@ -54,7 +55,8 @@ export class FsWatcherAdapter {
       return
     }
 
-    // 2. 笔记名称（笔记所属的直接父级文件夹名称）发生变化的情况
+    // 文件夹级事件
+    // 处理笔记名称（笔记所属的直接父级文件夹名称）发生变化的场景
     // 根层 rename：文件夹创建/删除/重命名，交给 RenameDetector
     if (
       eventType === 'rename' && // 检测文件夹 rename 事件
@@ -64,7 +66,8 @@ export class FsWatcherAdapter {
       return
     }
 
-    // 3. 笔记文件内容（笔记 README.md 文件、笔记配置 .tnotes.json 文件）发生变化的情况
+    // 文件级事件
+    // 处理笔记文件内容（笔记 README.md 文件、笔记配置 .tnotes.json 文件）发生变化的场景
     const fullPath = join(this.notesDir, filename)
     const event = this.buildWatchEvent(fullPath, filename)
     if (!event) {
