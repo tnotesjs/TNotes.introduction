@@ -17,7 +17,7 @@
 
 ## 2. TNotes
 
-- [x] [0001. TNotes 简介](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0001.%20TNotes%20%E7%AE%80%E4%BB%8B/README.md)
+- [ ] [0001. TNotes 简介](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0001.%20TNotes%20%E7%AE%80%E4%BB%8B/README.md)
 - [x] [0028. TNotes 根知识库](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0028.%20TNotes%20%E6%A0%B9%E7%9F%A5%E8%AF%86%E5%BA%93/README.md)
 - [x] [0014. 分仓库模式](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0014.%20%E5%88%86%E4%BB%93%E5%BA%93%E6%A8%A1%E5%BC%8F/README.md)
 - [ ] [0022. TNotes 脚本（待更新）](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0022.%20TNotes%20%E8%84%9A%E6%9C%AC%EF%BC%88%E5%BE%85%E6%9B%B4%E6%96%B0%EF%BC%89/README.md)

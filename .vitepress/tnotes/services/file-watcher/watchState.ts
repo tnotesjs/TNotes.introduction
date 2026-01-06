@@ -1,72 +1,40 @@
 /**
+ * .vitepress/tnotes/services/file-watcher/watchState.ts
+ *
  * 监听状态存储：哈希缓存、配置缓存、目录缓存
  */
-import * as fs from 'fs'
-import * as crypto from 'crypto'
-import * as path from 'path'
-import type { ConfigSnapshot } from './internal'
+import { existsSync, readFileSync, readdirSync, statSync } from 'fs'
+import { createHash } from 'crypto'
+import { join } from 'path'
+import type { ConfigSnapshot, ConfigSnapshotReader } from './internal'
+
+interface WatchStateConfig {
+  /** 笔记目录路径 */
+  notesDir: string
+}
 
 export class WatchState {
-  /**
-   * 文件内容哈希缓存
-   *
-   * - key: 文件路径
-   * - val: 文件内容的哈希值
-   *
-   * 示例：
-   *
-   * ```js
-   * // 笔记 README.md 文件：
-   * {
-   *   key: 'C:\tnotesjs\TNotes.introduction\notes\0001. TNotes 简介\README.md',
-   *   val: 'f74ce0d9fd0bb1a150d2015e750786f2'
-   * }
-   *
-   *
-   * // 笔记 .tnotes.json 配置文件：
-   * {
-   *   key: 'C:\tnotesjs\TNotes.introduction\notes\0001. TNotes 简介\.tnotes.json',
-   *   val: '901a6c270876661408c3e94ca8de14a4'
-   * }
-   * ```
-   */
+  /** 文件哈希缓存 */
   private fileHashes = new Map<string, string>()
 
-  /**
-   * 缓存所有笔记文件夹名称
-   */
+  /** 笔记目录缓存 */
   private noteDirCache = new Set<string>()
 
-  /**
-   * 缓存配置状态（done、deprecated、enableDiscussions、description）
-   */
+  /** 笔记配置缓存 */
   private configCache = new Map<string, ConfigSnapshot>()
 
-  constructor(private notesDir: string) {}
+  constructor(private config: WatchStateConfig) {}
 
-  /**
-   * 计算文件内容的哈希值
-   */
   getFileHash(filePath: string): string | null {
     try {
-      if (!fs.existsSync(filePath)) return null
-      const content = fs.readFileSync(filePath, 'utf-8')
-      return crypto.createHash('md5').update(content).digest('hex')
+      if (!existsSync(filePath)) return null
+      const content = readFileSync(filePath, 'utf-8')
+      return createHash('md5').update(content).digest('hex')
     } catch {
       return null
     }
   }
 
-  /**
-   * 若内容变更则更新哈希缓存
-   *
-   * 返回值：
-   *
-   * ```js
-   * false // 表示文件内容没有发生变化
-   * true // 表示文件内容有发生变化
-   * ```
-   */
   updateFileHash(filePath: string): boolean {
     const current = this.getFileHash(filePath)
     if (!current) return false
@@ -103,8 +71,8 @@ export class WatchState {
   }
 
   clearNoteCaches(noteDirName: string): void {
-    const readmePath = path.join(this.notesDir, noteDirName, 'README.md')
-    const configPath = path.join(this.notesDir, noteDirName, '.tnotes.json')
+    const readmePath = join(this.config.notesDir, noteDirName, 'README.md')
+    const configPath = join(this.config.notesDir, noteDirName, '.tnotes.json')
     this.fileHashes.delete(readmePath)
     this.fileHashes.delete(configPath)
     this.configCache.delete(configPath)
@@ -118,27 +86,24 @@ export class WatchState {
     this.configCache.set(configPath, snapshot)
   }
 
-  initializeFromDisk(
-    readConfigSnapshot: (configPath: string) => ConfigSnapshot | null
-  ): void {
+  initializeFromDisk(readConfigSnapshot: ConfigSnapshotReader): void {
     try {
-      // 冷启动：扫描现有笔记目录并预热哈希与配置缓存，避免首次事件误判
-      const noteDirs = fs.readdirSync(this.notesDir)
+      const noteDirs = readdirSync(this.config.notesDir)
       this.clearAll()
 
       for (const noteDir of noteDirs) {
-        const noteDirPath = path.join(this.notesDir, noteDir)
-        if (!fs.statSync(noteDirPath).isDirectory()) continue
+        const noteDirPath = join(this.config.notesDir, noteDir)
+        if (!statSync(noteDirPath).isDirectory()) continue
 
         this.noteDirCache.add(noteDir)
 
-        const readmePath = path.join(noteDirPath, 'README.md')
+        const readmePath = join(noteDirPath, 'README.md')
         const readmeHash = this.getFileHash(readmePath)
         if (readmeHash) {
           this.fileHashes.set(readmePath, readmeHash)
         }
 
-        const configPath = path.join(noteDirPath, '.tnotes.json')
+        const configPath = join(noteDirPath, '.tnotes.json')
         const configHash = this.getFileHash(configPath)
         if (configHash) {
           this.fileHashes.set(configPath, configHash)

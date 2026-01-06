@@ -314,6 +314,9 @@ export class ReadmeService {
     const repoOwner = this.configManager.get('author')
     const repoName = this.configManager.get('repoName')
 
+    // 合并缓存配置和传入的更新
+    const mergedConfig = { ...item.noteConfig, ...updates }
+
     // 构建一个临时的 NoteInfo 对象用于生成 markdown
     const tempNoteInfo: NoteInfo = {
       id: noteIndex,
@@ -321,7 +324,7 @@ export class ReadmeService {
       path: '',
       readmePath: '',
       configPath: '',
-      config: item.noteConfig,
+      config: mergedConfig,
     }
 
     let updated = false
