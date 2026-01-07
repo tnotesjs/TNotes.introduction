@@ -48,7 +48,7 @@
 - [ ] [0025. Q&A](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0025.%20Q%26A/README.md)
 - [ ] [0017. 统计知识库近 12 个月每个月的笔记完成数量](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0017.%20%E7%BB%9F%E8%AE%A1%E7%9F%A5%E8%AF%86%E5%BA%93%E8%BF%91%2012%20%E4%B8%AA%E6%9C%88%E6%AF%8F%E4%B8%AA%E6%9C%88%E7%9A%84%E7%AC%94%E8%AE%B0%E5%AE%8C%E6%88%90%E6%95%B0%E9%87%8F/README.md)
 - [ ] [0018. dev](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0018.%20dev/README.md)
-- [ ] [0020. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0020.%20new/README.md)
+- [ ] [0020. build](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0020.%20build/README.md)
 - [ ] [0021. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0021.%20new/README.md)
 - [ ] [0024. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0024.%20new/README.md)
 - [ ] [0026. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0026.%20new/README.md)
