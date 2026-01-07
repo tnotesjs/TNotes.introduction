@@ -31,6 +31,7 @@ import {
 import { updateConfigPlugin } from './tnotes/vitepress/plugins/updateConfigPlugin'
 import { renameNotePlugin } from './tnotes/vitepress/plugins/renameNotePlugin'
 import { getNoteByConfigIdPlugin } from './tnotes/vitepress/plugins/getNoteByConfigIdPlugin'
+import { buildProgressPlugin } from './tnotes/vitepress/plugins/buildProgressPlugin'
 
 export default defineConfig({
   appearance: 'dark',
@@ -51,6 +52,10 @@ export default defineConfig({
   srcExclude: IGNORE_LIST,
   vite: {
     plugins: [
+      /**
+       * 构建进度插件 - 仅在 build 模式下显示真实进度
+       */
+      buildProgressPlugin() as any,
       /**
        * 类型断言: VitePress 的 vite 5.4.20 与 vite 7.1.9 插件类型不兼容
        */
