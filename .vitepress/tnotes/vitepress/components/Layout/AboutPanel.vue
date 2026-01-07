@@ -106,28 +106,6 @@
       </div>
     </div>
 
-    <!-- 弃用状态（仅笔记页显示且非开发环境只读） -->
-    <div
-      :class="$style.timeLine"
-      v-if="!isHomeReadme && currentNoteId"
-      title="弃用状态"
-    >
-      <div :class="$style.timeLabel">
-        <strong>🗑 弃用状态</strong>
-      </div>
-      <div :class="$style.timeValue">
-        <select
-          v-model="editableDeprecated"
-          :class="$style.statusSelect"
-          :disabled="!isDev"
-          @change="onConfigChange"
-        >
-          <option :value="false">✅ 未弃用</option>
-          <option :value="true">❌ 已弃用</option>
-        </select>
-      </div>
-    </div>
-
     <!-- 首次提交时间 -->
     <div :class="$style.timeLine" title="首次提交时间">
       <div :class="$style.timeLabel"><strong>⌛️ 首次提交</strong></div>
@@ -226,7 +204,6 @@ const props = defineProps<{
   editableDescription: string
   editableNoteStatus: boolean
   editableDiscussionsEnabled: boolean
-  editableDeprecated: boolean
   titleError: string
   modalCreatedAt: number | undefined
   modalUpdatedAt: number | undefined
@@ -242,7 +219,6 @@ const emit = defineEmits<{
   'update:editableDescription': [value: string]
   'update:editableNoteStatus': [value: boolean]
   'update:editableDiscussionsEnabled': [value: boolean]
-  'update:editableDeprecated': [value: boolean]
   'update:titleError': [value: string]
   titleInput: []
   titleBlur: []
@@ -268,11 +244,6 @@ const editableNoteStatus = computed({
 const editableDiscussionsEnabled = computed({
   get: () => props.editableDiscussionsEnabled,
   set: (value) => emit('update:editableDiscussionsEnabled', value),
-})
-
-const editableDeprecated = computed({
-  get: () => props.editableDeprecated,
-  set: (value) => emit('update:editableDeprecated', value),
 })
 
 function onTitleInput() {

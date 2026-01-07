@@ -48,18 +48,14 @@ export class ConfigChangeHandler {
 
       if (!cached) continue
 
-      const statusChanged =
-        cached.done !== snapshot.done ||
-        cached.deprecated !== snapshot.deprecated
+      const statusChanged = cached.done !== snapshot.done
       const otherChanged =
         cached.enableDiscussions !== snapshot.enableDiscussions ||
         cached.description !== snapshot.description
 
       if (statusChanged) {
         changedIndexes.push(change.noteIndex)
-        logger.info(
-          `检测到配置状态变化: done(${cached.done}→${snapshot.done}), deprecated(${cached.deprecated}→${snapshot.deprecated})`
-        )
+        logger.info(`检测到配置状态变化: done(${cached.done}→${snapshot.done})`)
       } else if (otherChanged) {
         logger.info('检测到配置非状态字段变化，已刷新缓存（无需全局更新）')
       }

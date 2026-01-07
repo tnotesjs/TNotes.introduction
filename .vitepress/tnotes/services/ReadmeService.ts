@@ -225,9 +225,7 @@ export class ReadmeService {
         // 获取笔记配置，添加状态 emoji
         let statusEmoji = '⏰ ' // 默认未完成
         if (note?.config) {
-          if (note.config.deprecated) {
-            statusEmoji = '❌ '
-          } else if (note.config.done) {
+          if (note.config.done) {
             statusEmoji = '✅ '
           }
         }

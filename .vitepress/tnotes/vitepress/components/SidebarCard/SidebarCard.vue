@@ -30,10 +30,6 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  deprecated: {
-    type: Boolean,
-    default: false,
-  },
 })
 // #endregion
 
@@ -122,17 +118,11 @@ const sidebarData = computed(() => {
 const { articles, groups } = extractArticlesWithGroups(
   sidebarData.value,
   props.pending,
-  props.done,
-  props.deprecated
+  props.done
 )
 const expandedGroups = ref(new Set(Object.keys(groups)))
 
-function extractArticlesWithGroups(
-  sidebar,
-  showPending,
-  showDone,
-  showDeprecated
-) {
+function extractArticlesWithGroups(sidebar, showPending, showDone) {
   const articles = []
   const groups = {}
 
@@ -156,10 +146,6 @@ function extractArticlesWithGroups(
           shouldInclude = true
           status = 'pending'
           cleanText = item.text.replace('⏰ ', '')
-        } else if (item.text.startsWith('❌') && showDeprecated) {
-          shouldInclude = true
-          status = 'deprecated'
-          cleanText = item.text.replace('❌ ', '')
         }
 
         if (shouldInclude) {
@@ -383,8 +369,6 @@ function openVSCodeArticle(article) {
                       ? '✅ '
                       : article.status === 'pending'
                       ? '⏰ '
-                      : article.status === 'deprecated'
-                      ? '❌ '
                       : '✅ ') + article.realNumber
                   }}
                 </div>
@@ -446,8 +430,6 @@ function openVSCodeArticle(article) {
                       ? '✅'
                       : article.status === 'pending'
                       ? '⏰'
-                      : article.status === 'deprecated'
-                      ? '❌'
                       : '📄'
                   }}
                 </span>
@@ -670,10 +652,6 @@ function openVSCodeArticle(article) {
         &.status-pending {
           color: var(--vp-c-yellow-1);
         }
-
-        &.status-deprecated {
-          color: var(--vp-c-red-1);
-        }
       }
 
       .card-index {
@@ -870,10 +848,6 @@ function openVSCodeArticle(article) {
 
               &.status-pending {
                 color: var(--vp-c-yellow-1);
-              }
-
-              &.status-deprecated {
-                color: var(--vp-c-red-1);
               }
             }
 

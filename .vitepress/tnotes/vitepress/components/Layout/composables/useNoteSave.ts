@@ -15,8 +15,6 @@ export function useNoteSave(
   originalNoteStatus: any,
   editableDiscussionsEnabled: any,
   originalDiscussionsEnabled: any,
-  editableDeprecated: any,
-  originalDeprecated: any,
   editableDescription: any,
   originalDescription: any,
   allNotesConfig: Record<string, any>,
@@ -85,7 +83,6 @@ export function useNoteSave(
       const needConfigUpdate =
         editableNoteStatus.value !== originalNoteStatus.value ||
         editableDiscussionsEnabled.value !== originalDiscussionsEnabled.value ||
-        editableDeprecated.value !== originalDeprecated.value ||
         editableDescription.value.trim() !== originalDescription.value
 
       if (needConfigUpdate) {
@@ -101,7 +98,6 @@ export function useNoteSave(
             config: {
               done: editableNoteStatus.value,
               enableDiscussions: editableDiscussionsEnabled.value,
-              deprecated: editableDeprecated.value,
               description: editableDescription.value.trim(),
             },
           }),
@@ -121,8 +117,6 @@ export function useNoteSave(
         allNotesConfig[currentNoteId.value].done = editableNoteStatus.value
         allNotesConfig[currentNoteId.value].enableDiscussions =
           editableDiscussionsEnabled.value
-        allNotesConfig[currentNoteId.value].deprecated =
-          editableDeprecated.value
         allNotesConfig[currentNoteId.value].description =
           editableDescription.value.trim()
       }

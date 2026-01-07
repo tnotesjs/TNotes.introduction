@@ -81,13 +81,10 @@ export function updateNoteStatus(note: NoteInfo): {
   deprecatedMark: string
 } {
   let status = ' ' // 默认未完成
-  let deprecatedMark = '' // 弃用标记
+  let deprecatedMark = '' // 弃用标记（已废弃，保留返回值结构以免破坏 API）
 
   if (note.config) {
-    if (note.config.deprecated) {
-      status = ' ' // 弃用的笔记，复选框不勾选
-      deprecatedMark = ' ❌' // 添加弃用标记
-    } else if (note.config.done) {
+    if (note.config.done) {
       status = 'x' // 完成的笔记，勾选复选框
     }
   }

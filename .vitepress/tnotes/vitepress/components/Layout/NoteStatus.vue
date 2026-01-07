@@ -48,16 +48,10 @@ const noteTitle = computed(() => {
 })
 
 // 计算状态 emoji
-// 优先级：deprecated > pending (done: false) > done
 const statusEmoji = computed(() => {
   const config = noteConfig.value
 
   if (!config) return ''
-
-  // 弃用状态优先级最高
-  if (config.deprecated === true) {
-    return '❌'
-  }
 
   // done 为 false 表示待完成
   if (config.done === false) {

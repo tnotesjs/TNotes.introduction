@@ -12,7 +12,7 @@ interface UpdateConfigParams {
   config: Partial<
     Pick<
       NoteConfig,
-      'done' | 'enableDiscussions' | 'deprecated' | 'description'
+      'done' | 'enableDiscussions' | 'description'
     >
   >
 }
@@ -30,7 +30,6 @@ export class UpdateNoteConfigCommand extends BaseCommand {
     const noteIndex = process.env.NOTE_ID
     const done = process.env.NOTE_DONE === 'true'
     const enableDiscussions = process.env.NOTE_DISCUSSIONS === 'true'
-    const deprecated = process.env.NOTE_DEPRECATED === 'true'
     const description = process.env.NOTE_DESCRIPTION || ''
 
     if (!noteIndex) {
@@ -44,7 +43,6 @@ export class UpdateNoteConfigCommand extends BaseCommand {
         config: {
           done,
           enableDiscussions,
-          deprecated,
           description,
         },
       })
@@ -76,8 +74,6 @@ export class UpdateNoteConfigCommand extends BaseCommand {
       this.logger.info(`  - 完成状态: ${config.done}`)
     if (config.enableDiscussions !== undefined)
       this.logger.info(`  - 评论状态: ${config.enableDiscussions}`)
-    if (config.deprecated !== undefined)
-      this.logger.info(`  - 弃用状态: ${config.deprecated}`)
     if (config.description !== undefined)
       this.logger.info(`  - 笔记简介: ${config.description || '(空)'}`)
   }

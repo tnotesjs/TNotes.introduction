@@ -59,7 +59,6 @@ export function updateConfigPlugin(): PluginOption {
                 config: {
                   done: config.done,
                   enableDiscussions: config.enableDiscussions,
-                  deprecated: config.deprecated,
                   description: config.description,
                 },
               })

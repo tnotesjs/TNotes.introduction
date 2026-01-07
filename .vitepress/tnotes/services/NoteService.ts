@@ -9,7 +9,6 @@ import { v4 as uuidv4 } from 'uuid'
 import type { NoteInfo, NoteConfig } from '../types'
 import { NoteManager } from '../core/NoteManager'
 import { NoteIndexCache } from '../core/NoteIndexCache'
-import { ConfigManager } from '../config/ConfigManager'
 import { generateNoteTitle } from '../config/templates'
 import {
   NOTES_PATH,
@@ -119,7 +118,6 @@ export class NoteService {
       tnotes: [],
       yuque: [],
       done: false,
-      deprecated: false, // 添加 deprecated 字段，避免后续修复
       category,
       enableDiscussions,
       created_at: now,
@@ -250,8 +248,8 @@ export class NoteService {
     oldConfig: NoteConfig,
     newConfig: NoteConfig
   ): boolean {
-    // 影响全局的字段：done、deprecated
-    const globalFields: (keyof NoteConfig)[] = ['done', 'deprecated']
+    // 影响全局的字段：done
+    const globalFields: (keyof NoteConfig)[] = ['done']
 
     for (const field of globalFields) {
       if (oldConfig[field] !== newConfig[field]) {
@@ -278,15 +276,6 @@ export class NoteService {
   async markNoteAsUndone(noteIndex: string): Promise<void> {
     await this.updateNoteConfig(noteIndex, { done: false })
     logger.info(`Marked note as undone: ${noteIndex}`)
-  }
-
-  /**
-   * 标记笔记为废弃
-   * @param noteIndex - 笔记索引
-   */
-  async deprecateNote(noteIndex: string): Promise<void> {
-    await this.updateNoteConfig(noteIndex, { deprecated: true })
-    logger.info(`Deprecated note: ${noteIndex}`)
   }
 
   /**
@@ -320,7 +309,6 @@ export class NoteService {
 
     const total = notes.length
     const done = notes.filter((n) => n.config?.done).length
-    const deprecated = notes.filter((n) => n.config?.deprecated).length
     const withDiscussions = notes.filter(
       (n) => n.config?.enableDiscussions
     ).length
@@ -341,8 +329,7 @@ export class NoteService {
     return {
       total,
       done,
-      inProgress: total - done - deprecated,
-      deprecated,
+      inProgress: total - done,
       withDiscussions,
       externalResources: {
         bilibili: bilibiliCount,

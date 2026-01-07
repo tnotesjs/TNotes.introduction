@@ -60,7 +60,6 @@
           v-model:editable-description="editableDescription"
           v-model:editable-note-status="editableNoteStatus"
           v-model:editable-discussions-enabled="editableDiscussionsEnabled"
-          v-model:editable-deprecated="editableDeprecated"
           v-model:title-error="titleError"
           :modal-created-at="modalCreatedAt"
           :modal-updated-at="modalUpdatedAt"
@@ -347,7 +346,6 @@ const timeModalOpen = ref(false)
 const {
   editableNoteStatus,
   editableDiscussionsEnabled,
-  editableDeprecated,
   editableNoteTitle,
   editableDescription,
   titleError,
@@ -389,8 +387,6 @@ const {
   computed(() => currentNoteConfig.value.done || false),
   editableDiscussionsEnabled,
   computed(() => currentNoteConfig.value.enableDiscussions || false),
-  editableDeprecated,
-  computed(() => currentNoteConfig.value.deprecated || false),
   editableDescription,
   computed(() => currentNoteConfig.value.description || ''),
   allNotesConfig,

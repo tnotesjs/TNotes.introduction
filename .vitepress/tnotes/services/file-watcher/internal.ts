@@ -49,7 +49,6 @@ export interface WatchEvent {
 
 export type ConfigSnapshot = {
   done: boolean
-  deprecated: boolean
   enableDiscussions: boolean
   description: string
 }

@@ -18,7 +18,7 @@
     "collapsed": true,
     "items": [
       {
-        "text": "❌ TNotes 简介",
+        "text": "✅ TNotes 简介",
         "link": "/notes/0001. TNotes 简介/README"
       },
       {
@@ -98,7 +98,7 @@
         "link": "/notes/0009. 优化搜索配置/README"
       },
       {
-        "text": "❌ 处理笨重的 git log 问题（待迁移到 git-notes 中）",
+        "text": "⏰ 处理笨重的 git log 问题（待迁移到 git-notes 中）",
         "link": "/notes/0023. 处理笨重的 git log 问题（待迁移到 git-notes 中）/README"
       }
     ]

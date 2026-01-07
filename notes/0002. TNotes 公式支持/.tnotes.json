@@ -3,7 +3,6 @@
   "tnotes": [],
   "yuque": [],
   "done": true,
-  "deprecated": false,
   "enableDiscussions": true,
   "description": "本文介绍了 TNotes 对数学公式的支持，通过集成 markdown-it-mathjax3 实现了 LaTeX 公式渲染功能，并提供了测试用例验证其正确性。",
   "id": "4bd88b23-afee-4c89-a7b6-f4bd17f2e556",

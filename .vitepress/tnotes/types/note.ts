@@ -13,7 +13,6 @@ export interface NoteConfig {
   tnotes: string[]
   yuque: string[]
   done: boolean
-  deprecated?: boolean
   category?: string
   enableDiscussions: boolean
   description?: string // 笔记简介(一句话描述)
@@ -37,7 +36,6 @@ export interface NoteConfig {
  *     tnotes: [],
  *     yuque: [],
  *     done: true,
- *     deprecated: false,
  *     enableDiscussions: true,
  *     description: 'TNotes 是一个基于开源技术构建的免费个人在线知识库系统，采用分仓库模式管理笔记，支持公式渲染和自定义组件扩展，旨在提供高效便捷的知识管理和分享体验。',
  *     id: 'f3625513-ef8b-4ef5-b01b-69875d0fdcd9',

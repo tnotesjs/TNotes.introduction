@@ -16,14 +16,12 @@ export function useNoteConfig(
   // 可编辑的配置项
   const editableNoteStatus = ref(false)
   const editableDiscussionsEnabled = ref(false)
-  const editableDeprecated = ref(false)
   const editableNoteTitle = ref('')
   const editableDescription = ref('')
 
   // 原始配置（用于检测是否有变更）
   const originalNoteStatus = ref(false)
   const originalDiscussionsEnabled = ref(false)
-  const originalDeprecated = ref(false)
   const originalNoteTitle = ref('')
   const originalDescription = ref('')
 
@@ -35,7 +33,6 @@ export function useNoteConfig(
     return (
       editableNoteStatus.value !== originalNoteStatus.value ||
       editableDiscussionsEnabled.value !== originalDiscussionsEnabled.value ||
-      editableDeprecated.value !== originalDeprecated.value ||
       editableDescription.value.trim() !== originalDescription.value ||
       (editableNoteTitle.value.trim() !== originalNoteTitle.value &&
         !titleError.value)
@@ -49,14 +46,12 @@ export function useNoteConfig(
     editableNoteStatus.value = currentNoteConfig.value.done || false
     editableDiscussionsEnabled.value =
       currentNoteConfig.value.enableDiscussions || false
-    editableDeprecated.value = currentNoteConfig.value.deprecated || false
     editableNoteTitle.value = currentNoteTitle.value || ''
     editableDescription.value = currentNoteConfig.value.description || ''
 
     // 保存原始值
     originalNoteStatus.value = editableNoteStatus.value
     originalDiscussionsEnabled.value = editableDiscussionsEnabled.value
-    originalDeprecated.value = editableDeprecated.value
     originalNoteTitle.value = editableNoteTitle.value
     originalDescription.value = editableDescription.value
 
@@ -68,7 +63,6 @@ export function useNoteConfig(
   function resetNoteConfig() {
     editableNoteStatus.value = originalNoteStatus.value
     editableDiscussionsEnabled.value = originalDiscussionsEnabled.value
-    editableDeprecated.value = originalDeprecated.value
     editableNoteTitle.value = originalNoteTitle.value
     editableDescription.value = originalDescription.value
     titleError.value = ''
@@ -78,7 +72,6 @@ export function useNoteConfig(
   function updateOriginalValues() {
     originalNoteStatus.value = editableNoteStatus.value
     originalDiscussionsEnabled.value = editableDiscussionsEnabled.value
-    originalDeprecated.value = editableDeprecated.value
     originalNoteTitle.value = editableNoteTitle.value.trim()
     originalDescription.value = editableDescription.value.trim()
   }
@@ -103,14 +96,12 @@ export function useNoteConfig(
     // 可编辑字段
     editableNoteStatus,
     editableDiscussionsEnabled,
-    editableDeprecated,
     editableNoteTitle,
     editableDescription,
 
     // 原始值
     originalNoteStatus,
     originalDiscussionsEnabled,
-    originalDeprecated,
     originalNoteTitle,
     originalDescription,
 

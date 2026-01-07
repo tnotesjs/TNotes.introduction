@@ -15,7 +15,6 @@ const DEFAULT_CONFIG_FIELDS = {
   tnotes: [],
   yuque: [],
   done: false,
-  deprecated: false,
   enableDiscussions: false,
   description: '', // 笔记简介(一句话描述)
 } as const
@@ -33,7 +32,6 @@ const FIELD_ORDER = [
   'tnotes',
   'yuque',
   'done',
-  'deprecated',
   'category',
   'enableDiscussions',
   'description',
@@ -170,7 +168,7 @@ export class ConfigValidator {
     const tocFields = ['bilibili', 'tnotes', 'yuque']
 
     // 全局更新字段：影响侧边栏、首页等
-    const globalFields = ['done', 'deprecated', 'enableDiscussions']
+    const globalFields = ['done', 'enableDiscussions']
 
     // 检查是否有全局字段变更
     for (const field of globalFields) {

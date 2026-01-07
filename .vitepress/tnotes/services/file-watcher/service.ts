@@ -26,7 +26,7 @@ import { NOTES_DIR_PATH } from '../../config/constants'
 const RENAME_REVERT_DELAY_MS = 2000
 
 /**
- * 检测到笔记目录名称变更或者被删除的事件时,需要更新根目录下的 README.md 和 sidebar.json
+ * 检测到笔记目录名称变更或者被删除的事件时，需要更新根目录下的 README.md 和 sidebar.json
  *
  * 暂定 1s 作为缓冲，1s 过后再恢复监听
  */
@@ -353,7 +353,6 @@ export class FileWatcherService {
       const config = JSON.parse(content) as any
       return {
         done: Boolean(config.done),
-        deprecated: Boolean(config.deprecated),
         enableDiscussions: Boolean(config.enableDiscussions),
         description: config.description || '',
       }

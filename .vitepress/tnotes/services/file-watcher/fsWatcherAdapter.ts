@@ -82,6 +82,13 @@ export class FsWatcherAdapter {
 
     // 文件级事件
     // 处理笔记文件内容（笔记 README.md 文件、笔记配置 .tnotes.json 文件）发生变化的场景
+    // 只处理 README.md 和 .tnotes.json 文件的变更
+    const baseFilename = basename(filename)
+    if (baseFilename !== 'README.md' && baseFilename !== '.tnotes.json') {
+      // 忽略非目标文件的变更事件（如 assets 文件夹、其他文件等）
+      return
+    }
+
     const fullPath = join(this.config.notesDir, filename)
     const event = this.buildWatchEvent(fullPath, filename)
     if (!event) {
