@@ -2,7 +2,7 @@
  * .vitepress/tnotes/commands/update-completed-count/UpdateCompletedCountCommand.ts
  *
  * 更新完成笔记数量历史记录命令
- * 从知识库创建月份到当前月份，基于 Git 历史中的 README.md 统计每个月的完成笔记数量
+ * 基于 Git 历史统计最近 12 个月（近 1 年）的每月完成笔记数量
  */
 import { BaseCommand } from '../BaseCommand'
 import { readFileSync, writeFileSync } from 'fs'
@@ -16,7 +16,7 @@ export class UpdateCompletedCountCommand extends BaseCommand {
   constructor() {
     super(
       'update-completed-count',
-      '更新完成笔记数量历史记录（从创建月份到当前月份）'
+      '更新完成笔记数量历史记录（近 1 年，最近 12 个月）'
     )
   }
 

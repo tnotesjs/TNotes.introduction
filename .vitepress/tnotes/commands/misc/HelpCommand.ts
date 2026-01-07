@@ -5,10 +5,17 @@
  */
 import { BaseCommand } from '../BaseCommand'
 import { getAllCommands } from '../index'
+import { createLogger, LogLevel } from '../../utils'
 
 export class HelpCommand extends BaseCommand {
   constructor() {
     super('help', '显示帮助信息')
+
+    // 禁用时间戳输出，help 结束后其他命令不受影响
+    this.logger = createLogger('help', {
+      timestamp: false,
+      level: process.env.DEBUG ? LogLevel.DEBUG : LogLevel.INFO,
+    })
   }
 
   protected async run(): Promise<void> {
@@ -50,10 +57,10 @@ export class HelpCommand extends BaseCommand {
     this.logger.info('  pnpm tn:update')
     this.logger.info('  pnpm tn:update --all     # 更新所有知识库')
     this.logger.info(
-      '  pnpm tn:update-completed-count           # 生成当前知识库近 1 年的笔记完成数量的统计数据'
+      '  pnpm tn:update-completed-count           # 生成当前知识库最近 12 个月的完成笔记数量统计'
     )
     this.logger.info(
-      '  pnpm tn:update-completed-count --all     # 生成所有知识库近 1 年的笔记完成数量的统计数据'
+      '  pnpm tn:update-completed-count --all     # 生成所有知识库最近 12 个月的完成笔记数量统计'
     )
     this.logger.info('  pnpm tn:push --all       # 推送所有知识库')
     this.logger.info('')
