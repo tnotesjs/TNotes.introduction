@@ -95,6 +95,23 @@ let globalIsBuilding = false
 let globalOutDir = ''
 let globalLastPercent = 0
 let globalFileCount = 0
+let globalLastLoggedPercent = -1 // 非 TTY 环境下上次输出的百分比区间，初始为 -1 以便第一次输出
+
+/** 检测是否支持单行刷新（交互式终端） */
+const isTTY = !!(process.stdout.isTTY && process.stderr.isTTY)
+
+/** 检测是否在 CI 环境中运行 */
+const isCI = !!(
+  process.env.CI ||
+  process.env.GITHUB_ACTIONS ||
+  process.env.GITLAB_CI ||
+  process.env.CIRCLECI ||
+  process.env.TRAVIS ||
+  process.env.JENKINS_URL
+)
+
+/** 是否使用单行刷新模式（TTY 且非 CI） */
+const useSingleLineMode = isTTY && !isCI
 
 // 保存原始输出函数
 let originalStdoutWrite: typeof process.stdout.write | null = null
@@ -181,6 +198,16 @@ function renderProgress(
 ) {
   if (!originalStderrWrite) return
 
+  // 非单行模式下，只在 10% 间隔输出进度，避免日志过多
+  if (!useSingleLineMode && !isFinal) {
+    const currentPercent = Math.floor(percent * 100)
+    const currentBucket = Math.floor(currentPercent / 10) * 10
+    if (currentBucket <= globalLastLoggedPercent) {
+      return
+    }
+    globalLastLoggedPercent = currentBucket
+  }
+
   const filled = Math.floor(percent * width)
   const empty = width - filled
   const bar = complete.repeat(filled) + incomplete.repeat(empty)
@@ -188,8 +215,10 @@ function renderProgress(
   const elapsed = ((Date.now() - globalStartTime) / 1000).toFixed(1)
 
   // 格式: Building [...] 100% | Transforms: x/y | Chunks: x/y | Time: xs
-  const ending = isFinal ? '\n' : ''
-  const line = `\r\x1b[2KBuilding [${bar}] ${percentStr}% | Transforms: ${transforms} | Chunks: ${chunks} | Time: ${elapsed}s${ending}`
+  // 单行模式使用回车覆盖，否则直接换行
+  const prefix = useSingleLineMode ? '\r\x1b[2K' : ''
+  const ending = isFinal || !useSingleLineMode ? '\n' : ''
+  const line = `${prefix}Building [${bar}] ${percentStr}% | Transforms: ${transforms} | Chunks: ${chunks} | Time: ${elapsed}s${ending}`
   originalStderrWrite(line)
 }
 
@@ -220,6 +249,7 @@ export function buildProgressPlugin(
           globalChunkCount = 0
           globalHasError = false
           globalLastPercent = 0
+          globalLastLoggedPercent = -1
           globalOutDir = config.build?.outDir || 'dist'
 
           if (!hasCache) {
@@ -341,8 +371,6 @@ export function buildProgressPlugin(
 
           console.log(`\n✅ 构建成功！`)
           console.log(`   📁 输出目录: ${globalOutDir}`)
-          console.log(`   📊 转换文件: ${globalTransformCount} 个`)
-          console.log(`   📦 生成块: ${globalChunkCount} 个`)
           console.log(`   ⏱️  耗时: ${elapsed}s`)
         } else {
           console.log(`\n❌ 构建失败，请检查错误信息`)
