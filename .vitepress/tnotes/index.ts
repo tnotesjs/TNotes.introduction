@@ -5,11 +5,8 @@
  */
 import minimist from 'minimist'
 import { getCommand } from './commands'
-import {
-  isValidCommand,
-  COMMAND_NAMES,
-  type CommandArgs,
-} from './types/command'
+import { isValidCommand, COMMAND_NAMES } from './types'
+import type { CommandArgs } from './types'
 import { handleError, createError } from './utils'
 import type {
   UpdateCommand,

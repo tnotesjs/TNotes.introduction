@@ -5,22 +5,14 @@
  */
 
 // 配置相关类型
-export type {
-  TNotesConfig,
-  IconConfig,
-  SocialLink,
-  MenuItem,
-  RootItem,
-  SidebarItem,
-  CommandOptions,
-} from './config'
+export type * from './config'
 
 // 笔记相关类型
-export type { NoteConfig, NoteInfo, NotesLastUpdatedMap } from './note'
+export type * from './note'
 
 // Git 相关类型
-export type { GitTimestamp } from './git'
+export type * from './git'
 
 // 命令相关类型
-export type { CommandName, CommandArgs, Command } from './command'
-export { isValidCommand } from './command'
+export type * from './command'
+export * from './command'

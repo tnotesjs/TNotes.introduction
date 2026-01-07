@@ -5,9 +5,9 @@
  */
 
 // Git 管理器
-export { GitManager } from './GitManager'
-export type { GitFileStatus, GitStatus, GitRemoteInfo } from './GitManager'
+export * from './GitManager'
+export type * from './GitManager'
 
 // 进程管理器
-export { ProcessManager, getProcessManager } from './ProcessManager'
-export type { ProcessInfo } from './ProcessManager'
+export * from './ProcessManager'
+export type * from './ProcessManager'
