@@ -3,7 +3,7 @@
  *
  * README 生成器 - 负责生成各种 README 内容
  */
-import * as fs from 'fs'
+import { readFileSync, writeFileSync, existsSync } from 'fs'
 import type { NoteInfo } from '../types'
 import { TocGenerator } from './TocGenerator'
 import { ConfigManager } from '../config/ConfigManager'
@@ -38,7 +38,7 @@ export class ReadmeGenerator {
       return
     }
 
-    const content = fs.readFileSync(noteInfo.readmePath, 'utf-8')
+    const content = readFileSync(noteInfo.readmePath, 'utf-8')
     const lines = content.split(EOL)
 
     const repoName = this.configManager.get('repoName')
@@ -50,7 +50,7 @@ export class ReadmeGenerator {
     )
 
     const updatedContent = lines.join(EOL)
-    fs.writeFileSync(noteInfo.readmePath, updatedContent, 'utf-8')
+    writeFileSync(noteInfo.readmePath, updatedContent, 'utf-8')
   }
 
   /**
@@ -60,12 +60,12 @@ export class ReadmeGenerator {
    * @param homeReadmePath - 首页 README 路径
    */
   updateHomeReadme(notes: NoteInfo[], homeReadmePath: string): void {
-    if (!fs.existsSync(homeReadmePath)) {
+    if (!existsSync(homeReadmePath)) {
       logger.error(`根目录下的 README.md 文件未找到：${homeReadmePath}`)
       return
     }
 
-    const content = fs.readFileSync(homeReadmePath, 'utf-8')
+    const content = readFileSync(homeReadmePath, 'utf-8')
     const lines = content.split(EOL)
 
     // 创建笔记配置映射，以笔记索引为键
@@ -201,7 +201,7 @@ export class ReadmeGenerator {
     const processedLines = processEmptyLines(lines)
 
     const updatedContent = processedLines.join(EOL)
-    fs.writeFileSync(homeReadmePath, updatedContent, 'utf-8')
+    writeFileSync(homeReadmePath, updatedContent, 'utf-8')
 
     logger.info('已更新首页 README')
   }

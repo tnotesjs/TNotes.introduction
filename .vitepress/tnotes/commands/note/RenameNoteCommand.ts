@@ -3,8 +3,8 @@
  *
  * 重命名笔记命令 - 用于在开发环境中重命名笔记文件夹
  */
-import * as fs from 'fs'
-import * as path from 'path'
+import { existsSync, renameSync, readFileSync, writeFileSync } from 'fs'
+import { join } from 'path'
 import { BaseCommand } from '../BaseCommand'
 import { NoteService } from '../../services'
 import { ReadmeService } from '../../services/ReadmeService'
@@ -70,16 +70,16 @@ export class RenameNoteCommand extends BaseCommand {
 
     // 构建新的文件夹名称
     const newDirName = `${noteIndex}. ${newTitle.trim()}`
-    const newPath = path.join(NOTES_PATH, newDirName)
+    const newPath = join(NOTES_PATH, newDirName)
 
     // 检查新路径是否已存在
-    if (fs.existsSync(newPath)) {
+    if (existsSync(newPath)) {
       throw new Error(`目标文件夹已存在: ${newDirName}`)
     }
 
     // 重命名文件夹
     try {
-      fs.renameSync(note.path, newPath)
+      renameSync(note.path, newPath)
       this.logger.info(`✅ 文件夹已重命名:`)
       this.logger.info(`  原名称: ${note.dirName}`)
       this.logger.info(`  新名称: ${newDirName}`)
@@ -94,10 +94,10 @@ export class RenameNoteCommand extends BaseCommand {
     // 更新笔记内部的标题（README.md 第一行）
     try {
       this.logger.info('正在更新笔记内部标题...')
-      const readmePath = path.join(newPath, README_FILENAME)
+      const readmePath = join(newPath, README_FILENAME)
 
-      if (fs.existsSync(readmePath)) {
-        const content = fs.readFileSync(readmePath, 'utf-8')
+      if (existsSync(readmePath)) {
+        const content = readFileSync(readmePath, 'utf-8')
         const lines = content.split('\n')
 
         // 查找第一个一级标题
@@ -119,7 +119,7 @@ export class RenameNoteCommand extends BaseCommand {
           lines[h1Index] = newH1
 
           // 写回文件
-          fs.writeFileSync(readmePath, lines.join('\n'), 'utf-8')
+          writeFileSync(readmePath, lines.join('\n'), 'utf-8')
           this.logger.success('✅ 笔记标题已更新')
         } else {
           this.logger.warn(

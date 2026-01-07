@@ -3,8 +3,14 @@
  *
  * 笔记管理器 - 负责笔记的扫描、验证和基本操作
  */
-import * as fs from 'fs'
-import * as path from 'path'
+import {
+  existsSync,
+  readdirSync,
+  statSync,
+  readFileSync,
+  writeFileSync,
+} from 'fs'
+import { join } from 'path'
 import type { NoteInfo, NoteConfig } from '../types'
 import {
   NOTES_PATH,
@@ -34,31 +40,30 @@ export class NoteManager {
     const notes: NoteInfo[] = []
     const noteIndexMap = new Map<string, string[]>() // 用于检测重复编号：索引 -> [dirNames]
 
-    if (!fs.existsSync(NOTES_PATH)) {
+    if (!existsSync(NOTES_PATH)) {
       logger.warn(`Notes directory not found: ${NOTES_PATH}`)
       return notes
     }
 
-    const noteDirs = fs
-      .readdirSync(NOTES_PATH)
+    const noteDirs = readdirSync(NOTES_PATH)
       .filter((dir) => {
-        const fullPath = path.join(NOTES_PATH, dir)
-        return fs.statSync(fullPath).isDirectory() && !dir.startsWith('.')
+        const fullPath = join(NOTES_PATH, dir)
+        return statSync(fullPath).isDirectory() && !dir.startsWith('.')
       })
       .sort()
 
     for (const dirName of noteDirs) {
-      const notePath = path.join(NOTES_PATH, dirName)
-      const readmePath = path.join(notePath, README_FILENAME)
-      const configPath = path.join(notePath, TNOTES_JSON_FILENAME)
+      const notePath = join(NOTES_PATH, dirName)
+      const readmePath = join(notePath, README_FILENAME)
+      const configPath = join(notePath, TNOTES_JSON_FILENAME)
 
-      if (!fs.existsSync(readmePath)) {
+      if (!existsSync(readmePath)) {
         logger.warn(`README not found in note: ${dirName}`)
         continue
       }
 
       let config: NoteConfig | undefined
-      if (fs.existsSync(configPath)) {
+      if (existsSync(configPath)) {
         try {
           // 使用 ConfigValidator 验证并修复配置
           config =
@@ -176,10 +181,10 @@ export class NoteManager {
    * @returns 笔记内容
    */
   readNoteContent(noteInfo: NoteInfo): string {
-    if (!fs.existsSync(noteInfo.readmePath)) {
+    if (!existsSync(noteInfo.readmePath)) {
       throw new Error(`README not found: ${noteInfo.readmePath}`)
     }
-    return fs.readFileSync(noteInfo.readmePath, 'utf-8')
+    return readFileSync(noteInfo.readmePath, 'utf-8')
   }
 
   /**
@@ -188,7 +193,7 @@ export class NoteManager {
    * @param content - 笔记内容
    */
   writeNoteContent(noteInfo: NoteInfo, content: string): void {
-    fs.writeFileSync(noteInfo.readmePath, content, 'utf-8')
+    writeFileSync(noteInfo.readmePath, content, 'utf-8')
     logger.info(`Updated note: ${noteInfo.dirName}`)
   }
 
@@ -204,7 +209,7 @@ export class NoteManager {
 
     config.updated_at = Date.now()
     const configContent = JSON.stringify(config, null, 2)
-    fs.writeFileSync(noteInfo.configPath, configContent, 'utf-8')
+    writeFileSync(noteInfo.configPath, configContent, 'utf-8')
     logger.info(`Updated config for note: ${noteInfo.dirName}`)
   }
 
@@ -214,18 +219,18 @@ export class NoteManager {
    * @returns 笔记信息，未找到时返回 undefined
    */
   getNoteByIndex(noteIndex: string): NoteInfo | undefined {
-    if (!fs.existsSync(NOTES_PATH)) {
+    if (!existsSync(NOTES_PATH)) {
       return undefined
     }
 
     // 直接遍历目录查找匹配的笔记，而不是扫描所有笔记
-    const noteDirs = fs.readdirSync(NOTES_PATH)
+    const noteDirs = readdirSync(NOTES_PATH)
 
     for (const dirName of noteDirs) {
-      const fullPath = path.join(NOTES_PATH, dirName)
+      const fullPath = join(NOTES_PATH, dirName)
 
       // 跳过非目录和隐藏目录
-      if (!fs.statSync(fullPath).isDirectory() || dirName.startsWith('.')) {
+      if (!statSync(fullPath).isDirectory() || dirName.startsWith('.')) {
         continue
       }
 
@@ -235,15 +240,15 @@ export class NoteManager {
       // 找到匹配的笔记
       if (id === noteIndex) {
         const notePath = fullPath
-        const readmePath = path.join(notePath, README_FILENAME)
-        const configPath = path.join(notePath, TNOTES_JSON_FILENAME)
+        const readmePath = join(notePath, README_FILENAME)
+        const configPath = join(notePath, TNOTES_JSON_FILENAME)
 
-        if (!fs.existsSync(readmePath)) {
+        if (!existsSync(readmePath)) {
           return undefined
         }
 
         let config: NoteConfig | undefined
-        if (fs.existsSync(configPath)) {
+        if (existsSync(configPath)) {
           try {
             config =
               ConfigValidator.validateAndFix(configPath, notePath) || undefined

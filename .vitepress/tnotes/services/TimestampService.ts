@@ -3,8 +3,14 @@
  *
  * 时间戳服务 - 管理笔记的创建时间和更新时间
  */
-import * as fs from 'fs'
-import * as path from 'path'
+import {
+  existsSync,
+  readFileSync,
+  writeFileSync,
+  readdirSync,
+  statSync,
+} from 'fs'
+import { join } from 'path'
 import { execSync } from 'child_process'
 import { logger } from '../utils/logger'
 import {
@@ -34,7 +40,7 @@ export class TimestampService {
     updated_at: number
   } | null {
     try {
-      const readmePath = path.join(noteDirPath, 'README.md')
+      const readmePath = join(noteDirPath, 'README.md')
 
       // 获取 README.md 的首次提交时间（创建时间）
       const createdAtCmd = `git log --diff-filter=A --follow --format=%ct -- "${readmePath}" | tail -1`
@@ -74,19 +80,19 @@ export class TimestampService {
     noteDir: string,
     forceUpdate: boolean = false
   ): boolean {
-    const configPath = path.join(NOTES_DIR_PATH, noteDir, '.tnotes.json')
+    const configPath = join(NOTES_DIR_PATH, noteDir, '.tnotes.json')
 
-    if (!fs.existsSync(configPath)) {
+    if (!existsSync(configPath)) {
       return false
     }
 
     try {
       // 读取配置
-      const configContent = fs.readFileSync(configPath, 'utf-8')
+      const configContent = readFileSync(configPath, 'utf-8')
       const config: NoteConfig = JSON.parse(configContent)
 
       // 获取 git 时间戳
-      const noteDirPath = path.join(NOTES_DIR_PATH, noteDir)
+      const noteDirPath = join(NOTES_DIR_PATH, noteDir)
       const timestamps = this.getGitTimestamps(noteDirPath)
 
       if (!timestamps) {
@@ -138,7 +144,7 @@ export class TimestampService {
         })
         lines.push('}')
 
-        fs.writeFileSync(configPath, lines.join('\n') + '\n', 'utf-8')
+        writeFileSync(configPath, lines.join('\n') + '\n', 'utf-8')
         return true
       }
 
@@ -157,7 +163,7 @@ export class TimestampService {
   private fixRootConfigTimestamps(forceUpdate: boolean = false): boolean {
     try {
       // 读取根配置文件
-      const configContent = fs.readFileSync(ROOT_CONFIG_PATH, 'utf-8')
+      const configContent = readFileSync(ROOT_CONFIG_PATH, 'utf-8')
       const config: TNotesConfig = JSON.parse(configContent)
 
       // 获取首次提交时间（项目创建时间）
@@ -214,7 +220,7 @@ export class TimestampService {
         config.root_item.days_since_birth = daysSinceBirth
 
         // 写回配置文件
-        fs.writeFileSync(
+        writeFileSync(
           ROOT_CONFIG_PATH,
           JSON.stringify(config, null, 2) + '\n',
           'utf-8'
@@ -253,16 +259,15 @@ export class TimestampService {
     }
 
     // 2. 修复所有笔记的时间戳
-    if (!fs.existsSync(NOTES_DIR_PATH)) {
+    if (!existsSync(NOTES_DIR_PATH)) {
       logger.error('notes 目录不存在')
       return { fixed: 0, skipped: 0, total: 0, rootConfigFixed }
     }
 
-    const noteDirs = fs
-      .readdirSync(NOTES_DIR_PATH)
+    const noteDirs = readdirSync(NOTES_DIR_PATH)
       .filter((name) => {
-        const fullPath = path.join(NOTES_DIR_PATH, name)
-        return fs.statSync(fullPath).isDirectory() && /^\d{4}\./.test(name)
+        const fullPath = join(NOTES_DIR_PATH, name)
+        return statSync(fullPath).isDirectory() && /^\d{4}\./.test(name)
       })
       .sort()
 
@@ -306,15 +311,15 @@ export class TimestampService {
     let updatedCount = 0
 
     for (const noteDir of noteDirNames) {
-      const configPath = path.join(NOTES_DIR_PATH, noteDir, '.tnotes.json')
+      const configPath = join(NOTES_DIR_PATH, noteDir, '.tnotes.json')
 
-      if (!fs.existsSync(configPath)) {
+      if (!existsSync(configPath)) {
         continue
       }
 
       try {
         // 读取配置
-        const configContent = fs.readFileSync(configPath, 'utf-8')
+        const configContent = readFileSync(configPath, 'utf-8')
         const config: NoteConfig = JSON.parse(configContent)
 
         // 更新 updated_at 为当前时间
@@ -331,7 +336,7 @@ export class TimestampService {
         })
         lines.push('}')
 
-        fs.writeFileSync(configPath, lines.join('\n') + '\n', 'utf-8')
+        writeFileSync(configPath, lines.join('\n') + '\n', 'utf-8')
         updatedCount++
       } catch (error) {
         logger.error(`更新时间戳失败: ${noteDir}`, error)

@@ -5,7 +5,7 @@
  */
 import { BaseCommand } from '../BaseCommand'
 import { NoteService, ReadmeService } from '../../services'
-import * as readline from 'readline'
+import { createInterface } from 'readline'
 import { v4 as uuidv4 } from 'uuid'
 
 export class CreateNotesCommand extends BaseCommand {
@@ -86,7 +86,7 @@ export class CreateNotesCommand extends BaseCommand {
    * 提示用户输入要创建的笔记数量
    */
   private async promptForCount(): Promise<number> {
-    const rl = readline.createInterface({
+    const rl = createInterface({
       input: process.stdin,
       output: process.stdout,
     })
@@ -125,7 +125,7 @@ export class CreateNotesCommand extends BaseCommand {
    * 提示用户输入笔记标题
    */
   private async promptForTitle(): Promise<string> {
-    const rl = readline.createInterface({
+    const rl = createInterface({
       input: process.stdin,
       output: process.stdout,
     })

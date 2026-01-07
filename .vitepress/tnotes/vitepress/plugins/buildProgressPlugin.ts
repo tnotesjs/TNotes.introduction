@@ -7,12 +7,18 @@
  * https://github.com/jeddygong/vite-plugin-progress
  */
 import type { Plugin } from 'vite'
-import * as fs from 'fs'
-import * as path from 'path'
+import {
+  existsSync,
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  readdirSync,
+} from 'fs'
+import { join } from 'path'
 
 /** 缓存目录和文件路径 */
-const CACHE_DIR = path.join(process.cwd(), 'node_modules', '.tnotes-progress')
-const CACHE_FILE = path.join(CACHE_DIR, 'build-cache.json')
+const CACHE_DIR = join(process.cwd(), 'node_modules', '.tnotes-progress')
+const CACHE_FILE = join(CACHE_DIR, 'build-cache.json')
 
 /** 缓存数据结构 */
 interface CacheData {
@@ -32,8 +38,8 @@ interface BuildProgressOptions {
  */
 function getCacheData(): CacheData {
   try {
-    if (fs.existsSync(CACHE_FILE)) {
-      return JSON.parse(fs.readFileSync(CACHE_FILE, 'utf-8'))
+    if (existsSync(CACHE_FILE)) {
+      return JSON.parse(readFileSync(CACHE_FILE, 'utf-8'))
     }
   } catch {
     // 忽略错误
@@ -46,10 +52,10 @@ function getCacheData(): CacheData {
  */
 function setCacheData(data: CacheData): void {
   try {
-    if (!fs.existsSync(CACHE_DIR)) {
-      fs.mkdirSync(CACHE_DIR, { recursive: true })
+    if (!existsSync(CACHE_DIR)) {
+      mkdirSync(CACHE_DIR, { recursive: true })
     }
-    fs.writeFileSync(CACHE_FILE, JSON.stringify(data), 'utf-8')
+    writeFileSync(CACHE_FILE, JSON.stringify(data), 'utf-8')
   } catch {
     // 忽略错误
   }
@@ -64,9 +70,9 @@ function countSourceFiles(srcDir: string): number {
 
   const scan = (dir: string) => {
     try {
-      const entries = fs.readdirSync(dir, { withFileTypes: true })
+      const entries = readdirSync(dir, { withFileTypes: true })
       for (const entry of entries) {
-        const fullPath = path.join(dir, entry.name)
+        const fullPath = join(dir, entry.name)
         if (
           entry.isDirectory() &&
           !entry.name.startsWith('.') &&

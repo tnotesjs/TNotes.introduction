@@ -11,7 +11,12 @@ import { NoteIndexCache } from '../core/NoteIndexCache'
 import { logger } from '../utils/logger'
 import { parseNoteLine, buildNoteLineMarkdown } from '../utils/readmeHelpers'
 import { ROOT_README_PATH, VP_SIDEBAR_PATH } from '../config/constants'
-import * as fs from 'fs'
+import {
+  existsSync,
+  readFileSync,
+  writeFileSync,
+  promises as fsPromises,
+} from 'fs'
 
 /**
  * README 更新选项
@@ -178,12 +183,12 @@ export class ReadmeService {
    */
   private async updateSidebar(notes: NoteInfo[]): Promise<void> {
     // 读取 README.md 解析层次结构
-    if (!fs.existsSync(ROOT_README_PATH)) {
+    if (!existsSync(ROOT_README_PATH)) {
       logger.error('未找到首页 README，无法生成侧边栏')
       return
     }
 
-    const content = fs.readFileSync(ROOT_README_PATH, 'utf-8')
+    const content = readFileSync(ROOT_README_PATH, 'utf-8')
     const lines = content.split('\n')
 
     // 解析 README.md 的层次结构
@@ -274,7 +279,7 @@ export class ReadmeService {
     )
 
     // 写入 sidebar.json
-    fs.writeFileSync(
+    writeFileSync(
       VP_SIDEBAR_PATH,
       JSON.stringify(hierarchicalSidebar, null, 2),
       'utf-8'
@@ -307,7 +312,7 @@ export class ReadmeService {
     }
 
     // 读取 README.md
-    const content = await fs.promises.readFile(ROOT_README_PATH, 'utf-8')
+    const content = await fsPromises.readFile(ROOT_README_PATH, 'utf-8')
     const lines = content.split('\n')
     const repoOwner = this.configManager.get('author')
     const repoName = this.configManager.get('repoName')
@@ -337,7 +342,7 @@ export class ReadmeService {
     }
 
     if (updated) {
-      await fs.promises.writeFile(ROOT_README_PATH, lines.join('\n'), 'utf-8')
+      await fsPromises.writeFile(ROOT_README_PATH, lines.join('\n'), 'utf-8')
       logger.info(`增量更新 README.md 中的笔记: ${noteIndex}`)
     } else {
       logger.warn(`README.md 中未找到笔记: ${noteIndex}`)
@@ -349,7 +354,7 @@ export class ReadmeService {
    * @param noteIndex - 笔记索引
    */
   async deleteNoteFromReadme(noteIndex: string): Promise<void> {
-    const content = await fs.promises.readFile(ROOT_README_PATH, 'utf-8')
+    const content = await fsPromises.readFile(ROOT_README_PATH, 'utf-8')
     const lines = content.split('\n')
     const linesToRemove: number[] = []
 
@@ -367,7 +372,7 @@ export class ReadmeService {
         lines.splice(linesToRemove[i], 1)
       }
 
-      await fs.promises.writeFile(ROOT_README_PATH, lines.join('\n'), 'utf-8')
+      await fsPromises.writeFile(ROOT_README_PATH, lines.join('\n'), 'utf-8')
       logger.info(
         `从 README.md 中删除笔记: ${noteIndex} (${linesToRemove.length} 处引用)`
       )
@@ -387,7 +392,7 @@ export class ReadmeService {
       return
     }
 
-    const content = await fs.promises.readFile(ROOT_README_PATH, 'utf-8')
+    const content = await fsPromises.readFile(ROOT_README_PATH, 'utf-8')
     const lines = content.split('\n')
     const repoOwner = this.configManager.get('author')
     const repoName = this.configManager.get('repoName')
@@ -406,7 +411,7 @@ export class ReadmeService {
     const noteLine = buildNoteLineMarkdown(tempNoteInfo, repoOwner, repoName)
     lines.push(noteLine)
 
-    await fs.promises.writeFile(ROOT_README_PATH, lines.join('\n'), 'utf-8')
+    await fsPromises.writeFile(ROOT_README_PATH, lines.join('\n'), 'utf-8')
     logger.info(`在 README.md 末尾添加笔记: ${noteIndex}`)
   }
 

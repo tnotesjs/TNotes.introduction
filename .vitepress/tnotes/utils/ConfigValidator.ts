@@ -3,7 +3,7 @@
  *
  * 配置验证和修复工具 - 确保 .tnotes.json 配置完整性
  */
-import * as fs from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 import type { NoteConfig } from '../types'
 import { logger } from './logger'
 
@@ -56,7 +56,7 @@ export class ConfigValidator {
   ): NoteConfig | null {
     try {
       // 读取配置文件
-      const configContent = fs.readFileSync(configPath, 'utf-8')
+      const configContent = readFileSync(configPath, 'utf-8')
       let config: Partial<NoteConfig>
 
       try {
@@ -118,7 +118,7 @@ export class ConfigValidator {
         jsonLines.push('}')
         const sortedJson = jsonLines.join('\n')
 
-        fs.writeFileSync(configPath, sortedJson + '\n', 'utf-8')
+        writeFileSync(configPath, sortedJson + '\n', 'utf-8')
         logger.info(`配置文件已修复: ${configPath}`)
       }
 

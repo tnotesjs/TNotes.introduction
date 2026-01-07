@@ -3,8 +3,8 @@
  *
  * 笔记服务 - 封装笔记相关的业务逻辑
  */
-import * as fs from 'fs'
-import * as path from 'path'
+import { writeFileSync, rmSync, readFileSync } from 'fs'
+import { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
 import type { NoteInfo, NoteConfig } from '../types'
 import { NoteManager } from '../core/NoteManager'
@@ -98,19 +98,19 @@ export class NoteService {
     // 生成笔记索引（填充空缺）
     const noteIndex = this.generateNextNoteIndex()
     const dirName = `${noteIndex}. ${title}`
-    const notePath = path.join(NOTES_PATH, dirName)
+    const notePath = join(NOTES_PATH, dirName)
 
     // 确保目录存在
     await ensureDirectory(notePath)
 
     // 创建 README.md（包含一级标题）
-    const readmePath = path.join(notePath, README_FILENAME)
+    const readmePath = join(notePath, README_FILENAME)
     const noteTitle = generateNoteTitle(noteIndex, title, REPO_NOTES_URL)
     const readmeContent = noteTitle + '\n' + NEW_NOTES_README_MD_TEMPLATE
-    fs.writeFileSync(readmePath, readmeContent, 'utf-8')
+    writeFileSync(readmePath, readmeContent, 'utf-8')
 
     // 创建 .tnotes.json（使用 UUID 作为配置 ID）
-    const configPath = path.join(notePath, TNOTES_JSON_FILENAME)
+    const configPath = join(notePath, TNOTES_JSON_FILENAME)
     const now = Date.now()
     const config: NoteConfig = {
       id: configId || uuidv4(), // 配置 ID 使用 UUID（跨知识库唯一）
@@ -123,7 +123,7 @@ export class NoteService {
       created_at: now,
       updated_at: now,
     }
-    fs.writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8')
+    writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8')
 
     logger.info(`Created new note: ${dirName}`)
 
@@ -179,7 +179,7 @@ export class NoteService {
     }
 
     // 删除笔记目录
-    fs.rmSync(note.path, { recursive: true, force: true })
+    rmSync(note.path, { recursive: true, force: true })
     logger.info(`Deleted note: ${note.dirName}`)
   }
 
@@ -366,7 +366,7 @@ export class NoteService {
    */
   async fixNoteTitle(noteInfo: NoteInfo): Promise<boolean> {
     try {
-      const readmeContent = fs.readFileSync(noteInfo.readmePath, 'utf-8')
+      const readmeContent = readFileSync(noteInfo.readmePath, 'utf-8')
       const lines = readmeContent.split('\n')
 
       // 提取目录名中的标题（去掉编号）
@@ -389,7 +389,7 @@ export class NoteService {
       if (!firstLine.startsWith('# ')) {
         // 缺少一级标题，在第一行插入
         lines.unshift(expectedH1)
-        fs.writeFileSync(noteInfo.readmePath, lines.join('\n'), 'utf-8')
+        writeFileSync(noteInfo.readmePath, lines.join('\n'), 'utf-8')
         logger.info(`Added title to: ${noteInfo.dirName}`)
         return true
       }
@@ -398,7 +398,7 @@ export class NoteService {
       if (firstLine !== expectedH1) {
         // 标题不正确，替换第一行
         lines[0] = expectedH1
-        fs.writeFileSync(noteInfo.readmePath, lines.join('\n'), 'utf-8')
+        writeFileSync(noteInfo.readmePath, lines.join('\n'), 'utf-8')
         logger.info(`Fixed title for: ${noteInfo.dirName}`)
         return true
       }

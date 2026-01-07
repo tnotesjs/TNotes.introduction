@@ -7,8 +7,8 @@ import { ProcessManager } from '../lib/ProcessManager'
 import { ConfigManager } from '../config/ConfigManager'
 import { logger } from '../utils/logger'
 import { ROOT_DIR_PATH, NOTES_PATH } from '../config/constants'
-import * as fs from 'fs'
-import * as path from 'path'
+import { readdirSync } from 'fs'
+import { join } from 'path'
 import { spawn } from 'child_process'
 
 /**
@@ -84,10 +84,10 @@ export class VitepressService {
 
     const scanDir = (dir: string) => {
       try {
-        const entries = fs.readdirSync(dir, { withFileTypes: true })
+        const entries = readdirSync(dir, { withFileTypes: true })
         for (const entry of entries) {
           if (entry.isDirectory() && !entry.name.startsWith('.')) {
-            scanDir(path.join(dir, entry.name))
+            scanDir(join(dir, entry.name))
           } else if (entry.isFile() && entry.name.endsWith('.md')) {
             count++
           }
@@ -102,7 +102,7 @@ export class VitepressService {
 
     // 加上根目录的 .md 文件（README.md, index.md 等）
     try {
-      const rootFiles = fs.readdirSync(ROOT_DIR_PATH)
+      const rootFiles = readdirSync(ROOT_DIR_PATH)
       count += rootFiles.filter((f) => f.endsWith('.md')).length
     } catch {
       // 忽略错误

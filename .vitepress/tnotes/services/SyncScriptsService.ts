@@ -3,8 +3,15 @@
  *
  * 脚本同步服务 - 同步知识库脚本到其它 TNotes.xxx 知识库
  */
-import * as fs from 'fs'
-import * as path from 'path'
+import {
+  existsSync,
+  statSync,
+  unlinkSync,
+  mkdirSync,
+  cpSync,
+  copyFileSync,
+} from 'fs'
+import { join, dirname, basename } from 'path'
 import { deleteDirectory, getTargetDirs } from '../utils'
 import {
   EN_WORDS_DIR,
@@ -65,35 +72,35 @@ export class SyncScriptsService {
     sourceRoot: string,
     targetRoot: string
   ): void {
-    const sourcePath = path.join(sourceRoot, relativePath)
-    const targetPath = path.join(targetRoot, relativePath)
+    const sourcePath = join(sourceRoot, relativePath)
+    const targetPath = join(targetRoot, relativePath)
 
     // 检查源路径是否存在
-    if (!fs.existsSync(sourcePath)) {
+    if (!existsSync(sourcePath)) {
       logger.warn(`源不存在: ${relativePath}`)
       return
     }
 
     // 删除目标路径（如果存在）
-    if (fs.existsSync(targetPath)) {
-      if (fs.statSync(targetPath).isDirectory()) {
+    if (existsSync(targetPath)) {
+      if (statSync(targetPath).isDirectory()) {
         deleteDirectory(targetPath)
       } else {
-        fs.unlinkSync(targetPath)
+        unlinkSync(targetPath)
       }
     }
 
     // 确保目标父目录存在
-    const targetDir = path.dirname(targetPath)
-    if (!fs.existsSync(targetDir)) {
-      fs.mkdirSync(targetDir, { recursive: true })
+    const targetDir = dirname(targetPath)
+    if (!existsSync(targetDir)) {
+      mkdirSync(targetDir, { recursive: true })
     }
 
     // 复制源到目标
-    if (fs.statSync(sourcePath).isDirectory()) {
-      fs.cpSync(sourcePath, targetPath, { recursive: true })
+    if (statSync(sourcePath).isDirectory()) {
+      cpSync(sourcePath, targetPath, { recursive: true })
     } else {
-      fs.copyFileSync(sourcePath, targetPath)
+      copyFileSync(sourcePath, targetPath)
     }
   }
 
@@ -102,11 +109,11 @@ export class SyncScriptsService {
    * @param targetDir - 目标仓库目录
    */
   private async syncSingleRepo(targetDir: string): Promise<SyncResult> {
-    const repoName = path.basename(targetDir)
+    const repoName = basename(targetDir)
     try {
       // 先清空目标仓库的 .vitepress 目录
-      const targetVitepressDir = path.join(targetDir, '.vitepress')
-      if (fs.existsSync(targetVitepressDir)) {
+      const targetVitepressDir = join(targetDir, '.vitepress')
+      if (existsSync(targetVitepressDir)) {
         logger.info(`  清空 .vitepress 目录...`)
         deleteDirectory(targetVitepressDir)
       }
@@ -149,7 +156,7 @@ export class SyncScriptsService {
       const results: SyncResult[] = []
       for (let i = 0; i < targetDirs.length; i++) {
         const dir = targetDirs[i]
-        const repoName = path.basename(dir)
+        const repoName = basename(dir)
         logger.info(`[${i + 1}/${targetDirs.length}] 同步: ${repoName}`)
 
         const result = await this.syncSingleRepo(dir)
@@ -177,7 +184,7 @@ export class SyncScriptsService {
         results
           .filter((r) => !r.success)
           .forEach((r, index) => {
-            const repoName = path.basename(r.dir)
+            const repoName = basename(r.dir)
             console.log(`  ${index + 1}. ${repoName}`)
             console.log(`     错误: ${r.error}`)
           })
