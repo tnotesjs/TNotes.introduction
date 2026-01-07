@@ -5,7 +5,7 @@
  */
 import { spawn, ChildProcess } from 'child_process'
 import type { SpawnOptions } from 'child_process'
-import { Logger } from '../utils/logger'
+import { Logger } from '../utils'
 
 /**
  * 进程信息接口

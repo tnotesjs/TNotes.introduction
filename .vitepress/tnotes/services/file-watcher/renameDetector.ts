@@ -5,7 +5,7 @@
  */
 import { existsSync } from 'fs'
 import { join } from 'path'
-import { extractNoteIndex } from '../../utils/noteIndex'
+import { extractNoteIndex } from '../../utils'
 
 const FOLDER_RENAME_DETECT_WINDOW_MS = 500
 

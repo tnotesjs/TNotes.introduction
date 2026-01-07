@@ -8,7 +8,7 @@ import { watch } from 'fs'
 import { basename, dirname, join, sep } from 'path'
 import type { WatchEvent, WatchEventType } from './internal'
 import { WATCH_EVENT_TYPES } from './internal'
-import { extractNoteIndex, warnInvalidNoteIndex } from '../../utils/noteIndex'
+import { extractNoteIndex, warnInvalidNoteIndex } from '../../utils'
 
 interface FsWatcherAdapterConfig {
   /** 笔记目录路径 */

@@ -5,7 +5,7 @@
  */
 import type { WatchEvent } from './internal'
 import type { NoteIndexCache } from '../../core/NoteIndexCache'
-import type { ReadmeService } from '../ReadmeService'
+import type { ReadmeService } from '../readme/service'
 
 interface GlobalUpdateCoordinatorConfig {
   /** README 服务实例，用于更新 README 文件和侧边栏 */

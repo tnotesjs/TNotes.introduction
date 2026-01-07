@@ -4,8 +4,8 @@
  * 用途：修复历史错误数据，将所有时间戳强制更新为 git 真实时间
  * 使用：pnpm tsx .vitepress/tnotes/scripts/force-fix-timestamps.ts
  */
-import { TimestampService } from '../services/TimestampService'
-import { logger } from '../utils/logger'
+import { TimestampService } from '../services'
+import { logger } from '../utils'
 
 async function main() {
   logger.info('🔧 强制修复时间戳工具')

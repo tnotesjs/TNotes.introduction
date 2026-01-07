@@ -3,6 +3,6 @@
  *
  * Git 命令统一导出
  */
-export { PushCommand } from './PushCommand'
-export { PullCommand } from './PullCommand'
-export { SyncCommand } from './SyncCommand'
+export * from './PushCommand'
+export * from './PullCommand'
+export * from './SyncCommand'

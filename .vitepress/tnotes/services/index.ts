@@ -1,18 +1,14 @@
 /**
  * .vitepress/tnotes/services/index.ts
  *
- * Services 层统一导出
+ * Services 层统一 IO 层
  */
 
-export { NoteService } from './NoteService'
-export { ReadmeService } from './ReadmeService'
-export { VitepressService } from './VitepressService'
-export { GitService } from './GitService'
-export { FileWatcherService } from './file-watcher'
-export { TimestampService } from './TimestampService'
-export { SyncScriptsService } from './SyncScriptsService'
-export { serviceManager } from './ServiceManager'
-
-export type { CreateNoteOptions } from './NoteService'
-export type { UpdateReadmeOptions } from './ReadmeService'
-export type { PushOptions, PullOptions } from './GitService'
+export * from './note'
+export * from './readme'
+export * from './vitepress'
+export * from './git'
+export * from './file-watcher'
+export * from './timestamp'
+export * from './manager'
+export * from './sync-scripts'

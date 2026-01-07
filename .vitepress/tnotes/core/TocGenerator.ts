@@ -6,7 +6,7 @@
 import {
   generateToc as generateTocUtil,
   createAddNumberToTitle,
-} from '../utils/markdown'
+} from '../utils'
 import type { NoteConfig } from '../types'
 import {
   BILIBILI_VIDEO_BASE_URL,

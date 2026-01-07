@@ -92,22 +92,6 @@ export function handleError(error: unknown, exitOnError = false): void {
 }
 
 /**
- * 包装异步函数，自动处理错误
- */
-export function withErrorHandling<T extends any[], R>(
-  fn: (...args: T) => Promise<R>,
-  exitOnError = false
-): (...args: T) => Promise<R | void> {
-  return async (...args: T): Promise<R | void> => {
-    try {
-      return await fn(...args)
-    } catch (error) {
-      handleError(error, exitOnError)
-    }
-  }
-}
-
-/**
  * 创建特定类型的错误
  */
 export const createError = {

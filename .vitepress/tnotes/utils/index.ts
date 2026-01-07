@@ -1,25 +1,24 @@
 /**
  * .vitepress/tnotes/utils/index.ts
  *
- * TNotes 工具函数统一导出
+ * util 统一入口
  */
 
-export * from './addNumberToTitle'
-export * from './copyFile'
-export * from './deleteDirectory'
+export * from './ConfigValidator'
 export * from './errorHandler'
+export * from './file'
 export * from './generateAnchor'
 export * from './genHierarchicalSidebar'
 export * from './getChangedIds'
 export * from './getGitTimestamps'
 export * from './getNotesLastUpdatedMap'
 export * from './getTargetDirs'
-export * from './getTnotesConfig'
 export * from './logger'
-export { generateToc, extractHeaders } from './markdown' // 只导出 generateToc 和 extractHeaders，避免与其他模块冲突
+export * from './markdown'
 export * from './noteIndex'
 export * from './parseReadmeCompletedNotes'
 export * from './portUtils'
+export * from './readmeHelpers'
 export * from './runCommand'
-export * from './sortObjectKeys'
 export * from './syncRepo'
+export * from './validators'

@@ -4,8 +4,8 @@
  * VitePress 插件 - 根据 configId 查询笔记信息
  */
 import type { PluginOption } from 'vite'
-import { serviceManager } from '../../services/ServiceManager'
-import { logger } from '../../utils/logger'
+import { serviceManager } from '../../services'
+import { logger } from '../../utils'
 
 export function getNoteByConfigIdPlugin(): PluginOption {
   return {

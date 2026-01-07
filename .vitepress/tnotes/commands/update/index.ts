@@ -3,4 +3,4 @@
  *
  * Update 命令统一导出
  */
-export { UpdateCommand } from './UpdateCommand'
+export * from './UpdateCommand'

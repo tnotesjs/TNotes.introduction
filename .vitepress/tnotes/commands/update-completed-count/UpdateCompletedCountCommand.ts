@@ -86,7 +86,7 @@ export class UpdateCompletedCountCommand extends BaseCommand {
     const { EN_WORDS_DIR, TNOTES_BASE_DIR } = await import(
       '../../config/constants'
     )
-    const { runCommand } = await import('../../utils/runCommand')
+    const { runCommand } = await import('../../utils')
 
     try {
       // 获取所有目标知识库

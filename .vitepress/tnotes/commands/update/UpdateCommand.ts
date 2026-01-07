@@ -5,7 +5,7 @@
  */
 import { BaseCommand } from '../BaseCommand'
 import { ReadmeService, NoteService } from '../../services'
-import { logger, LogLevel } from '../../utils/logger'
+import { logger, LogLevel } from '../../utils'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
 import { ROOT_DIR_PATH, TNOTES_BASE_DIR, ROOT_CONFIG_PATH } from '../../config'
@@ -89,7 +89,7 @@ export class UpdateCommand extends BaseCommand {
   private async updateAllRepos(): Promise<void> {
     const { getTargetDirs } = await import('../../utils')
     const { EN_WORDS_DIR } = await import('../../config/constants')
-    const { runCommand } = await import('../../utils/runCommand')
+    const { runCommand } = await import('../../utils')
 
     try {
       // 获取所有目标知识库

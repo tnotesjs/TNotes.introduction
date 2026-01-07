@@ -5,9 +5,9 @@
  */
 import type { WatchEvent, ConfigSnapshotReader } from './internal'
 import type { WatchState } from './watchState'
-import type { NoteService } from '../NoteService'
+import type { NoteService } from '../note/service'
 import type { NoteIndexCache } from '../../core/NoteIndexCache'
-import type { Logger } from '../../utils/logger'
+import type { Logger } from '../../utils'
 
 interface ConfigChangeHandlerConfig {
   /** 监听状态管理器 */

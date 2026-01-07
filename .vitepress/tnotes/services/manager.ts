@@ -1,21 +1,30 @@
 /**
- * .vitepress/tnotes/services/ServiceManager.ts
+ * .vitepress/tnotes/services/manager.ts
  *
  * 服务管理器 - 管理全局共享服务实例
  */
 import { FileWatcherService } from './file-watcher'
 import { NoteIndexCache } from '../core/NoteIndexCache'
 import { NoteManager } from '../core/NoteManager'
-import { logger } from '../utils/logger'
+import { logger } from '../utils'
 
 /**
  * 全局服务实例管理
  */
 class ServiceManager {
+  /** 单例实例 */
   private static instance: ServiceManager
+
+  /** 文件监听服务 */
   private fileWatcherService: FileWatcherService | null = null
+
+  /** 笔记索引缓存 */
   private noteIndexCache: NoteIndexCache
+
+  /** 笔记管理器 */
   private noteManager: NoteManager
+
+  /** 初始化状态 */
   private initialized: boolean = false
 
   private constructor() {

@@ -3,4 +3,4 @@
  *
  * 文件监听层入口
  */
-export { FileWatcherService } from './service'
+export * from './service'

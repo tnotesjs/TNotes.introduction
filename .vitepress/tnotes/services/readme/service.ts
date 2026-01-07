@@ -3,14 +3,13 @@
  *
  * README 服务 - 封装 README 更新相关的业务逻辑
  */
-import type { NoteInfo, NoteConfig } from '../types'
-import { NoteManager } from '../core/NoteManager'
-import { ReadmeGenerator } from '../core/ReadmeGenerator'
-import { ConfigManager } from '../config/ConfigManager'
-import { NoteIndexCache } from '../core/NoteIndexCache'
-import { logger } from '../utils/logger'
-import { parseNoteLine, buildNoteLineMarkdown } from '../utils/readmeHelpers'
-import { ROOT_README_PATH, VP_SIDEBAR_PATH } from '../config/constants'
+import type { NoteInfo, NoteConfig } from '../../types'
+import { NoteManager } from '../../core/NoteManager'
+import { ReadmeGenerator } from '../../core/ReadmeGenerator'
+import { ConfigManager } from '../../config/ConfigManager'
+import { NoteIndexCache } from '../../core/NoteIndexCache'
+import { parseNoteLine, buildNoteLineMarkdown, logger } from '../../utils'
+import { ROOT_README_PATH, VP_SIDEBAR_PATH } from '../../config/constants'
 import {
   existsSync,
   readFileSync,
@@ -130,7 +129,7 @@ export class ReadmeService {
    */
   private async getChangedNoteIndexes(): Promise<Set<string>> {
     try {
-      const { getChangedIds } = await import('../utils/getChangedIds')
+      const { getChangedIds } = await import('../../utils')
       return getChangedIds()
     } catch (error) {
       // 如果获取失败（比如不在 Git 仓库中），返回空集合，触发全量更新
@@ -192,9 +191,7 @@ export class ReadmeService {
     const lines = content.split('\n')
 
     // 解析 README.md 的层次结构
-    const { genHierarchicalSidebar } = await import(
-      '../utils/genHierarchicalSidebar'
-    )
+    const { genHierarchicalSidebar } = await import('../../utils')
 
     const itemList: Array<{ text: string; link: string }> = []
     const titles: string[] = []

@@ -5,8 +5,8 @@
  */
 import type { PluginOption } from 'vite'
 import { UpdateNoteConfigCommand } from '../../commands/note/UpdateNoteConfigCommand'
-import { serviceManager } from '../../services/ServiceManager'
-import { logger } from '../../utils/logger'
+import { serviceManager } from '../../services'
+import { logger } from '../../utils'
 
 export function updateConfigPlugin(): PluginOption {
   let updateCommand: UpdateNoteConfigCommand

@@ -8,7 +8,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import type { TNotesConfig } from '../types'
 import { validateAndCompleteConfig } from './defaultConfig'
-import { logger } from '../utils/logger'
+import { logger } from '../utils'
 
 /**
  * 配置管理器（单例模式）

@@ -126,7 +126,13 @@
       {
         "text": "⏰ build",
         "link": "/notes/0020. build/README"
-      },
+      }
+    ]
+  },
+  {
+    "text": "6. pending",
+    "collapsed": true,
+    "items": [
       {
         "text": "⏰ new",
         "link": "/notes/0021. new/README"
@@ -146,10 +152,6 @@
       {
         "text": "⏰ new",
         "link": "/notes/0030. new/README"
-      },
-      {
-        "text": "⏰ new",
-        "link": "/notes/0031. new/README"
       }
     ]
   }

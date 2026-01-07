@@ -10,7 +10,7 @@ import {
   COMMAND_NAMES,
   type CommandArgs,
 } from './types/command'
-import { handleError, createError } from './utils/errorHandler'
+import { handleError, createError } from './utils'
 import type {
   UpdateCommand,
   UpdateCompletedCountCommand,

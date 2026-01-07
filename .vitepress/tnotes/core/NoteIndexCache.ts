@@ -4,7 +4,7 @@
  * 笔记索引缓存 - 维护笔记的内存索引，避免重复扫描文件系统
  */
 import type { NoteInfo, NoteConfig } from '../types'
-import { logger } from '../utils/logger'
+import { logger } from '../utils'
 
 /**
  * 索引项结构

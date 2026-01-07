@@ -12,13 +12,13 @@ import {
 } from 'fs'
 import { join } from 'path'
 import { execSync } from 'child_process'
-import { logger } from '../utils/logger'
+import { logger } from '../../utils'
 import {
   NOTES_DIR_PATH,
   ROOT_DIR_PATH,
   ROOT_CONFIG_PATH,
-} from '../config/constants'
-import type { NoteConfig, TNotesConfig } from '../types'
+} from '../../config/constants'
+import type { NoteConfig, TNotesConfig } from '../../types'
 
 /**
  * 出生日期（用于计算 days_since_birth）
@@ -42,19 +42,28 @@ export class TimestampService {
     try {
       const readmePath = join(noteDirPath, 'README.md')
 
-      // 获取 README.md 的首次提交时间（创建时间）
-      const createdAtCmd = `git log --diff-filter=A --follow --format=%ct -- "${readmePath}" | tail -1`
-      const createdAtOutput = execSync(createdAtCmd, {
-        encoding: 'utf-8',
-        stdio: ['pipe', 'pipe', 'ignore'],
-      }).trim()
+      // 获取 README.md 的首次提交时间（创建时间）- 兼容 Windows，不依赖 tail/head
+      const createdAtOutput = execSync(
+        `git log --diff-filter=A --follow --format=%ct -- "${readmePath}"`,
+        {
+          cwd: ROOT_DIR_PATH,
+          encoding: 'utf-8',
+          stdio: ['pipe', 'pipe', 'ignore'],
+        }
+      )
+        .split(/\r?\n/)
+        .filter(Boolean)
+        .pop() // 取最后一条（最早的提交）
 
       // 获取 README.md 的最后修改时间（只看 README.md，忽略 .tnotes.json）
-      const updatedAtCmd = `git log -1 --format=%ct -- "${readmePath}"`
-      const updatedAtOutput = execSync(updatedAtCmd, {
-        encoding: 'utf-8',
-        stdio: ['pipe', 'pipe', 'ignore'],
-      }).trim()
+      const updatedAtOutput = execSync(
+        `git log -1 --format=%ct -- "${readmePath}"`,
+        {
+          cwd: ROOT_DIR_PATH,
+          encoding: 'utf-8',
+          stdio: ['pipe', 'pipe', 'ignore'],
+        }
+      ).trim()
 
       if (!createdAtOutput || !updatedAtOutput) {
         return null
@@ -65,7 +74,8 @@ export class TimestampService {
         updated_at: parseInt(updatedAtOutput) * 1000,
       }
     } catch (error) {
-      // git 命令失败（可能是新文件未提交）
+      // git 命令失败（可能是新文件未提交）；便于排查时输出调试信息
+      logger.debug?.(`getGitTimestamps failed: ${noteDirPath}`, error)
       return null
     }
   }

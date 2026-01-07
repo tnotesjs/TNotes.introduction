@@ -17,7 +17,7 @@ const slugger = new GithubSlugger()
  * @param label - 标题文本
  * @returns 生成的锚点字符串
  */
-export function generateAnchor(label: string): string {
+function generateAnchor(label: string): string {
   slugger.reset()
   return slugger.slug(label)
 }

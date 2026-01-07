@@ -17,10 +17,12 @@ import {
   TNOTES_JSON_FILENAME,
   README_FILENAME,
 } from '../config/constants'
-import { logger } from '../utils/logger'
-import { ConfigValidator } from '../utils/ConfigValidator'
+import {
+  logger,
+  ConfigValidator,
+  extractNoteIndex as parseNoteIndex,
+} from '../utils'
 import { ConfigManager } from '../config/ConfigManager'
-import { extractNoteIndex as parseNoteIndex } from '../utils/noteIndex'
 
 /**
  * 笔记管理器类
@@ -96,6 +98,24 @@ export class NoteManager {
 
     // 移除日志输出，由调用方决定是否输出
     return notes
+  }
+
+  /**
+   * 统计笔记数量（仅按目录名规则筛选，不读取文件）
+   */
+  countNotes(): number {
+    if (!existsSync(NOTES_PATH)) {
+      return 0
+    }
+
+    const entries = readdirSync(NOTES_PATH, { withFileTypes: true })
+
+    return entries.filter(
+      (entry) =>
+        entry.isDirectory() &&
+        !entry.name.startsWith('.') &&
+        /^\d{4}\./.test(entry.name)
+    ).length
   }
 
   /**

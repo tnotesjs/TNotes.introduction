@@ -7,13 +7,13 @@ import { readFileSync, writeFileSync, existsSync } from 'fs'
 import type { NoteInfo } from '../types'
 import { TocGenerator } from './TocGenerator'
 import { ConfigManager } from '../config/ConfigManager'
-import { logger } from '../utils/logger'
 import {
+  logger,
   parseNoteLine,
   buildNoteLineMarkdown,
   processEmptyLines,
-} from '../utils/readmeHelpers'
-import { createAddNumberToTitle } from '../utils/markdown'
+} from '../utils'
+import { createAddNumberToTitle } from '../utils'
 import { EOL } from '../config/constants'
 
 /**

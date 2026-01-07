@@ -4,8 +4,8 @@
  * 命令基类
  */
 import type { Command, CommandName } from '../types'
-import { logger, type Logger } from '../utils/logger'
-import { handleError } from '../utils/errorHandler'
+import type { Logger } from '../utils'
+import { handleError, logger } from '../utils'
 
 /**
  * 命令基类

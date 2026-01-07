@@ -6,9 +6,8 @@
 import { existsSync, renameSync, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { BaseCommand } from '../BaseCommand'
-import { NoteService } from '../../services'
-import { ReadmeService } from '../../services/ReadmeService'
-import { validateNoteTitle } from '../../utils/validators'
+import { ReadmeService, NoteService } from '../../services'
+import { validateNoteTitle } from '../../utils'
 import {
   NOTES_PATH,
   README_FILENAME,

@@ -1,40 +1,21 @@
 /**
- * .vitepress/tnotes/services/GitService.ts
+ * .vitepress/tnotes/services/git-service/service.ts
  *
  * Git 服务 - 封装 Git 操作相关的业务逻辑
  */
-import { GitManager } from '../lib/GitManager'
-import { ConfigManager } from '../config/ConfigManager'
-import { logger } from '../utils/logger'
-import { ROOT_DIR_PATH } from '../config/constants'
-
-/**
- * Git 推送选项
- */
-export interface PushOptions {
-  message?: string
-  branch?: string
-  force?: boolean
-}
-
-/**
- * Git 拉取选项
- */
-export interface PullOptions {
-  branch?: string
-  rebase?: boolean
-}
+import { GitManager } from '../../lib/GitManager'
+import { logger } from '../../utils'
+import { ROOT_DIR_PATH } from '../../config/constants'
+import type { PushOptions, PullOptions } from './models'
 
 /**
  * Git 服务类
  */
 export class GitService {
   private gitManager: GitManager
-  private configManager: ConfigManager
 
   constructor() {
     this.gitManager = new GitManager(ROOT_DIR_PATH)
-    this.configManager = ConfigManager.getInstance()
   }
 
   /**

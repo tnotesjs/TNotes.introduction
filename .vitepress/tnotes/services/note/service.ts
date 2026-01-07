@@ -6,20 +6,19 @@
 import { writeFileSync, rmSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
-import type { NoteInfo, NoteConfig } from '../types'
-import { NoteManager } from '../core/NoteManager'
-import { NoteIndexCache } from '../core/NoteIndexCache'
-import { generateNoteTitle } from '../config/templates'
+import type { NoteInfo, NoteConfig } from '../../types'
+import { NoteManager } from '../../core/NoteManager'
+import { NoteIndexCache } from '../../core/NoteIndexCache'
+import { generateNoteTitle } from '../../config/templates'
 import {
   NOTES_PATH,
   README_FILENAME,
   TNOTES_JSON_FILENAME,
   CONSTANTS,
   REPO_NOTES_URL,
-} from '../config/constants'
-import { NEW_NOTES_README_MD_TEMPLATE } from '../config/templates'
-import { logger } from '../utils/logger'
-import { ensureDirectory } from '../utils/file'
+} from '../../config/constants'
+import { NEW_NOTES_README_MD_TEMPLATE } from '../../config/templates'
+import { ensureDirectory, logger } from '../../utils'
 
 /**
  * 创建新笔记的选项
@@ -223,7 +222,7 @@ export class NoteService {
       logger.info(`检测到全局字段变更 (${noteIndex})，正在增量更新全局文件...`)
 
       // 使用增量更新
-      const ReadmeService = require('./ReadmeService').ReadmeService
+      const ReadmeService = require('../readme').ReadmeService
       const readmeService = new ReadmeService()
 
       // 增量更新 README.md 中的笔记

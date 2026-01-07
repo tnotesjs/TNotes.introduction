@@ -3,16 +3,13 @@
  *
  * VitePress 服务 - 封装 VitePress 开发服务器相关的业务逻辑
  */
-import { ProcessManager } from '../lib/ProcessManager'
-import { ConfigManager } from '../config/ConfigManager'
-import { logger } from '../utils/logger'
-import { ROOT_DIR_PATH } from '../config/constants'
 import { spawn } from 'child_process'
-import { NoteManager } from '../core/NoteManager'
+import { ProcessManager } from '../../lib/ProcessManager'
+import { ConfigManager } from '../../config/ConfigManager'
+import { logger } from '../../utils'
+import { ROOT_DIR_PATH } from '../../config/constants'
+import { NoteManager } from '../../core/NoteManager'
 
-/**
- * VitePress 服务类
- */
 export class VitepressService {
   private processManager: ProcessManager
   private configManager: ConfigManager
@@ -43,7 +40,7 @@ export class VitepressService {
 
     // 检查目标端口是否被占用，如果是则强制清理
     const { isPortInUse, killPortProcess, waitForPort } = await import(
-      '../utils'
+      '../../utils'
     )
     if (isPortInUse(port)) {
       logger.warn(`端口 ${port} 被占用，正在清理...`)
@@ -272,7 +269,7 @@ export class VitepressService {
 
     // 检查端口是否被占用
     const { isPortInUse, killPortProcess, waitForPort } = await import(
-      '../utils/portUtils'
+      '../../utils'
     )
 
     if (isPortInUse(previewPort)) {
