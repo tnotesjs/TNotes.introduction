@@ -102,7 +102,7 @@ export class VitepressService {
         process.stderr.write(
           `⏳ 启动中: 共 ${noteCount} 篇笔记，已用 ${seconds}s...`
         )
-      }, 100)
+      }, 1000)
 
       // 处理输出
       const handleOutput = (data: string) => {

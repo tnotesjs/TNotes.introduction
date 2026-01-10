@@ -20,7 +20,7 @@ import {
 /**
  * README 更新选项
  */
-export interface UpdateReadmeOptions {
+interface UpdateReadmeOptions {
   updateSidebar?: boolean
   updateHome?: boolean
 }

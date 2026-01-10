@@ -23,7 +23,7 @@ import { ensureDirectory, logger } from '../../utils'
 /**
  * 创建新笔记的选项
  */
-export interface CreateNoteOptions {
+interface CreateNoteOptions {
   title?: string
   category?: string
   enableDiscussions?: boolean
