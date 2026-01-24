@@ -1,5 +1,5 @@
 /**
- * .vitepress/tnotes/lib/GitManager.ts
+ * .vitepress/tnotes/core/GitManager.ts
  *
  * Git 仓库管理器 - 提供统一的 Git 操作接口
  */
@@ -8,7 +8,7 @@ import { Logger, runCommand, createError, handleError } from '../utils'
 /**
  * Git 文件状态接口
  */
-export interface GitFileStatus {
+interface GitFileStatus {
   path: string
   status: 'staged' | 'unstaged' | 'untracked' | 'modified'
   statusCode: string
@@ -17,7 +17,7 @@ export interface GitFileStatus {
 /**
  * Git 状态信息接口
  */
-export interface GitStatus {
+interface GitStatus {
   hasChanges: boolean
   changedFiles: number
   staged: number
@@ -32,7 +32,7 @@ export interface GitStatus {
 /**
  * Git 远程信息接口
  */
-export interface GitRemoteInfo {
+interface GitRemoteInfo {
   url: string
   type: 'https' | 'ssh' | 'unknown'
   owner?: string
@@ -58,7 +58,7 @@ export class GitManager {
     try {
       const result = await runCommand(
         'git rev-parse --is-inside-work-tree',
-        this.dir
+        this.dir,
       )
       return result.trim() === 'true'
     } catch {
@@ -84,7 +84,7 @@ export class GitManager {
     // 使用 -c core.quotePath=false 禁用路径转义，正确显示中文文件名
     const statusOutput = await runCommand(
       'git -c core.quotePath=false status --porcelain',
-      this.dir
+      this.dir,
     )
     const lines = statusOutput
       .trim()
@@ -124,7 +124,7 @@ export class GitManager {
     try {
       const aheadBehind = await runCommand(
         'git rev-list --left-right --count @{upstream}...HEAD',
-        this.dir
+        this.dir,
       )
       const [behindStr, aheadStr] = aheadBehind.trim().split('\t')
       behind = parseInt(behindStr) || 0
@@ -154,7 +154,7 @@ export class GitManager {
       await this.ensureValidRepo()
       const remoteUrl = await runCommand(
         'git config --get remote.origin.url',
-        this.dir
+        this.dir,
       )
       const url = remoteUrl.trim()
 
@@ -162,7 +162,7 @@ export class GitManager {
 
       // 解析 HTTPS URL
       const httpsMatch = url.match(
-        /https:\/\/(?:www\.)?github\.com\/([^/]+)\/(.+?)(?:\.git)?$/
+        /https:\/\/(?:www\.)?github\.com\/([^/]+)\/(.+?)(?:\.git)?$/,
       )
       if (httpsMatch) {
         return {
@@ -270,7 +270,7 @@ export class GitManager {
         try {
           const diffOutput = await runCommand(
             `git diff --name-only ${beforeCommit.trim()}..${afterCommit.trim()}`,
-            this.dir
+            this.dir,
           )
           const changedFiles = diffOutput
             .trim()
@@ -373,7 +373,7 @@ export class GitManager {
    */
   async pushWithCommit(
     commitMessage?: string,
-    options?: { force?: boolean; showFiles?: boolean }
+    options?: { force?: boolean; showFiles?: boolean },
   ): Promise<void> {
     await this.ensureValidRepo()
 
@@ -414,7 +414,7 @@ export class GitManager {
       const remoteInfo = await this.getRemoteInfo()
       if (remoteInfo) {
         this.logger.success(
-          `推送成功: ${status.changedFiles} 个文件 → https://github.com/${remoteInfo.owner}/${remoteInfo.repo}`
+          `推送成功: ${status.changedFiles} 个文件 → https://github.com/${remoteInfo.owner}/${remoteInfo.repo}`,
         )
       } else {
         this.logger.success(`推送成功: ${status.changedFiles} 个文件`)
@@ -461,13 +461,13 @@ export class GitManager {
     console.log(`  分支: ${status.branch}`)
     if (remoteInfo) {
       console.log(
-        `  远程: ${remoteInfo.owner}/${remoteInfo.repo} (${remoteInfo.type})`
+        `  远程: ${remoteInfo.owner}/${remoteInfo.repo} (${remoteInfo.type})`,
       )
     }
 
     if (status.hasChanges) {
       console.log(
-        `  变更: ${status.changedFiles} 个文件 (已暂存 ${status.staged}, 未暂存 ${status.unstaged}, 未跟踪 ${status.untracked})`
+        `  变更: ${status.changedFiles} 个文件 (已暂存 ${status.staged}, 未暂存 ${status.unstaged}, 未跟踪 ${status.untracked})`,
       )
 
       // 显示文件列表
@@ -477,10 +477,10 @@ export class GitManager {
         // 按状态分组显示
         const stagedFiles = status.files.filter((f) => f.status === 'staged')
         const unstagedFiles = status.files.filter(
-          (f) => f.status === 'unstaged'
+          (f) => f.status === 'unstaged',
         )
         const untrackedFiles = status.files.filter(
-          (f) => f.status === 'untracked'
+          (f) => f.status === 'untracked',
         )
 
         if (stagedFiles.length > 0) {

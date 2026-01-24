@@ -4,11 +4,10 @@
  * VitePress 服务 - 封装 VitePress 开发服务器相关的业务逻辑
  */
 import { spawn } from 'child_process'
-import { ProcessManager } from '../../lib/ProcessManager'
+import { ProcessManager, NoteManager } from '../../core'
 import { ConfigManager } from '../../config/ConfigManager'
 import { logger } from '../../utils'
 import { ROOT_DIR_PATH } from '../../config/constants'
-import { NoteManager } from '../../core/NoteManager'
 
 export class VitepressService {
   private processManager: ProcessManager
@@ -16,7 +15,7 @@ export class VitepressService {
   private noteManager: NoteManager
 
   constructor() {
-    this.processManager = new ProcessManager()
+    this.processManager = ProcessManager.getInstance()
     this.configManager = ConfigManager.getInstance()
     this.noteManager = new NoteManager()
   }
@@ -39,9 +38,8 @@ export class VitepressService {
     }
 
     // 检查目标端口是否被占用，如果是则强制清理
-    const { isPortInUse, killPortProcess, waitForPort } = await import(
-      '../../utils'
-    )
+    const { isPortInUse, killPortProcess, waitForPort } =
+      await import('../../utils')
     if (isPortInUse(port)) {
       logger.warn(`端口 ${port} 被占用，正在清理...`)
       killPortProcess(port)
@@ -51,7 +49,7 @@ export class VitepressService {
         logger.info(`端口 ${port} 已释放，继续启动服务`)
       } else {
         logger.warn(
-          `端口 ${port} 未确认释放，仍将尝试启动；如启动失败，请手动清理该端口`
+          `端口 ${port} 未确认释放，仍将尝试启动；如启动失败，请手动清理该端口`,
         )
       }
     }
@@ -81,7 +79,7 @@ export class VitepressService {
    */
   private waitForServerReady(
     childProcess: import('child_process').ChildProcess,
-    noteCount: number
+    noteCount: number,
   ): Promise<void> {
     return new Promise((resolve) => {
       const startTime = Date.now()
@@ -100,7 +98,7 @@ export class VitepressService {
         process.stderr.clearLine?.(0)
         process.stderr.cursorTo?.(0)
         process.stderr.write(
-          `⏳ 启动中: 共 ${noteCount} 篇笔记，已用 ${seconds}s...`
+          `⏳ 启动中: 共 ${noteCount} 篇笔记，已用 ${seconds}s...`,
         )
       }, 1000)
 
@@ -124,7 +122,7 @@ export class VitepressService {
           const elapsed = Date.now() - startTime
           const seconds = (elapsed / 1000).toFixed(1)
           console.log(
-            `✅ 服务已就绪 - 共 ${noteCount} 篇笔记，启动耗时 ${seconds}s\n`
+            `✅ 服务已就绪 - 共 ${noteCount} 篇笔记，启动耗时 ${seconds}s\n`,
           )
 
           // 显示 VitePress 输出
@@ -268,9 +266,8 @@ export class VitepressService {
     const previewPort = 4173 // VitePress 默认预览端口
 
     // 检查端口是否被占用
-    const { isPortInUse, killPortProcess, waitForPort } = await import(
-      '../../utils'
-    )
+    const { isPortInUse, killPortProcess, waitForPort } =
+      await import('../../utils')
 
     if (isPortInUse(previewPort)) {
       logger.warn(`端口 ${previewPort} 已被占用，正在尝试清理...`)
@@ -286,7 +283,7 @@ export class VitepressService {
         logger.info(`端口 ${previewPort} 已释放`)
       } else {
         logger.error(
-          `无法清理端口 ${previewPort}，请手动执行: taskkill /F /PID <PID>`
+          `无法清理端口 ${previewPort}，请手动执行: taskkill /F /PID <PID>`,
         )
         return undefined
       }

@@ -23,7 +23,7 @@ export interface TNotesConfig {
 /**
  * 图标配置
  */
-export interface IconConfig {
+interface IconConfig {
   svg?: string
   src?: string
 }
@@ -31,7 +31,7 @@ export interface IconConfig {
 /**
  * 社交链接类型
  */
-export interface SocialLink {
+interface SocialLink {
   ariaLabel?: string
   icon: string | IconConfig
   link: string
@@ -40,7 +40,7 @@ export interface SocialLink {
 /**
  * 菜单项类型
  */
-export interface MenuItem {
+interface MenuItem {
   text: string
   link: string
 }
@@ -48,7 +48,7 @@ export interface MenuItem {
 /**
  * 根项目配置
  */
-export interface RootItem {
+interface RootItem {
   icon?: IconConfig
   title: string
   completed_notes_count: Record<string, number>
@@ -57,23 +57,4 @@ export interface RootItem {
   created_at: number
   updated_at: number
   days_since_birth: number
-}
-
-/**
- * 侧边栏项类型
- */
-export interface SidebarItem {
-  text: string
-  link?: string
-  collapsed?: boolean
-  items?: SidebarItem[]
-}
-
-/**
- * 命令执行选项
- */
-export interface CommandOptions {
-  cwd?: string
-  stdio?: 'inherit' | 'pipe' | 'ignore'
-  shell?: boolean
 }

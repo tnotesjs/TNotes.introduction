@@ -5,7 +5,7 @@
  */
 
 // 配置相关类型
-export type * from './config'
+export type { TNotesConfig } from './config'
 
 // 笔记相关类型
-export type * from './note'
+export type { NoteConfig, NoteInfo } from './note'

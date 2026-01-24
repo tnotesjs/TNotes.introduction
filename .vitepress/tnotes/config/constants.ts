@@ -3,7 +3,7 @@
  *
  * 常量定义（从配置中派生的路径和URL常量）
  */
-import path from 'path'
+import { resolve } from 'path'
 import { getConfigManager } from './ConfigManager'
 
 const configManager = getConfigManager()
@@ -21,55 +21,43 @@ export const {
   root_item,
 } = config
 
-// URL 常量
-export const BILIBILI_VIDEO_BASE_URL = 'https://www.bilibili.com/video/'
-export const TNOTES_YUQUE_BASE_URL =
-  'https://www.yuque.com/tdahuyou/tnotes.yuque/'
-
 // 目录常量
-export const __dirname = configManager.getDirname()
+const __dirname = configManager.getDirname()
 
 /**
  * TNotes.* 笔记仓库的基路径
  * @example `/Users/huyouda/zm/notes/` 【在此目录下存放其它 TNotes.* 笔记仓库】
  */
-export const TNOTES_BASE_DIR = path.resolve(__dirname, '..', '..', '..', '..')
-export const EN_WORDS_DIR = path.resolve(TNOTES_BASE_DIR, 'TNotes.en-words')
+export const TNOTES_BASE_DIR = resolve(__dirname, '..', '..', '..', '..')
+export const EN_WORDS_DIR = resolve(TNOTES_BASE_DIR, 'TNotes.en-words')
 
 /**
  * TNotes.* 当前的笔记仓库根路径
  * @example `/Users/huyouda/zm/notes/TNotes.template/`
  */
-export const ROOT_DIR_PATH = path.resolve(__dirname, '..', '..', '..')
-export const ROOT_README_PATH = path.resolve(ROOT_DIR_PATH, 'README.md')
-export const ROOT_CONFIG_PATH = path.resolve(ROOT_DIR_PATH, '.tnotes.json')
-export const NOTES_DIR_PATH = path.resolve(ROOT_DIR_PATH, 'notes')
-export const VP_DIR_PATH = path.resolve(ROOT_DIR_PATH, '.vitepress')
-export const PUBLIC_PATH = path.resolve(ROOT_DIR_PATH, 'public')
-export const GITHUB_DIR_PATH = path.resolve(ROOT_DIR_PATH, '.github')
-export const GITHUB_DEPLOY_YML_PATH = path.resolve(
+export const ROOT_DIR_PATH = resolve(__dirname, '..', '..', '..')
+export const ROOT_README_PATH = resolve(ROOT_DIR_PATH, 'README.md')
+export const ROOT_CONFIG_PATH = resolve(ROOT_DIR_PATH, '.tnotes.json')
+export const NOTES_DIR_PATH = resolve(ROOT_DIR_PATH, 'notes')
+export const VP_DIR_PATH = resolve(ROOT_DIR_PATH, '.vitepress')
+export const PUBLIC_PATH = resolve(ROOT_DIR_PATH, 'public')
+export const GITHUB_DIR_PATH = resolve(ROOT_DIR_PATH, '.github')
+export const GITHUB_DEPLOY_YML_PATH = resolve(
   GITHUB_DIR_PATH,
   'workflows',
-  'deploy.yml'
+  'deploy.yml',
 )
-export const VP_SIDEBAR_PATH = path.resolve(ROOT_DIR_PATH, 'sidebar.json')
-export const ROOT_PKG_PATH = path.resolve(ROOT_DIR_PATH, 'package.json')
-export const VSCODE_SETTINGS_PATH = path.resolve(
+export const VP_SIDEBAR_PATH = resolve(ROOT_DIR_PATH, 'sidebar.json')
+export const ROOT_PKG_PATH = resolve(ROOT_DIR_PATH, 'package.json')
+export const VSCODE_SETTINGS_PATH = resolve(
   ROOT_DIR_PATH,
   '.vscode',
-  'settings.json'
+  'settings.json',
 )
-export const VSCODE_TASKS_PATH = path.resolve(
-  ROOT_DIR_PATH,
-  '.vscode',
-  'tasks.json'
-)
+export const VSCODE_TASKS_PATH = resolve(ROOT_DIR_PATH, '.vscode', 'tasks.json')
 
 // 文本常量
 export const EOL = '\n'
-
-export const NOTES_TOC_START_TAG = '<!-- region:toc -->'
-export const NOTES_TOC_END_TAG = '<!-- endregion:toc -->'
 
 /**
  * TNotes 常量配置
@@ -131,15 +119,4 @@ export const TNOTES_JSON_FILENAME = CONSTANTS.CONFIG_FILENAME
 export const NOTES_PATH = NOTES_DIR_PATH
 
 // GitHub URL 常量
-export const REPO_URL = `https://github.com/${author}/${repoName}/tree/main`
 export const REPO_NOTES_URL = `https://github.com/${author}/${repoName}/tree/main/notes`
-
-/**
- * 处理图片资源路径
- * @example https://github.com/Tdahuyou/TNotes.html-css-js/blob/main/notes/0000/%E5%B0%81%E9%9D%A2/JavaScript.png?raw=true
- */
-export const REPO_BLOB_URL_1 = `https://github.com/${author}/${repoName}/blob/main/notes`
-export const REPO_BLOB_URL_2 = `?raw=true`
-
-export const GITHUB_PAGE_URL = `https://tnotesjs.github.io/${repoName}`
-export const GITHUB_PAGE_NOTES_URL = `https://tnotesjs.github.io/${repoName}/notes`

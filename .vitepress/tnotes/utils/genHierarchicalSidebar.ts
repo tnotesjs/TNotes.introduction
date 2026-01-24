@@ -1,4 +1,16 @@
-import type { SidebarItem } from '../types'
+/**
+ * .vitepress/tnotes/utils/genHierarchicalSidebar.ts
+ *
+ * 生成层次化侧边栏
+ */
+
+/** 侧边栏项类型 */
+interface SidebarItem {
+  text: string
+  link?: string
+  collapsed?: boolean
+  items?: SidebarItem[]
+}
 
 interface StackItem {
   level: number
@@ -17,7 +29,7 @@ export const genHierarchicalSidebar = (
   itemList: SidebarItem[],
   titles: string[],
   titlesNotesCount: number[],
-  sidebarIsCollapsed: boolean
+  sidebarIsCollapsed: boolean,
 ): SidebarItem[] => {
   const stack: StackItem[] = []
   const root: SidebarItem[] = []

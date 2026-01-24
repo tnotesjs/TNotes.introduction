@@ -8,13 +8,15 @@ import {
   createAddNumberToTitle,
 } from '../utils'
 import type { NoteConfig } from '../types'
-import {
-  BILIBILI_VIDEO_BASE_URL,
-  TNOTES_YUQUE_BASE_URL,
-  NOTES_TOC_START_TAG,
-  NOTES_TOC_END_TAG,
-  EOL,
-} from '../config/constants'
+import { EOL } from '../config/constants'
+
+// URL 常量
+const BILIBILI_VIDEO_BASE_URL = 'https://www.bilibili.com/video/'
+const TNOTES_YUQUE_BASE_URL = 'https://www.yuque.com/tdahuyou/tnotes.yuque/'
+
+// 目录开始和结束标记
+const NOTES_TOC_START_TAG = '<!-- region:toc -->'
+const NOTES_TOC_END_TAG = '<!-- endregion:toc -->'
 
 /**
  * 目录生成器类
@@ -31,7 +33,7 @@ export class TocGenerator {
     noteIndex: string,
     lines: string[],
     noteConfig: NoteConfig,
-    repoName: string
+    repoName: string,
   ): void {
     let startLineIdx = -1,
       endLineIdx = -1
@@ -75,11 +77,11 @@ export class TocGenerator {
 
       // 检查是否是需要编号的标题（2~3 级）
       const isNumberedHeader = numberedHeaders.some((header) =>
-        line.startsWith(header)
+        line.startsWith(header),
       )
       // 检查是否是不需要编号的标题（4~6 级）
       const isUnnumberedHeader = unnumberedHeaders.some((header) =>
-        line.startsWith(header)
+        line.startsWith(header),
       )
 
       if (isNumberedHeader) {
@@ -112,18 +114,18 @@ export class TocGenerator {
           bilibiliTOCItems.push(
             `  - [bilibili.${repoName}.${noteIndex}.${i + 1}](${
               BILIBILI_VIDEO_BASE_URL + bvid
-            })`
+            })`,
           )
         })
       }
       if (noteConfig.tnotes && noteConfig.tnotes.length > 0) {
         // 生成相关知识库标题和链接列表
         tnotesTOCItems.push(
-          `- [📒 TNotes（相关知识库）](https://tnotesjs.github.io/TNotes/)`
+          `- [📒 TNotes（相关知识库）](https://tnotesjs.github.io/TNotes/)`,
         )
         noteConfig.tnotes.forEach((repoName) => {
           tnotesTOCItems.push(
-            `  - [TNotes.${repoName}](https://tnotesjs.github.io/TNotes.${repoName}/)`
+            `  - [TNotes.${repoName}](https://tnotesjs.github.io/TNotes.${repoName}/)`,
           )
         })
       }
@@ -132,8 +134,8 @@ export class TocGenerator {
           yuqueTOCItems.push(
             `  - [TNotes.yuque.${repoName.replace(
               'TNotes.',
-              ''
-            )}.${noteIndex}](${TNOTES_YUQUE_BASE_URL + slug})`
+              '',
+            )}.${noteIndex}](${TNOTES_YUQUE_BASE_URL + slug})`,
           )
         })
       }
@@ -151,7 +153,7 @@ export class TocGenerator {
       if (bilibiliTOCItems.length > 0) {
         insertTocItems.push(
           `- [📺 bilibili（笔记视频资源）](https://space.bilibili.com/407241004)`,
-          ...bilibiliTOCItems
+          ...bilibiliTOCItems,
         )
       }
 
@@ -162,7 +164,7 @@ export class TocGenerator {
       if (yuqueTOCItems.length > 0) {
         insertTocItems.push(
           `- [📂 TNotes.yuque（笔记附件资源）](${TNOTES_YUQUE_BASE_URL})`,
-          ...yuqueTOCItems
+          ...yuqueTOCItems,
         )
       }
 
@@ -174,7 +176,7 @@ export class TocGenerator {
       endLineIdx - startLineIdx - 1,
       '',
       ...insertTocItems,
-      ...toc.replace(new RegExp(`^${EOL}`), '').split(EOL)
+      ...toc.replace(new RegExp(`^${EOL}`), '').split(EOL),
     )
   }
 
@@ -187,7 +189,7 @@ export class TocGenerator {
   updateHomeToc(
     lines: string[],
     titles: string[],
-    titlesNotesCount: number[]
+    titlesNotesCount: number[],
   ): void {
     let startLineIdx = -1,
       endLineIdx = -1
@@ -202,7 +204,7 @@ export class TocGenerator {
     lines.splice(
       startLineIdx + 1,
       endLineIdx - startLineIdx - 1,
-      ...toc.split(EOL)
+      ...toc.split(EOL),
     )
   }
 }

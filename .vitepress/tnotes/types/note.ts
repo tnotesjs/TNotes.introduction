@@ -53,8 +53,3 @@ export interface NoteInfo {
   configPath: string
   config?: NoteConfig
 }
-
-/**
- * 笔记更新映射表类型
- */
-export type NotesLastUpdatedMap = Record<string, number>

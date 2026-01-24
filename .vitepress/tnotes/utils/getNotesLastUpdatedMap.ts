@@ -2,7 +2,6 @@ import fs from 'node:fs'
 import { resolve } from 'node:path'
 import { ROOT_DIR_PATH } from '../config/constants'
 import { execSync } from 'node:child_process'
-import type { NotesLastUpdatedMap } from '../types'
 
 /**
  * 获取 Markdown 文件列表
@@ -46,6 +45,9 @@ const getGitLastCommitTime = (filePath: string): number => {
     return 0
   }
 }
+
+/** 笔记更新映射表类型 */
+type NotesLastUpdatedMap = Record<string, number>
 
 /**
  * 获取所有 README.md 文件的最后更新时间

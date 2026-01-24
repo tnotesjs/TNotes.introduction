@@ -10,7 +10,7 @@ import {
   EN_WORDS_DIR,
 } from '../config/constants'
 import { getTargetDirs } from './getTargetDirs'
-import { GitManager } from '../lib/GitManager'
+import { GitManager } from '../core'
 import { logger } from './logger'
 import { handleError } from './errorHandler'
 
@@ -161,7 +161,7 @@ export async function pushAllRepos(options?: {
     logger.success(`推送完成: ${successCount}/${results.length} 个仓库成功`)
   } else {
     logger.warn(
-      `推送完成: ${successCount} 成功, ${failCount} 失败 (共 ${results.length} 个)`
+      `推送完成: ${successCount} 成功, ${failCount} 失败 (共 ${results.length} 个)`,
     )
     console.log('\n失败的仓库:')
     results
@@ -237,7 +237,7 @@ export async function pullAllRepos(options?: {
     logger.success(`拉取完成: ${successCount}/${results.length} 个仓库成功`)
   } else {
     logger.warn(
-      `拉取完成: ${successCount} 成功, ${failCount} 失败 (共 ${results.length} 个)`
+      `拉取完成: ${successCount} 成功, ${failCount} 失败 (共 ${results.length} 个)`,
     )
     console.log('\n失败的仓库:')
     results
@@ -312,7 +312,7 @@ export async function syncAllRepos(options?: {
     logger.success(`同步完成: ${successCount}/${results.length} 个仓库成功`)
   } else {
     logger.warn(
-      `同步完成: ${successCount} 成功, ${failCount} 失败 (共 ${results.length} 个)`
+      `同步完成: ${successCount} 成功, ${failCount} 失败 (共 ${results.length} 个)`,
     )
     console.log('\n失败的仓库:')
     results

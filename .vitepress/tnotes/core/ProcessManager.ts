@@ -1,7 +1,7 @@
 /**
- * .vitepress/tnotes/lib/ProcessManager.ts
+ * .vitepress/tnotes/core/ProcessManager.ts
  *
- * 进程管理器 - 管理子进程的生命周期
+ * 进程管理器 - 管理子进程的生命周期（单例模式）
  */
 import { spawn, ChildProcess } from 'child_process'
 import type { SpawnOptions } from 'child_process'
@@ -10,7 +10,7 @@ import { Logger } from '../utils'
 /**
  * 进程信息接口
  */
-export interface ProcessInfo {
+interface ProcessInfo {
   id: string
   pid?: number
   command: string
@@ -20,14 +20,15 @@ export interface ProcessInfo {
 }
 
 /**
- * 进程管理器类
+ * 进程管理器类（单例）
  */
 export class ProcessManager {
+  private static instance: ProcessManager | null = null
   private processes: Map<string, ProcessInfo> = new Map()
   private logger: Logger
 
-  constructor(logger?: Logger) {
-    this.logger = logger?.child('process') || new Logger({ prefix: 'process' })
+  private constructor() {
+    this.logger = new Logger({ prefix: 'process' })
 
     // 清理进程在程序退出时
     process.on('exit', () => {
@@ -46,6 +47,16 @@ export class ProcessManager {
   }
 
   /**
+   * 获取单例实例
+   */
+  static getInstance(): ProcessManager {
+    if (!ProcessManager.instance) {
+      ProcessManager.instance = new ProcessManager()
+    }
+    return ProcessManager.instance
+  }
+
+  /**
    * 启动进程
    * @param id - 进程ID
    * @param command - 命令
@@ -57,7 +68,7 @@ export class ProcessManager {
     id: string,
     command: string,
     args: string[] = [],
-    options?: SpawnOptions
+    options?: SpawnOptions,
   ): ProcessInfo {
     // 如果进程已存在，先停止
     if (this.processes.has(id)) {
@@ -254,19 +265,4 @@ export class ProcessManager {
     }
     console.log()
   }
-}
-
-/**
- * 全局进程管理器实例（单例）
- */
-let globalProcessManager: ProcessManager | null = null
-
-/**
- * 获取全局进程管理器实例
- */
-export function getProcessManager(): ProcessManager {
-  if (!globalProcessManager) {
-    globalProcessManager = new ProcessManager()
-  }
-  return globalProcessManager
 }

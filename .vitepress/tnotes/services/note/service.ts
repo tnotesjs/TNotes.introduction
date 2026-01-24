@@ -17,8 +17,29 @@ import {
   CONSTANTS,
   REPO_NOTES_URL,
 } from '../../config/constants'
-import { NEW_NOTES_README_MD_TEMPLATE } from '../../config/templates'
 import { ensureDirectory, logger } from '../../utils'
+
+/**
+ * 新增笔记 README.md 模板
+ *
+ * 不包含一级标题（# 笔记编号. 笔记名称），由 createNote 动态生成
+ */
+const NEW_NOTES_README_MD_TEMPLATE = `
+<!-- region:toc -->
+
+- [1. 🎯 本节内容](#1--本节内容)
+- [2. 🫧 评价](#2--评价)
+
+<!-- endregion:toc -->
+
+## 1. 🎯 本节内容
+
+- todo
+
+## 2. 🫧 评价
+
+- todo
+`
 
 /**
  * 创建新笔记的选项
@@ -189,7 +210,7 @@ export class NoteService {
    */
   async updateNoteConfig(
     noteIndex: string,
-    updates: Partial<NoteConfig>
+    updates: Partial<NoteConfig>,
   ): Promise<void> {
     const note = this.getNoteByIndex(noteIndex)
     if (!note || !note.config) {
@@ -215,7 +236,7 @@ export class NoteService {
     // 检查是否需要更新全局文件
     const needsGlobalUpdate = this.checkNeedsGlobalUpdate(
       oldConfig,
-      updatedConfig
+      updatedConfig,
     )
 
     if (needsGlobalUpdate) {
@@ -245,7 +266,7 @@ export class NoteService {
    */
   private checkNeedsGlobalUpdate(
     oldConfig: NoteConfig,
-    newConfig: NoteConfig
+    newConfig: NoteConfig,
   ): boolean {
     // 影响全局的字段：done
     const globalFields: (keyof NoteConfig)[] = ['done']
@@ -309,20 +330,20 @@ export class NoteService {
     const total = notes.length
     const done = notes.filter((n) => n.config?.done).length
     const withDiscussions = notes.filter(
-      (n) => n.config?.enableDiscussions
+      (n) => n.config?.enableDiscussions,
     ).length
 
     const bilibiliCount = notes.reduce(
       (sum, n) => sum + (n.config?.bilibili?.length || 0),
-      0
+      0,
     )
     const tnotesCount = notes.reduce(
       (sum, n) => sum + (n.config?.tnotes?.length || 0),
-      0
+      0,
     )
     const yuqueCount = notes.reduce(
       (sum, n) => sum + (n.config?.yuque?.length || 0),
-      0
+      0,
     )
 
     return {
@@ -379,7 +400,7 @@ export class NoteService {
       const expectedH1 = generateNoteTitle(
         noteInfo.id,
         expectedTitle,
-        REPO_NOTES_URL
+        REPO_NOTES_URL,
       )
 
       // 检查第一行是否为一级标题

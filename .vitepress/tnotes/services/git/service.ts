@@ -3,7 +3,7 @@
  *
  * Git 服务 - 封装 Git 操作相关的业务逻辑
  */
-import { GitManager } from '../../lib/GitManager'
+import { GitManager } from '../../core'
 import { logger } from '../../utils'
 import { ROOT_DIR_PATH } from '../../config/constants'
 import type { PushOptions, PullOptions } from './models'
