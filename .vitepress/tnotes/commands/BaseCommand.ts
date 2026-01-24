@@ -3,7 +3,8 @@
  *
  * 命令基类
  */
-import type { Command, CommandName } from '../types'
+import type { Command, CommandName } from './models'
+import { COMMAND_DESCRIPTIONS } from './models'
 import type { Logger } from '../utils'
 import { handleError, logger } from '../utils'
 
@@ -14,7 +15,12 @@ export abstract class BaseCommand implements Command {
   protected logger: Logger
   protected options: Record<string, any> = {}
 
-  constructor(public name: CommandName, public description: string) {
+  /** 命令描述（从静态配置读取） */
+  get description(): string {
+    return COMMAND_DESCRIPTIONS[this.name]
+  }
+
+  constructor(public name: CommandName) {
     this.logger = logger.child(name)
   }
 

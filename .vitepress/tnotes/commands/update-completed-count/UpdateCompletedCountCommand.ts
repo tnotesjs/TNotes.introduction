@@ -14,10 +14,7 @@ export class UpdateCompletedCountCommand extends BaseCommand {
   private updateAll: boolean = false
 
   constructor() {
-    super(
-      'update-completed-count',
-      '更新完成笔记数量历史记录（近 1 年，最近 12 个月）'
-    )
+    super('update-completed-count')
   }
 
   /**
@@ -68,11 +65,11 @@ export class UpdateCompletedCountCommand extends BaseCommand {
       const currentCount = completedNotesCountHistory[currentKey] || 0
 
       this.logger.success(
-        `历史数据更新完成: 共 ${monthKeys.length} 个月, 当前 ${currentKey} 月完成 ${currentCount} 篇笔记 (${duration}ms)`
+        `历史数据更新完成: 共 ${monthKeys.length} 个月, 当前 ${currentKey} 月完成 ${currentCount} 篇笔记 (${duration}ms)`,
       )
     } catch (error) {
       this.logger.error(
-        `更新失败: ${error instanceof Error ? error.message : String(error)}`
+        `更新失败: ${error instanceof Error ? error.message : String(error)}`,
       )
       throw error
     }
@@ -83,9 +80,8 @@ export class UpdateCompletedCountCommand extends BaseCommand {
    */
   private async updateAllRepos(): Promise<void> {
     const { getTargetDirs } = await import('../../utils')
-    const { EN_WORDS_DIR, TNOTES_BASE_DIR } = await import(
-      '../../config/constants'
-    )
+    const { EN_WORDS_DIR, TNOTES_BASE_DIR } =
+      await import('../../config/constants')
     const { runCommand } = await import('../../utils')
 
     try {
@@ -101,7 +97,7 @@ export class UpdateCompletedCountCommand extends BaseCommand {
       }
 
       this.logger.info(
-        `正在更新 ${targetDirs.length} 个知识库的完成数量历史记录...`
+        `正在更新 ${targetDirs.length} 个知识库的完成数量历史记录...`,
       )
 
       // 依次更新每个知识库
@@ -114,7 +110,7 @@ export class UpdateCompletedCountCommand extends BaseCommand {
 
         try {
           process.stdout.write(
-            `\r  [${i + 1}/${targetDirs.length}] 正在更新: ${repoName}...`
+            `\r  [${i + 1}/${targetDirs.length}] 正在更新: ${repoName}...`,
           )
 
           // 执行更新命令
@@ -126,7 +122,7 @@ export class UpdateCompletedCountCommand extends BaseCommand {
           this.logger.error(
             `更新失败: ${repoName} - ${
               error instanceof Error ? error.message : String(error)
-            }`
+            }`,
           )
         }
       }
@@ -136,18 +132,18 @@ export class UpdateCompletedCountCommand extends BaseCommand {
       // 显示汇总
       if (failCount === 0) {
         this.logger.success(
-          `✅ 所有知识库历史数据更新完成: ${successCount}/${targetDirs.length}`
+          `✅ 所有知识库历史数据更新完成: ${successCount}/${targetDirs.length}`,
         )
       } else {
         this.logger.warn(
-          `⚠️  更新完成: ${successCount} 成功, ${failCount} 失败 (共 ${targetDirs.length} 个)`
+          `⚠️  更新完成: ${successCount} 成功, ${failCount} 失败 (共 ${targetDirs.length} 个)`,
         )
       }
     } catch (error) {
       this.logger.error(
         `批量更新失败: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
       )
       throw error
     }
@@ -164,7 +160,7 @@ export class UpdateCompletedCountCommand extends BaseCommand {
    * 5. 返回对象 { '25.01': 0, '25.02': 1, ..., '25.12': 15 }
    */
   private async getCompletedNotesCountHistory(
-    createdAt: number
+    createdAt: number,
   ): Promise<Record<string, number>> {
     try {
       // 1. 计算最近12个月的范围
@@ -216,7 +212,7 @@ export class UpdateCompletedCountCommand extends BaseCommand {
             const count = await this.getMonthCompletedCount(
               targetYear,
               targetMonth,
-              prevCount
+              prevCount,
             )
             result[key] = count
             prevCount = count
@@ -234,7 +230,7 @@ export class UpdateCompletedCountCommand extends BaseCommand {
       this.logger.error(
         `获取历史数据失败: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
       )
       return {}
     }
@@ -250,7 +246,7 @@ export class UpdateCompletedCountCommand extends BaseCommand {
   private async getMonthCompletedCount(
     year: number,
     month: number,
-    fallbackCount: number = 0
+    fallbackCount: number = 0,
   ): Promise<number> {
     const { parseReadmeCompletedNotes } = await import('../../utils')
 
@@ -267,7 +263,7 @@ export class UpdateCompletedCountCommand extends BaseCommand {
       {
         cwd: ROOT_DIR_PATH,
         encoding: 'utf-8',
-      }
+      },
     ).trim()
 
     if (!commitHash) {

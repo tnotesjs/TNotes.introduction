@@ -10,7 +10,7 @@ export class FixTimestampsCommand extends BaseCommand {
   private timestampService: TimestampService
 
   constructor() {
-    super('fix-timestamps', '修复所有笔记的时间戳（基于 git 历史）')
+    super('fix-timestamps')
     this.timestampService = new TimestampService()
   }
 
@@ -25,7 +25,7 @@ export class FixTimestampsCommand extends BaseCommand {
     this.logger.info('')
     this.logger.info('📊 修复统计:')
     this.logger.info(
-      `  - 根配置文件: ${result.rootConfigFixed ? '已修复' : '无需修复'}`
+      `  - 根配置文件: ${result.rootConfigFixed ? '已修复' : '无需修复'}`,
     )
     this.logger.info(`  - 总笔记数: ${result.total}`)
     this.logger.info(`  - 已修复: ${result.fixed}`)
@@ -36,7 +36,7 @@ export class FixTimestampsCommand extends BaseCommand {
       this.logger.success(
         `✅ 成功修复 ${result.fixed} 个笔记${
           result.rootConfigFixed ? ' + 根配置文件' : ''
-        }的时间戳！`
+        }的时间戳！`,
       )
       this.logger.info('💡 提示: 运行 pnpm tn:push 提交更改')
     } else {

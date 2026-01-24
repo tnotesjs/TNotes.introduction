@@ -10,7 +10,7 @@ export class DevCommand extends BaseCommand {
   private vitepressService: VitepressService
 
   constructor() {
-    super('dev', '启动知识库开发服务')
+    super('dev')
     this.vitepressService = new VitepressService()
   }
 

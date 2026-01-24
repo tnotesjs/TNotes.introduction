@@ -3,7 +3,14 @@ import { promisify } from 'util'
 import path from 'path'
 import { getChangedIds } from './getChangedIds'
 import { extractNoteIndex } from './noteIndex'
-import type { GitTimestamp } from '../types'
+
+/**
+ * Git 时间戳信息
+ */
+interface GitTimestamp {
+  created: number
+  updated: number
+}
 
 const execAsync = promisify(exec)
 const changedIds = getChangedIds()
@@ -34,7 +41,7 @@ function parseNoteIndex(filePath: string): string | null {
  */
 export async function getGitTimestamps(
   filePath: string,
-  noteIndex?: string
+  noteIndex?: string,
 ): Promise<GitTimestamp | undefined> {
   const id = noteIndex || parseNoteIndex(filePath)
   if (!id || !changedIds.has(id)) return
@@ -46,7 +53,7 @@ export async function getGitTimestamps(
   try {
     // 首次提交时间
     const { stdout: createdStdout } = await execAsync(
-      `git log --diff-filter=A --format=%ct "${filePath}"`
+      `git log --diff-filter=A --format=%ct "${filePath}"`,
     )
     const createdTs = createdStdout.toString().trim()
     if (createdTs) created = parseInt(createdTs, 10) * 1000

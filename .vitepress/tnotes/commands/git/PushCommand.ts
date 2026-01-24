@@ -13,7 +13,7 @@ export class PushCommand extends BaseCommand {
   private pushAll: boolean = false
 
   constructor() {
-    super('push', '将知识库推送到 GitHub (使用 --all 推送所有知识库)')
+    super('push')
     this.gitService = new GitService()
     this.timestampService = new TimestampService()
   }
@@ -70,7 +70,7 @@ export class PushCommand extends BaseCommand {
 
       if (changedNotes.length > 0) {
         this.logger.info(
-          `检测到 ${changedNotes.length} 篇笔记的 README.md 有变更，更新时间戳...`
+          `检测到 ${changedNotes.length} 篇笔记的 README.md 有变更，更新时间戳...`,
         )
         await this.timestampService.updateNotesTimestamp(changedNotes)
       }

@@ -12,7 +12,7 @@ export class SyncCommand extends BaseCommand {
   private syncAll: boolean = false
 
   constructor() {
-    super('sync', '同步本地和远程的知识库状态 (使用 --all 同步所有知识库)')
+    super('sync')
     this.gitService = new GitService()
   }
 

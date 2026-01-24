@@ -13,7 +13,7 @@ export class CreateNotesCommand extends BaseCommand {
   private readmeService: ReadmeService
 
   constructor() {
-    super('create-notes', '新建笔记（支持批量创建）')
+    super('create-notes')
     this.noteService = new NoteService()
     this.readmeService = new ReadmeService()
   }
@@ -70,7 +70,7 @@ export class CreateNotesCommand extends BaseCommand {
     if (count > 1) {
       console.log('')
       this.logger.info(
-        `📊 创建完成: 成功 ${successCount} 篇, 失败 ${failCount} 篇`
+        `📊 创建完成: 成功 ${successCount} 篇, 失败 ${failCount} 篇`,
       )
     }
 

@@ -4,12 +4,52 @@
  * 帮助命令
  */
 import { BaseCommand } from '../BaseCommand'
-import { getAllCommands } from '../index'
+import {
+  COMMAND_NAMES,
+  COMMAND_OPTIONS,
+  COMMAND_DESCRIPTIONS,
+  type CommandOption,
+} from '../models'
 import { createLogger, LogLevel } from '../../utils'
+
+/** 命令分组（用于帮助信息展示） */
+const COMMAND_CATEGORIES = {
+  开发和构建: [COMMAND_NAMES.DEV, COMMAND_NAMES.BUILD, COMMAND_NAMES.PREVIEW],
+  内容管理: [
+    COMMAND_NAMES.UPDATE,
+    COMMAND_NAMES.UPDATE_COMPLETED_COUNT,
+    COMMAND_NAMES.CREATE_NOTES,
+  ],
+  'Git 操作': [COMMAND_NAMES.PUSH, COMMAND_NAMES.PULL, COMMAND_NAMES.SYNC],
+  其他: [
+    COMMAND_NAMES.SYNC_SCRIPTS,
+    COMMAND_NAMES.FIX_TIMESTAMPS,
+    COMMAND_NAMES.HELP,
+  ],
+} as const
+
+/** 命令选项描述（用于帮助信息展示） */
+const COMMAND_OPTIONS_INFO: Record<
+  CommandOption,
+  { description: string; applicableTo: string }
+> = {
+  [COMMAND_OPTIONS.ALL]: {
+    description: '批量操作所有知识库',
+    applicableTo: 'update/update-completed-count/push/pull/sync',
+  },
+  [COMMAND_OPTIONS.QUIET]: {
+    description: '静默模式',
+    applicableTo: 'update',
+  },
+  [COMMAND_OPTIONS.FORCE]: {
+    description: '强制推送',
+    applicableTo: 'push',
+  },
+}
 
 export class HelpCommand extends BaseCommand {
   constructor() {
-    super('help', '显示帮助信息')
+    super('help')
 
     // 禁用时间戳输出，help 结束后其他命令不受影响
     this.logger = createLogger('help', {
@@ -19,8 +59,6 @@ export class HelpCommand extends BaseCommand {
   }
 
   protected async run(): Promise<void> {
-    const commands = getAllCommands()
-
     this.logger.info('TNotes 命令行工具')
     this.logger.info('')
     this.logger.info('用法：pnpm tn:<command> # 推荐')
@@ -29,23 +67,13 @@ export class HelpCommand extends BaseCommand {
     this.logger.info('可用命令：')
     this.logger.info('')
 
-    // 按类别组织命令
-    const categories = {
-      开发和构建: ['dev', 'build', 'preview'],
-      内容管理: ['update', 'update-completed-count', 'create-notes'],
-      'Git 操作': ['push', 'pull', 'sync'],
-      其他: ['sync-scripts', 'fix-timestamps', 'help'],
-    }
-
-    for (const [category, cmdNames] of Object.entries(categories)) {
+    for (const [category, cmdNames] of Object.entries(COMMAND_CATEGORIES)) {
       this.logger.info(`  ${category}:`)
       for (const cmdName of cmdNames) {
-        const cmd = commands.find((c) => c.name === cmdName)
-        if (cmd) {
-          const paddingLength = Math.max(25 - cmdName.length, 1)
-          const padding = ' '.repeat(paddingLength)
-          this.logger.info(`    --${cmdName}${padding}${cmd.description}`)
-        }
+        const description = COMMAND_DESCRIPTIONS[cmdName]
+        const paddingLength = Math.max(25 - cmdName.length, 1)
+        const padding = ' '.repeat(paddingLength)
+        this.logger.info(`    --${cmdName}${padding}${description}`)
       }
       this.logger.info('')
     }
@@ -57,19 +85,21 @@ export class HelpCommand extends BaseCommand {
     this.logger.info('  pnpm tn:update')
     this.logger.info('  pnpm tn:update --all     # 更新所有知识库')
     this.logger.info(
-      '  pnpm tn:update-completed-count           # 生成当前知识库最近 12 个月的完成笔记数量统计'
+      '  pnpm tn:update-completed-count           # 生成当前知识库最近 12 个月的完成笔记数量统计',
     )
     this.logger.info(
-      '  pnpm tn:update-completed-count --all     # 生成所有知识库最近 12 个月的完成笔记数量统计'
+      '  pnpm tn:update-completed-count --all     # 生成所有知识库最近 12 个月的完成笔记数量统计',
     )
     this.logger.info('  pnpm tn:push --all       # 推送所有知识库')
     this.logger.info('')
     this.logger.info('参数：')
-    this.logger.info(
-      '  --all          批量操作所有知识库 (适用于 update/update-completed-count/push/pull/sync)'
-    )
-    this.logger.info('  --quiet        静默模式 (适用于 update)')
-    this.logger.info('  --force        强制推送 (适用于 push)')
+    for (const [option, info] of Object.entries(COMMAND_OPTIONS_INFO)) {
+      const paddingLength = Math.max(13 - option.length, 1)
+      const padding = ' '.repeat(paddingLength)
+      this.logger.info(
+        `  --${option}${padding}${info.description} (适用于 ${info.applicableTo})`,
+      )
+    }
     this.logger.info('')
     this.logger.info('环境变量：')
     this.logger.info('  DEBUG=1        启用调试模式，显示详细日志')

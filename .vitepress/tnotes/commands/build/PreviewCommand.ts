@@ -10,7 +10,7 @@ export class PreviewCommand extends BaseCommand {
   private vitepressService: VitepressService
 
   constructor() {
-    super('preview', '预览构建后的知识库')
+    super('preview')
     this.vitepressService = new VitepressService()
   }
 

@@ -10,7 +10,7 @@ export class SyncScriptsCommand extends BaseCommand {
   private syncScriptsService: SyncScriptsService
 
   constructor() {
-    super('sync-scripts', '同步知识库脚本到其它 TNotes.xxx 知识库中')
+    super('sync-scripts')
     this.syncScriptsService = new SyncScriptsService()
   }
 

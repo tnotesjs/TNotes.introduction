@@ -25,7 +25,7 @@ export class RenameNoteCommand extends BaseCommand {
   private readmeService: ReadmeService
 
   constructor() {
-    super('rename-note', '重命名笔记')
+    super('rename-note')
     this.noteService = new NoteService()
     this.readmeService = new ReadmeService()
   }
@@ -86,7 +86,7 @@ export class RenameNoteCommand extends BaseCommand {
       throw new Error(
         `重命名文件夹失败: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
       )
     }
 
@@ -113,7 +113,7 @@ export class RenameNoteCommand extends BaseCommand {
           const newH1 = generateNoteTitle(
             noteIndex,
             newTitle.trim(),
-            REPO_NOTES_URL
+            REPO_NOTES_URL,
           )
           lines[h1Index] = newH1
 
@@ -122,7 +122,7 @@ export class RenameNoteCommand extends BaseCommand {
           this.logger.success('✅ 笔记标题已更新')
         } else {
           this.logger.warn(
-            `⚠️  笔记标题格式不符合规范，未找到一级标题，请手动检查修正: ${readmePath}`
+            `⚠️  笔记标题格式不符合规范，未找到一级标题，请手动检查修正: ${readmePath}`,
           )
         }
       }

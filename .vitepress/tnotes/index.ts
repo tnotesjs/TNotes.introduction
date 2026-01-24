@@ -3,11 +3,10 @@
  *
  * TNotes 内置命令入口模块
  */
-import minimist from 'minimist'
 import { getCommand } from './commands'
-import { isValidCommand, COMMAND_NAMES } from './types'
-import type { CommandArgs } from './types'
-import { handleError, createError } from './utils'
+import { isValidCommand, COMMAND_NAMES } from './commands'
+import type { CommandArgs } from './commands'
+import { handleError, createError, parseArgs } from './utils'
 import type {
   UpdateCommand,
   UpdateCompletedCountCommand,
@@ -22,11 +21,11 @@ import type {
 ;(async (): Promise<void> => {
   try {
     // 解析命令行参数
-    const args = minimist(process.argv.slice(2)) as CommandArgs
+    const args = parseArgs(process.argv.slice(2)) as CommandArgs
 
     // 查找第一个为 true 的参数作为命令名
     const commandName = Object.keys(args).find(
-      (key) => key !== '_' && args[key] === true
+      (key) => key !== '_' && args[key] === true,
     )
 
     // 如果没有找到命令，显示帮助信息

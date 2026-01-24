@@ -12,7 +12,7 @@ export class PullCommand extends BaseCommand {
   private pullAll: boolean = false
 
   constructor() {
-    super('pull', '将 GitHub 的知识库拉下来 (使用 --all 拉取所有知识库)')
+    super('pull')
     this.gitService = new GitService()
   }
 

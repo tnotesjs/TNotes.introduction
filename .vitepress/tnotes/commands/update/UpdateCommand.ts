@@ -18,7 +18,7 @@ export class UpdateCommand extends BaseCommand {
   private updateAll: boolean = false
 
   constructor() {
-    super('update', '根据笔记内容更新知识库')
+    super('update')
     this.readmeService = new ReadmeService()
     this.noteService = new NoteService()
   }
@@ -115,7 +115,7 @@ export class UpdateCommand extends BaseCommand {
 
         try {
           process.stdout.write(
-            `\r  [${i + 1}/${targetDirs.length}] 正在更新: ${repoName}...`
+            `\r  [${i + 1}/${targetDirs.length}] 正在更新: ${repoName}...`,
           )
 
           // 执行更新命令
@@ -127,7 +127,7 @@ export class UpdateCommand extends BaseCommand {
           this.logger.error(
             `更新失败: ${repoName} - ${
               error instanceof Error ? error.message : String(error)
-            }`
+            }`,
           )
         }
       }
@@ -137,18 +137,18 @@ export class UpdateCommand extends BaseCommand {
       // 显示汇总
       if (failCount === 0) {
         this.logger.success(
-          `✅ 所有知识库更新完成: ${successCount}/${targetDirs.length}`
+          `✅ 所有知识库更新完成: ${successCount}/${targetDirs.length}`,
         )
       } else {
         this.logger.warn(
-          `⚠️  更新完成: ${successCount} 成功, ${failCount} 失败 (共 ${targetDirs.length} 个)`
+          `⚠️  更新完成: ${successCount} 成功, ${failCount} 失败 (共 ${targetDirs.length} 个)`,
         )
       }
     } catch (error) {
       this.logger.error(
         `批量更新失败: ${
           error instanceof Error ? error.message : String(error)
-        }`
+        }`,
       )
       throw error
     }
@@ -206,7 +206,7 @@ export class UpdateCommand extends BaseCommand {
 
       if (!this.quiet) {
         this.logger.success(
-          `root_item 配置已更新: ${currentKey} 月完成 ${completedCount} 篇笔记`
+          `root_item 配置已更新: ${currentKey} 月完成 ${completedCount} 篇笔记`,
         )
       }
     } catch (error) {
@@ -214,7 +214,7 @@ export class UpdateCommand extends BaseCommand {
         this.logger.error(
           `更新 root_item 失败: ${
             error instanceof Error ? error.message : String(error)
-          }`
+          }`,
         )
       }
       throw error

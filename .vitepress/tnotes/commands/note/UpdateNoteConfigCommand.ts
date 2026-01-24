@@ -10,10 +10,7 @@ import type { NoteConfig } from '../../types'
 interface UpdateConfigParams {
   noteIndex: string
   config: Partial<
-    Pick<
-      NoteConfig,
-      'done' | 'enableDiscussions' | 'description'
-    >
+    Pick<NoteConfig, 'done' | 'enableDiscussions' | 'description'>
   >
 }
 
@@ -21,7 +18,7 @@ export class UpdateNoteConfigCommand extends BaseCommand {
   private noteService: NoteService
 
   constructor() {
-    super('update-note-config', '更新笔记配置')
+    super('update-note-config')
     this.noteService = new NoteService()
   }
 
