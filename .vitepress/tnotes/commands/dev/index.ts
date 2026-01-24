@@ -3,4 +3,4 @@
  *
  * Dev 命令统一导出
  */
-export * from './DevCommand'
+export { DevCommand } from './DevCommand'

@@ -3,4 +3,4 @@
  *
  * 其他杂项命令
  */
-export * from './HelpCommand'
+export { HelpCommand } from './HelpCommand'

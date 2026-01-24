@@ -8,7 +8,7 @@ import { NoteService, ReadmeService } from '../../services'
 import { createInterface } from 'readline'
 import { v4 as uuidv4 } from 'uuid'
 
-export class CreateNotesCommand extends BaseCommand {
+export class CreateNoteCommand extends BaseCommand {
   private noteService: NoteService
   private readmeService: ReadmeService
 

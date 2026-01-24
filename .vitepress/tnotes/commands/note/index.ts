@@ -3,6 +3,6 @@
  *
  * Note 命令统一导出
  */
-export * from './CreateNoteCommand'
-export * from './UpdateNoteConfigCommand'
-export * from './RenameNoteCommand'
+export { CreateNoteCommand } from './CreateNoteCommand'
+export { UpdateNoteConfigCommand } from './UpdateNoteConfigCommand'
+export { RenameNoteCommand } from './RenameNoteCommand'

@@ -1,4 +1,4 @@
 /**
  * .vitepress/tnotes/commands/update-completed-count/index.ts
  */
-export * from './UpdateCompletedCountCommand'
+export { UpdateCompletedCountCommand } from './UpdateCompletedCountCommand'
