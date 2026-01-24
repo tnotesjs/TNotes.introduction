@@ -104,9 +104,7 @@ export class NoteManager {
    * 统计笔记数量（仅按目录名规则筛选，不读取文件）
    */
   countNotes(): number {
-    if (!existsSync(NOTES_PATH)) {
-      return 0
-    }
+    if (!existsSync(NOTES_PATH)) return 0
 
     const entries = readdirSync(NOTES_PATH, { withFileTypes: true })
 
@@ -114,7 +112,7 @@ export class NoteManager {
       (entry) =>
         entry.isDirectory() &&
         !entry.name.startsWith('.') &&
-        /^\d{4}\./.test(entry.name)
+        /^\d{4}\./.test(entry.name),
     ).length
   }
 
@@ -140,7 +138,7 @@ export class NoteManager {
         })
       }
       logger.error(
-        '\n请检查并删除或重命名重复的笔记文件夹，确保每个笔记编号唯一！\n'
+        '\n请检查并删除或重命名重复的笔记文件夹，确保每个笔记编号唯一！\n',
       )
       // 终止执行
       process.exit(1)
@@ -275,7 +273,7 @@ export class NoteManager {
           } catch (error) {
             logger.error(
               `Failed to validate config for note: ${dirName}`,
-              error
+              error,
             )
           }
         }
