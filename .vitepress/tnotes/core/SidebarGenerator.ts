@@ -5,7 +5,7 @@
  */
 import type { NoteInfo } from '../types'
 
-export interface SidebarGroup {
+interface SidebarGroup {
   text: string
   items: Array<{
     text: string
@@ -13,7 +13,7 @@ export interface SidebarGroup {
   }>
 }
 
-export interface SidebarConfig {
+interface SidebarConfig {
   '/notes/': SidebarGroup[]
 }
 
@@ -36,7 +36,7 @@ export class SidebarGenerator {
           text: note.dirName,
           link: `/notes/${note.dirName}/README`,
         })),
-      })
+      }),
     )
 
     return {

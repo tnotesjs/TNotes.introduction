@@ -3,10 +3,9 @@
  *
  * TNotes 内置命令入口模块
  */
-import { getCommand } from './commands'
-import { isValidCommand, COMMAND_NAMES } from './commands'
+import { getCommand, COMMAND_NAMES } from './commands'
 import type { CommandArgs } from './commands'
-import { handleError, createError, parseArgs } from './utils'
+import { handleError, parseArgs, createLogger } from './utils'
 import type {
   UpdateCommand,
   UpdateCompletedCountCommand,
@@ -28,24 +27,37 @@ import type {
       (key) => key !== '_' && args[key] === true,
     )
 
-    // 如果没有找到命令，显示帮助信息
-    if (!commandName) {
+    // 若没有检测到命令名，则显示帮助信息
+    // 测试命令：npx tsx ./.vitepress/tnotes/index.ts 123
+    // 若命令名无效，则显示帮助信息
+    // 测试命令：npx tsx ./.vitepress/tnotes/index.ts --123
+    const command = commandName ? getCommand(commandName as any) : null
+    if (!command) {
+      const logger = createLogger('command-not-found', {
+        timestamp: false,
+      })
+      console.log(
+        `\n------------------------------------------------------------------\n`,
+      )
+      if (commandName) {
+        logger.warn(`未找到命令：${commandName}`)
+        logger.info(`请检查命令名是否正确！`)
+      } else {
+        logger.warn(`未检测到命令名，请检查命令输入是否正确`)
+        logger.info(`示例：`)
+        logger.info(`pnpm tn:<命令名>`)
+        logger.info(`npx tsx ./.vitepress/tnotes/index.ts --<命令名>`)
+      }
+      console.log(
+        `\n------------------------------------------------------------------\n`,
+      )
+
       const helpCommand = getCommand(COMMAND_NAMES.HELP)
       if (helpCommand) {
+        console.log('\n正在执行 pnpm tn:help 打印帮助信息...\n')
         await helpCommand.execute()
       }
       return
-    }
-
-    // 验证命令名
-    if (!isValidCommand(commandName)) {
-      throw createError.commandNotFound(commandName)
-    }
-
-    // 获取命令实例
-    const command = getCommand(commandName)
-    if (!command) {
-      throw createError.commandNotFound(commandName)
     }
 
     // 处理命令选项

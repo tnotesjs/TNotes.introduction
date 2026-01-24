@@ -1,6 +1,8 @@
-// .vitepress/tnotes/vitepress/components/sidebar.data.ts
+/**
+ * .vitepress/tnotes/vitepress/components/sidebar.data.ts
+ */
+
 import fs from 'node:fs'
-import path from 'node:path'
 
 /**
  * VitePress Data Loader for Sidebar
@@ -18,7 +20,7 @@ interface SidebarGroup {
   items: SidebarItem[]
 }
 
-export interface SidebarConfig {
+interface SidebarConfig {
   '/notes/': SidebarGroup[]
 }
 

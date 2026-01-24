@@ -83,10 +83,3 @@ export interface Command {
   description: string
   execute(): Promise<void>
 }
-
-/**
- * 检查是否为有效命令
- */
-export function isValidCommand(command: string): command is CommandName {
-  return Object.values(COMMAND_NAMES).includes(command as CommandName)
-}

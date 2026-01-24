@@ -10,5 +10,3 @@ export { TocGenerator } from './TocGenerator'
 export { SidebarGenerator } from './SidebarGenerator'
 export { GitManager } from './GitManager'
 export { ProcessManager } from './ProcessManager'
-
-export type { SidebarConfig, SidebarGroup } from './SidebarGenerator'
