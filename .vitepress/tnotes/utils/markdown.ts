@@ -37,7 +37,7 @@ export function createAddNumberToTitle() {
   return function addNumberToTitle(title: string): [string, string] {
     // 正则匹配提取标题信息
     const match = title.match(
-      /^(\#+)\s*((\d+(\.\d*)?(\.\d*)?(\.\d*)?(\.\d*)?(\.\d*)?)\.\s*)?(.*)/
+      /^(\#+)\s*((\d+(\.\d*)?(\.\d*)?(\.\d*)?(\.\d*)?(\.\d*)?)\.\s*)?(.*)/,
     )
     const plainTitle = match ? match[9].trim() : title.trim()
 
@@ -74,7 +74,7 @@ export function createAddNumberToTitle() {
 export function generateToc(
   titles: string[],
   baseLevel = 2,
-  eol = '\n'
+  eol = '\n',
 ): string {
   const toc = titles
     .map((title) => {
@@ -88,30 +88,4 @@ export function generateToc(
 
   // !在 TOC 区域前后添加换行符 - 适配 prettier 格式化
   return `${eol}${toc}${eol}`
-}
-
-/**
- * 提取 Markdown 标题
- * @param content - Markdown 内容
- * @returns 标题列表
- */
-export function extractHeaders(
-  content: string
-): Array<{ level: number; text: string; anchor: string }> {
-  const lines = content.split('\n')
-  const headers: Array<{ level: number; text: string; anchor: string }> = []
-
-  for (const line of lines) {
-    const match = line.match(/^(#{1,6})\s+(.+)/)
-    if (match) {
-      const [, hashes, text] = match
-      headers.push({
-        level: hashes.length,
-        text: text.trim(),
-        anchor: generateAnchor(text),
-      })
-    }
-  }
-
-  return headers
 }

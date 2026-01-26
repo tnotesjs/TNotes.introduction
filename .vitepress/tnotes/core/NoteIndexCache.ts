@@ -81,7 +81,7 @@ export class NoteIndexCache {
    * 检测重复的笔记索引
    */
   private findDuplicateNoteIndexes(
-    notes: NoteInfo[]
+    notes: NoteInfo[],
   ): Array<{ index: string; folders: string[] }> {
     const indexMap = new Map<string, string[]>()
 
@@ -121,20 +121,6 @@ export class NoteIndexCache {
    */
   has(noteIndex: string): boolean {
     return this.byNoteIndex.has(noteIndex)
-  }
-
-  /**
-   * 获取所有笔记索引
-   */
-  getAllNoteIndexes(): string[] {
-    return Array.from(this.byNoteIndex.keys())
-  }
-
-  /**
-   * 获取所有索引项
-   */
-  getAll(): NoteIndexItem[] {
-    return Array.from(this.byNoteIndex.values())
   }
 
   /**
@@ -204,36 +190,6 @@ export class NoteIndexCache {
     this.byConfigId.set(note.config.id, note.id)
 
     logger.info(`添加笔记索引: ${note.id}`)
-  }
-
-  /**
-   * 更改笔记索引（文件夹重命名导致索引变化）
-   * @param oldNoteIndex - 旧的笔记索引
-   * @param newNoteIndex - 新的笔记索引
-   * @param newFolderName - 新的文件夹名称
-   */
-  changeNoteIndex(
-    oldNoteIndex: string,
-    newNoteIndex: string,
-    newFolderName: string
-  ): void {
-    const item = this.byNoteIndex.get(oldNoteIndex)
-    if (!item) {
-      logger.warn(`尝试更改不存在的笔记索引: ${oldNoteIndex}`)
-      return
-    }
-
-    // 删除旧索引的映射
-    this.byNoteIndex.delete(oldNoteIndex)
-
-    // 更新 item 的数据
-    item.noteIndex = newNoteIndex
-    item.folderName = newFolderName
-
-    // 添加新索引的映射
-    this.byNoteIndex.set(newNoteIndex, item)
-
-    logger.info(`笔记索引变更: ${oldNoteIndex} -> ${newNoteIndex}`)
   }
 
   /**

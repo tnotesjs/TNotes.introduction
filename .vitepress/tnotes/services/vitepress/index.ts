@@ -3,4 +3,4 @@
  *
  * Vitepress 服务入口
  */
-export * from './service'
+export { VitepressService } from './service'

@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+import { readdirSync } from 'fs'
+import { join } from 'path'
 
 /**
  * 获取 baseDir 目录下以 prefix 开头的目录路径列表
@@ -11,13 +11,13 @@ import path from 'path'
 export const getTargetDirs = (
   baseDir: string,
   prefix: string,
-  excludeDirs: string[] = []
+  excludeDirs: string[] = [],
 ): string[] => {
   try {
-    const entries = fs.readdirSync(baseDir, { withFileTypes: true })
+    const entries = readdirSync(baseDir, { withFileTypes: true })
     const targetDirs = entries
       .filter((entry) => entry.isDirectory() && entry.name.startsWith(prefix))
-      .map((entry) => path.join(baseDir, entry.name))
+      .map((entry) => join(baseDir, entry.name))
       .filter((dir) => !excludeDirs.includes(dir))
     return targetDirs
   } catch (error) {

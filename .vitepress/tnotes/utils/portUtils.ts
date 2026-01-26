@@ -36,7 +36,7 @@ export function isPortInUse(port: number): boolean {
 /**
  * 获取占用端口的进程 PID
  */
-export function getPortPid(port: number): number | null {
+function getPortPid(port: number): number | null {
   try {
     if (process.platform === 'win32') {
       const output = execSync(`netstat -ano | findstr :${port}`, {
@@ -87,7 +87,7 @@ export function killPortProcess(port: number): boolean {
     logger.error(
       `终止进程失败 (PID: ${pid}): ${
         error instanceof Error ? error.message : String(error)
-      }`
+      }`,
     )
     return false
   }
@@ -98,7 +98,7 @@ export function killPortProcess(port: number): boolean {
  */
 export async function waitForPort(
   port: number,
-  timeout: number = 5000
+  timeout: number = 5000,
 ): Promise<boolean> {
   const startTime = Date.now()
   while (Date.now() - startTime < timeout) {

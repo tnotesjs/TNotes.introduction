@@ -18,7 +18,7 @@ export enum LogLevel {
 /**
  * 日志配置接口
  */
-export interface LoggerConfig {
+interface LoggerConfig {
   level?: LogLevel
   prefix?: string
   timestamp?: boolean

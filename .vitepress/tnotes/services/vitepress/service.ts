@@ -6,7 +6,7 @@
 import { spawn } from 'child_process'
 import { ProcessManager, NoteManager } from '../../core'
 import { ConfigManager } from '../../config/ConfigManager'
-import { logger } from '../../utils'
+import { logger, isPortInUse, killPortProcess, waitForPort } from '../../utils'
 import { ROOT_DIR_PATH } from '../../config/constants'
 
 /** VitePress 开发服务器默认端口 */
@@ -15,11 +15,11 @@ const VITEPRESS_DEV_PORT = 5173
 /** VitePress 预览服务器默认端口 */
 const VITEPRESS_PREVIEW_PORT = 4173
 
-/** 开发服务器进程 ID */
-const PROCESS_ID_DEV = 'vitepress-dev'
+/** 开发服务器进程 ID 后缀 */
+const PROCESS_ID_DEV_SUFFIX = 'vitepress-dev'
 
-/** 预览服务器进程 ID */
-const PROCESS_ID_PREVIEW = 'vitepress-preview'
+/** 预览服务器进程 ID 后缀 */
+const PROCESS_ID_PREVIEW_SUFFIX = 'vitepress-preview'
 
 /** 服务启动超时时间（毫秒） */
 const SERVER_STARTUP_TIMEOUT = 60000
@@ -29,6 +29,9 @@ const PORT_RELEASE_TIMEOUT = 3000
 
 /** 进程清理等待时间（毫秒） */
 const PROCESS_CLEANUP_DELAY = 1000
+
+/** 默认包管理器 */
+const DEFAULT_PACKAGE_MANAGER = 'pnpm'
 
 export class VitepressService {
   private processManager: ProcessManager
@@ -47,7 +50,8 @@ export class VitepressService {
    */
   async startServer(): Promise<number | undefined> {
     const port = this.configManager.get('port') || VITEPRESS_DEV_PORT
-    const processId = PROCESS_ID_DEV
+    const repoName = this.configManager.get('repoName')
+    const processId = `${repoName}-${PROCESS_ID_DEV_SUFFIX}`
 
     // 检查内存中的进程管理器（清理残留）
     if (
@@ -59,8 +63,6 @@ export class VitepressService {
     }
 
     // 检查目标端口是否被占用，如果是则强制清理
-    const { isPortInUse, killPortProcess, waitForPort } =
-      await import('../../utils')
     if (isPortInUse(port)) {
       logger.warn(`端口 ${port} 被占用，正在清理...`)
       killPortProcess(port)
@@ -76,10 +78,11 @@ export class VitepressService {
     }
 
     // 启动 VitePress 开发服务器
-    const command = 'pnpm'
+    const pm =
+      this.configManager.get('packageManager') || DEFAULT_PACKAGE_MANAGER
     const args = ['vitepress', 'dev', '--port', port.toString()]
 
-    const processInfo = this.processManager.spawn(processId, command, args, {
+    const processInfo = this.processManager.spawn(processId, pm, args, {
       cwd: ROOT_DIR_PATH,
       stdio: ['inherit', 'pipe', 'pipe'], // stdin 继承，stdout/stderr 管道捕获
     })
@@ -217,7 +220,9 @@ export class VitepressService {
    */
   private runBuildWithProgress(): Promise<void> {
     return new Promise((resolve, reject) => {
-      const child = spawn('pnpm', ['vitepress', 'build'], {
+      const pm =
+        this.configManager.get('packageManager') || DEFAULT_PACKAGE_MANAGER
+      const child = spawn(pm, ['vitepress', 'build'], {
         cwd: ROOT_DIR_PATH,
         shell: true,
         stdio: ['inherit', 'pipe', 'pipe'],
@@ -281,15 +286,14 @@ export class VitepressService {
    * 预览构建后的站点
    */
   async preview(): Promise<number | undefined> {
-    const processId = PROCESS_ID_PREVIEW
-    const command = 'pnpm'
+    const repoName = this.configManager.get('repoName')
+    const processId = `${repoName}-${PROCESS_ID_PREVIEW_SUFFIX}`
+    const pm =
+      this.configManager.get('packageManager') || DEFAULT_PACKAGE_MANAGER
     const args = ['vitepress', 'preview']
     const previewPort = VITEPRESS_PREVIEW_PORT
 
     // 检查端口是否被占用
-    const { isPortInUse, killPortProcess, waitForPort } =
-      await import('../../utils')
-
     if (isPortInUse(previewPort)) {
       logger.warn(`端口 ${previewPort} 已被占用，正在尝试清理...`)
       const killed = killPortProcess(previewPort)
@@ -310,10 +314,10 @@ export class VitepressService {
       }
     }
 
-    logger.info(`执行命令：${command} ${args.join(' ')}`)
+    logger.info(`执行命令：${pm} ${args.join(' ')}`)
     logger.info('正在启动预览服务...')
 
-    const processInfo = this.processManager.spawn(processId, command, args, {
+    const processInfo = this.processManager.spawn(processId, pm, args, {
       cwd: ROOT_DIR_PATH,
       stdio: 'inherit',
     })

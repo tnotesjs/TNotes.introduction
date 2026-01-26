@@ -17,6 +17,7 @@ export interface TNotesConfig {
   menuItems: MenuItem[]
   sidebarShowNoteId: boolean
   port?: number
+  packageManager?: 'pnpm' | 'npm' | 'yarn'
   root_item: RootItem
 }
 

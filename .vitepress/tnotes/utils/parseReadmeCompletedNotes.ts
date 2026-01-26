@@ -7,7 +7,7 @@
 /**
  * 笔记状态
  */
-export interface NoteStatus {
+interface NoteStatus {
   noteIndex: string // 笔记编号（如 "0001"）
   completed: boolean // 是否完成
   line: string // 原始行内容
@@ -16,7 +16,7 @@ export interface NoteStatus {
 /**
  * 解析结果
  */
-export interface ParseResult {
+interface ParseResult {
   completedCount: number // 完成的笔记数量
   totalCount: number // 总笔记数量
   notes: NoteStatus[] // 所有笔记的状态
@@ -80,7 +80,7 @@ export function parseReadmeCompletedNotes(content: string): ParseResult {
         throw new Error(
           `发现相同编号 ${noteIndex} 的笔记有不同的完成状态:\n` +
             `  第一次出现: ${existing.line}\n` +
-            `  第二次出现: ${line}`
+            `  第二次出现: ${line}`,
         )
       }
       // 状态相同，跳过（去重）

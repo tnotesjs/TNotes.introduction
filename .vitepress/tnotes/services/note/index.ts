@@ -4,4 +4,4 @@
  * 笔记服务入口
  */
 
-export * from './service'
+export { NoteService } from './service'

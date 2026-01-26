@@ -7,9 +7,7 @@ import { spawn, ChildProcess } from 'child_process'
 import type { SpawnOptions } from 'child_process'
 import { Logger } from '../utils'
 
-/**
- * 进程信息接口
- */
+/** 进程信息接口 */
 interface ProcessInfo {
   id: string
   pid?: number
@@ -139,24 +137,6 @@ export class ProcessManager {
   }
 
   /**
-   * 强制停止进程
-   * @param id - 进程ID
-   * @returns 是否成功停止
-   */
-  forceKill(id: string): boolean {
-    return this.kill(id, 'SIGKILL')
-  }
-
-  /**
-   * 获取进程信息
-   * @param id - 进程ID
-   * @returns ProcessInfo 或 undefined
-   */
-  get(id: string): ProcessInfo | undefined {
-    return this.processes.get(id)
-  }
-
-  /**
    * 检查进程是否存在
    * @param id - 进程ID
    * @returns 是否存在
@@ -184,22 +164,6 @@ export class ProcessManager {
   }
 
   /**
-   * 获取所有进程ID
-   * @returns 进程ID列表
-   */
-  getAllIds(): string[] {
-    return Array.from(this.processes.keys())
-  }
-
-  /**
-   * 获取所有进程信息
-   * @returns ProcessInfo 列表
-   */
-  getAllProcesses(): ProcessInfo[] {
-    return Array.from(this.processes.values())
-  }
-
-  /**
    * 停止所有进程
    * @param signal - 信号（默认为 SIGTERM）
    */
@@ -220,49 +184,5 @@ export class ProcessManager {
     }
 
     this.processes.clear()
-  }
-
-  /**
-   * 强制停止所有进程
-   */
-  forceKillAll(): void {
-    this.killAll('SIGKILL')
-  }
-
-  /**
-   * 获取进程运行时间
-   * @param id - 进程ID
-   * @returns 运行时间（毫秒）或 undefined
-   */
-  getUptime(id: string): number | undefined {
-    const processInfo = this.processes.get(id)
-    if (!processInfo) return undefined
-
-    return Date.now() - processInfo.startTime
-  }
-
-  /**
-   * 显示所有进程状态
-   */
-  showStatus(): void {
-    if (this.processes.size === 0) {
-      console.log('没有运行中的进程')
-      return
-    }
-
-    console.log(`\n📊 进程状态 (${this.processes.size} 个):`)
-    for (const [id, info] of this.processes) {
-      const uptime = this.getUptime(id)
-      const uptimeStr = uptime ? `${Math.floor(uptime / 1000)}s` : 'N/A'
-      const isRunning = this.isRunning(id)
-      const status = isRunning ? '✓ 运行中' : '✗ 已停止'
-
-      console.log(`  ${id}:`)
-      console.log(`    PID: ${info.pid}`)
-      console.log(`    命令: ${info.command} ${info.args.join(' ')}`)
-      console.log(`    运行时间: ${uptimeStr}`)
-      console.log(`    状态: ${status}`)
-    }
-    console.log()
   }
 }

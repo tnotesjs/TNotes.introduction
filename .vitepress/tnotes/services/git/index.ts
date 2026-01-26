@@ -3,5 +3,4 @@
  *
  * Git 服务入口 - 导出 GitService 类
  */
-export * from './service'
-export * from './models'
+export { GitService } from './service'

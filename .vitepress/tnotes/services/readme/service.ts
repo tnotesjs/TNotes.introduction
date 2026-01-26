@@ -63,7 +63,7 @@ export class ReadmeService {
     if (shouldIncrementalUpdate) {
       notesToUpdate = notes.filter((note) => changedIndexes.has(note.id))
       logger.info(
-        `检测到 ${changedIndexes.size} 篇笔记有变更，使用增量更新模式`
+        `检测到 ${changedIndexes.size} 篇笔记有变更，使用增量更新模式`,
       )
     } else {
       logger.info('使用全量更新模式')
@@ -157,8 +157,8 @@ export class ReadmeService {
         batch.map((note) =>
           Promise.resolve().then(() => {
             this.readmeGenerator.updateNoteReadme(note)
-          })
-        )
+          }),
+        ),
       )
 
       for (const result of results) {
@@ -272,14 +272,14 @@ export class ReadmeService {
       itemList,
       titles,
       titlesNotesCount,
-      sidebarIsCollapsed
+      sidebarIsCollapsed,
     )
 
     // 写入 sidebar.json
     writeFileSync(
       VP_SIDEBAR_PATH,
       JSON.stringify(hierarchicalSidebar, null, 2),
-      'utf-8'
+      'utf-8',
     )
 
     logger.info('已更新侧边栏配置')
@@ -300,7 +300,7 @@ export class ReadmeService {
    */
   async updateNoteInReadme(
     noteIndex: string,
-    updates: Partial<NoteConfig>
+    updates: Partial<NoteConfig>,
   ): Promise<void> {
     const item = this.noteIndexCache.getByNoteIndex(noteIndex)
     if (!item) {
@@ -371,7 +371,7 @@ export class ReadmeService {
 
       await fsPromises.writeFile(ROOT_README_PATH, lines.join('\n'), 'utf-8')
       logger.info(
-        `从 README.md 中删除笔记: ${noteIndex} (${linesToRemove.length} 处引用)`
+        `从 README.md 中删除笔记: ${noteIndex} (${linesToRemove.length} 处引用)`,
       )
     } else {
       logger.warn(`README.md 中未找到笔记: ${noteIndex}`)

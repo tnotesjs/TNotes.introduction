@@ -28,11 +28,7 @@ import { ConfigManager } from '../config/ConfigManager'
  * 笔记管理器类
  */
 export class NoteManager {
-  private configManager: ConfigManager
-
-  constructor() {
-    this.configManager = ConfigManager.getInstance()
-  }
+  constructor() {}
 
   /**
    * 扫描所有笔记
@@ -194,28 +190,6 @@ export class NoteManager {
   }
 
   /**
-   * 读取笔记内容
-   * @param noteInfo - 笔记信息
-   * @returns 笔记内容
-   */
-  readNoteContent(noteInfo: NoteInfo): string {
-    if (!existsSync(noteInfo.readmePath)) {
-      throw new Error(`README not found: ${noteInfo.readmePath}`)
-    }
-    return readFileSync(noteInfo.readmePath, 'utf-8')
-  }
-
-  /**
-   * 写入笔记内容
-   * @param noteInfo - 笔记信息
-   * @param content - 笔记内容
-   */
-  writeNoteContent(noteInfo: NoteInfo, content: string): void {
-    writeFileSync(noteInfo.readmePath, content, 'utf-8')
-    logger.info(`Updated note: ${noteInfo.dirName}`)
-  }
-
-  /**
    * 更新笔记配置
    * @param noteInfo - 笔记信息
    * @param config - 新的配置
@@ -290,14 +264,5 @@ export class NoteManager {
     }
 
     return undefined
-  }
-
-  /**
-   * 检查笔记是否存在
-   * @param noteIndex - 笔记索引
-   * @returns 是否存在
-   */
-  noteExists(noteIndex: string): boolean {
-    return this.getNoteByIndex(noteIndex) !== undefined
   }
 }

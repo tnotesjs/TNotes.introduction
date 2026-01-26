@@ -4,4 +4,4 @@
  * README 服务入口
  */
 
-export * from './service'
+export { ReadmeService } from './service'

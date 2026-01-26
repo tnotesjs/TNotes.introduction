@@ -52,7 +52,7 @@ export class ConfigValidator {
    */
   static validateAndFix(
     configPath: string,
-    noteDirPath: string
+    noteDirPath: string,
   ): NoteConfig | null {
     try {
       // 读取配置文件
@@ -73,7 +73,7 @@ export class ConfigValidator {
         if (!config[field]) {
           logger.error(
             `配置文件缺少必需字段 "${field}": ${configPath}\n` +
-              `请手动添加该字段或删除配置文件后重新生成`
+              `请手动添加该字段或删除配置文件后重新生成`,
           )
           throw new Error(`Missing required field: ${field}`)
         }
@@ -152,43 +152,5 @@ export class ConfigValidator {
     }
 
     return sorted as NoteConfig
-  }
-
-  /**
-   * 检测配置变更类型
-   * @param oldConfig - 旧配置
-   * @param newConfig - 新配置
-   * @returns 变更类型：'toc-only'（仅 TOC 相关）或 'full'（需要全局更新）
-   */
-  static detectChangeType(
-    oldConfig: NoteConfig,
-    newConfig: NoteConfig
-  ): 'toc-only' | 'full' {
-    // TOC 相关字段：只影响笔记内部目录
-    const tocFields = ['bilibili', 'tnotes', 'yuque']
-
-    // 全局更新字段：影响侧边栏、首页等
-    const globalFields = ['done', 'enableDiscussions']
-
-    // 检查是否有全局字段变更
-    for (const field of globalFields) {
-      if (
-        JSON.stringify(oldConfig[field]) !== JSON.stringify(newConfig[field])
-      ) {
-        return 'full'
-      }
-    }
-
-    // 只有 TOC 字段变更
-    for (const field of tocFields) {
-      if (
-        JSON.stringify(oldConfig[field]) !== JSON.stringify(newConfig[field])
-      ) {
-        return 'toc-only'
-      }
-    }
-
-    // 没有影响更新的字段变更
-    return 'toc-only'
   }
 }

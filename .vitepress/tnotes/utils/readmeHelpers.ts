@@ -16,12 +16,12 @@ import { extractNoteIndex } from './noteIndex'
  *
  * 要求: 笔记名称必须是 4 个数字开头，后面紧跟着一个小数点和一个空格，随后跟着任意标题内容
  */
-export const NOTE_LINE_REGEX = /^( *)- \[.\] \[(\d{4}\. .+?)\]/
+const NOTE_LINE_REGEX = /^( *)- \[.\] \[(\d{4}\. .+?)\]/
 
 /**
  * 笔记链接解析结果
  */
-export interface ParsedNoteLine {
+interface ParsedNoteLine {
   isMatch: boolean // 是否匹配到笔记行
   noteIndex: string | null // 笔记索引 (如 "0001")
 }
@@ -62,10 +62,10 @@ export function parseNoteLine(line: string): ParsedNoteLine {
  * @param repoName - 仓库名称
  * @returns 完整的 GitHub URL
  */
-export function buildNoteLink(
+function buildNoteLink(
   note: NoteInfo,
   repoOwner: string,
-  repoName: string
+  repoName: string,
 ): string {
   const encodedDirName = encodeURIComponent(note.dirName)
   return `https://github.com/${repoOwner}/${repoName}/tree/main/notes/${encodedDirName}/README.md`
@@ -76,7 +76,7 @@ export function buildNoteLink(
  * @param note - 笔记信息
  * @returns { status, deprecatedMark } 状态字符和弃用标记
  */
-export function updateNoteStatus(note: NoteInfo): {
+function updateNoteStatus(note: NoteInfo): {
   status: string
   deprecatedMark: string
 } {
@@ -102,7 +102,7 @@ export function updateNoteStatus(note: NoteInfo): {
 export function buildNoteLineMarkdown(
   note: NoteInfo,
   repoOwner: string,
-  repoName: string
+  repoName: string,
 ): string {
   const url = buildNoteLink(note, repoOwner, repoName)
   const { status, deprecatedMark } = updateNoteStatus(note)
@@ -123,7 +123,7 @@ export function isNoteLine(line: string): boolean {
  * @param lines - 原始行数组
  * @returns 合并后的行数组
  */
-export function mergeConsecutiveEmptyLines(lines: string[]): string[] {
+function mergeConsecutiveEmptyLines(lines: string[]): string[] {
   const result: string[] = []
   let previousLineIsEmpty = false
 
@@ -150,7 +150,7 @@ export function mergeConsecutiveEmptyLines(lines: string[]): string[] {
  * @param lines - 行数组
  * @returns 处理后的行数组
  */
-export function removeEmptyLinesBetweenNotes(lines: string[]): string[] {
+function removeEmptyLinesBetweenNotes(lines: string[]): string[] {
   const result: string[] = []
 
   for (let i = 0; i < lines.length; i++) {

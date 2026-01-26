@@ -43,11 +43,11 @@ export enum ErrorCode {
 /**
  * TNotes 自定义错误类
  */
-export class TNotesError extends Error {
+class TNotesError extends Error {
   constructor(
     message: string,
     public code: ErrorCode = ErrorCode.UNKNOWN,
-    public context?: Record<string, any>
+    public context?: Record<string, any>,
   ) {
     super(message)
     this.name = 'TNotesError'
@@ -130,14 +130,14 @@ export const createError = {
       ErrorCode.NOTE_INDEX_INVALID,
       {
         noteIndex,
-      }
+      },
     ),
 
   noteConfigInvalid: (notePath: string, reason?: string) =>
     new TNotesError(
       `无效的笔记配置：${notePath}`,
       ErrorCode.NOTE_CONFIG_INVALID,
-      { notePath, reason }
+      { notePath, reason },
     ),
 
   configInvalid: (field: string, reason: string) =>
@@ -154,7 +154,7 @@ export const createError = {
   commandFailed: (
     commandName: string,
     exitCode?: number,
-    originalError?: Error
+    originalError?: Error,
   ) =>
     new TNotesError(`命令执行失败：${commandName}`, ErrorCode.COMMAND_FAILED, {
       commandName,
@@ -166,7 +166,7 @@ export const createError = {
     new TNotesError(
       `启动服务器失败：端口 ${port}`,
       ErrorCode.SERVER_START_FAILED,
-      { port, originalError: originalError?.message }
+      { port, originalError: originalError?.message },
     ),
 
   portInUse: (port: number) =>

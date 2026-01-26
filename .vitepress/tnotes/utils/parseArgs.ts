@@ -5,7 +5,7 @@
  * 替代 minimist，仅实现项目需要的功能
  */
 
-export interface ParsedArgs {
+interface ParsedArgs {
   /** 非选项参数 */
   _: string[]
   /** 选项参数 */

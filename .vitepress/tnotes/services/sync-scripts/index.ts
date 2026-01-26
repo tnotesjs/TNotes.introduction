@@ -4,4 +4,4 @@
  * 脚本同步服务入口
  */
 
-export * from './service'
+export { SyncScriptsService } from './service'

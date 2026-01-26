@@ -14,7 +14,7 @@ import { logger } from './logger'
  * - 匹配格式: 4 位数字开头，后接小数点
  * - 示例: "0001." 或 "9999."
  */
-export const NOTE_INDEX_REGEX = /^(\d{4})\./
+const NOTE_INDEX_REGEX = /^(\d{4})\./
 
 /**
  * 从文件夹名称或文本中提取笔记索引
@@ -30,16 +30,6 @@ export const NOTE_INDEX_REGEX = /^(\d{4})\./
 export function extractNoteIndex(text: string): string | null {
   const match = text.match(NOTE_INDEX_REGEX)
   return match ? match[1] : null
-}
-
-/**
- * 检查文本是否以有效的笔记索引开头
- *
- * @param text - 要检查的文本
- * @returns 是否匹配笔记索引格式
- */
-export function isValidNoteIndexFormat(text: string): boolean {
-  return NOTE_INDEX_REGEX.test(text)
 }
 
 /**

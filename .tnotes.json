@@ -5,6 +5,7 @@
     "TNotes.introduction"
   ],
   "sidebarShowNoteId": false,
+  "packageManager": "pnpm",
   "ignore_dirs": [
     ".vscode",
     "0000",
@@ -34,7 +35,7 @@
     "details": "TNotes 说明文档",
     "link": "https://tnotesjs.github.io/TNotes.introduction/",
     "created_at": 1740850835000,
-    "updated_at": 1769242150333,
+    "updated_at": 1769418036199,
     "days_since_birth": 9690
   },
   "port": 9379,

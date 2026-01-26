@@ -100,23 +100,3 @@ export function validateNoteTitle(title: string): {
 
   return { valid: true }
 }
-
-/**
- * 清理标题,移除或替换非法字符
- * @param title - 原始标题
- * @returns 清理后的标题
- */
-export function sanitizeNoteTitle(title: string): string {
-  return (
-    title
-      .trim()
-      // 替换非法字符为下划线
-      .replace(INVALID_FILENAME_CHARS, '_')
-      // 移除开头的点和空格
-      .replace(/^[.\s]+/, '')
-      // 移除结尾的点和空格
-      .replace(/[.\s]+$/, '')
-      // 限制长度
-      .slice(0, 200)
-  )
-}

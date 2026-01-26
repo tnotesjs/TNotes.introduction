@@ -6,7 +6,23 @@
 import { GitManager } from '../../core'
 import { logger } from '../../utils'
 import { ROOT_DIR_PATH } from '../../config/constants'
-import type { PushOptions, PullOptions } from './models'
+
+/**
+ * Git 推送选项
+ */
+interface PushOptions {
+  message?: string
+  branch?: string
+  force?: boolean
+}
+
+/**
+ * Git 拉取选项
+ */
+interface PullOptions {
+  branch?: string
+  rebase?: boolean
+}
 
 /**
  * Git 服务类
