@@ -3,13 +3,7 @@
  *
  * 笔记管理器 - 负责笔记的扫描、验证和基本操作
  */
-import {
-  existsSync,
-  readdirSync,
-  statSync,
-  readFileSync,
-  writeFileSync,
-} from 'fs'
+import { existsSync, readdirSync, statSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import type { NoteInfo, NoteConfig } from '../types'
 import {
@@ -17,12 +11,7 @@ import {
   TNOTES_JSON_FILENAME,
   README_FILENAME,
 } from '../config/constants'
-import {
-  logger,
-  ConfigValidator,
-  extractNoteIndex as parseNoteIndex,
-} from '../utils'
-import { ConfigManager } from '../config/ConfigManager'
+import { logger, ConfigValidator, extractNoteIndex } from '../utils'
 
 /**
  * 笔记管理器类
@@ -147,7 +136,7 @@ export class NoteManager {
    * @returns 笔记索引
    */
   private getNoteIndexFromDir(dirName: string): string {
-    return parseNoteIndex(dirName) || dirName
+    return extractNoteIndex(dirName) || dirName
   }
 
   /**

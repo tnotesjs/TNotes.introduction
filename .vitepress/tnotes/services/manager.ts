@@ -32,9 +32,7 @@ class ServiceManager {
     this.noteManager = new NoteManager()
   }
 
-  /**
-   * 获取 ServiceManager 单例
-   */
+  /** 获取 ServiceManager 单例 */
   static getInstance(): ServiceManager {
     if (!ServiceManager.instance) {
       ServiceManager.instance = new ServiceManager()
@@ -44,6 +42,7 @@ class ServiceManager {
 
   /**
    * 初始化服务（扫描笔记并初始化索引缓存）
+   *
    * @throws 如果检测到重复的笔记 ID
    */
   async initialize(): Promise<void> {
@@ -76,23 +75,17 @@ class ServiceManager {
     }
   }
 
-  /**
-   * 检查是否已初始化
-   */
+  /** 检查是否已初始化 */
   isInitialized(): boolean {
     return this.initialized
   }
 
-  /**
-   * 获取笔记索引缓存实例
-   */
+  /** 获取笔记索引缓存实例 */
   getNoteIndexCache(): NoteIndexCache {
     return this.noteIndexCache
   }
 
-  /**
-   * 获取 FileWatcherService 实例（如果不存在则创建）
-   */
+  /** 获取 FileWatcherService 实例 */
   getFileWatcherService(): FileWatcherService {
     if (!this.fileWatcherService) {
       this.fileWatcherService = new FileWatcherService()
@@ -100,9 +93,7 @@ class ServiceManager {
     return this.fileWatcherService
   }
 
-  /**
-   * 检查 FileWatcherService 是否存在且正在运行
-   */
+  /** 检查 FileWatcherService 是否存在且正在运行 */
   isFileWatcherActive(): boolean {
     return this.fileWatcherService?.isWatching() ?? false
   }

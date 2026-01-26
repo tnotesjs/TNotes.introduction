@@ -3,6 +3,7 @@
  *
  * 命令基类
  */
+
 import type { Command, CommandName } from './models'
 import { COMMAND_DESCRIPTIONS } from './models'
 import type { Logger } from '../utils'
