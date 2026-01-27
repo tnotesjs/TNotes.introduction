@@ -6,6 +6,7 @@
  * - 监听笔记文件标题的变化并自动更新 toc
  * - 监听笔记配置文件的变化并自动更新笔记的状态
  */
+
 import { existsSync, readFileSync, promises as fsPromises } from 'fs'
 import { join } from 'path'
 import { NOTES_DIR_NOT_SET_ERROR, WATCH_EVENT_TYPES } from './internal'
@@ -89,8 +90,8 @@ export class FileWatcherService {
       addNoteDir: (name) => this.watchState.addNoteDir(name),
       deleteNoteDir: (name) => this.watchState.deleteNoteDir(name),
       onDelete: (oldName) => this.handleFolderDeletion(oldName),
-      onRename: (noteIndex, oldName, newName) =>
-        this.handleFolderRenameUpdate(noteIndex, oldName, newName),
+      onRename: (oldName, newName) =>
+        this.handleFolderRenameUpdate(oldName, newName),
       onInvalidIndex: (name) =>
         logger.warn(`无法从文件夹名称提取笔记索引: ${name}`),
       onRenameConflict: (oldName, newName) =>
@@ -165,10 +166,10 @@ export class FileWatcherService {
     try {
       // 优先处理配置状态变更；仅当配置未变更时再处理 README 内容更新
       const configChanges = events.filter(
-        (e) => e.type === WATCH_EVENT_TYPES.CONFIG
+        (e) => e.type === WATCH_EVENT_TYPES.CONFIG,
       )
       const readmeChanges = events.filter(
-        (e) => e.type === WATCH_EVENT_TYPES.README
+        (e) => e.type === WATCH_EVENT_TYPES.README,
       )
 
       const changedNoteIndexes = await this.configHandler.handle(configChanges)
@@ -183,7 +184,7 @@ export class FileWatcherService {
     } finally {
       setTimeout(
         () => this.scheduler.setUpdating(false),
-        UPDATE_UNLOCK_DELAY_MS
+        UPDATE_UNLOCK_DELAY_MS,
       )
     }
   }
@@ -215,9 +216,8 @@ export class FileWatcherService {
   }
 
   private async handleFolderRenameUpdate(
-    noteIndex: string,
     oldName: string,
-    newName: string
+    newName: string,
   ): Promise<void> {
     if (this.scheduler.getUpdating()) return
     this.scheduler.setUpdating(true)
@@ -225,7 +225,7 @@ export class FileWatcherService {
     try {
       const { oldNoteIndex, newNoteIndex } = this.validateRenameIndexes(
         oldName,
-        newName
+        newName,
       )
       if (!oldNoteIndex || !newNoteIndex) return
 
@@ -246,7 +246,7 @@ export class FileWatcherService {
 
   private validateRenameIndexes(
     oldName: string,
-    newName: string
+    newName: string,
   ): { oldNoteIndex: string | null; newNoteIndex: string | null } {
     const oldNoteIndex = this.extractNoteIndexOrWarn(oldName)
     const newNoteIndex = this.extractNoteIndexOrWarn(newName)
@@ -275,7 +275,7 @@ export class FileWatcherService {
 
   private async handleTitleOnlyRename(
     noteIndex: string,
-    newName: string
+    newName: string,
   ): Promise<void> {
     logger.info(`笔记索引未变 (${noteIndex})，只更新标题`)
     const cache = this.noteIndexCache
@@ -290,14 +290,14 @@ export class FileWatcherService {
 
   private async handleIndexChangedRename(
     oldNoteIndex: string,
-    newNoteIndex: string
+    newNoteIndex: string,
   ): Promise<void> {
     logger.info(`笔记索引变更: ${oldNoteIndex} → ${newNoteIndex}`)
 
     await this.readmeService.deleteNoteFromReadme(oldNoteIndex)
 
     const allNotes = this.noteService.getAllNotes()
-    const newNote = allNotes.find((n) => n.id === newNoteIndex)
+    const newNote = allNotes.find((n) => n.index === newNoteIndex)
 
     if (newNote) {
       const cache = this.noteIndexCache
@@ -314,7 +314,7 @@ export class FileWatcherService {
 
   private async revertFolderRename(
     oldName: string,
-    newName: string
+    newName: string,
   ): Promise<void> {
     try {
       const oldPath = join(this.notesDir, oldName)

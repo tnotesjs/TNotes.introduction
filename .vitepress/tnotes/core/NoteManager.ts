@@ -6,12 +6,8 @@
 import { existsSync, readdirSync, statSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import type { NoteInfo, NoteConfig } from '../types'
-import {
-  NOTES_PATH,
-  TNOTES_JSON_FILENAME,
-  README_FILENAME,
-} from '../config/constants'
-import { logger, ConfigValidator, extractNoteIndex } from '../utils'
+import { NOTES_PATH } from '../config/constants'
+import { logger, validateAndFixConfig, extractNoteIndex } from '../utils'
 
 /**
  * 笔记管理器类
@@ -25,7 +21,14 @@ export class NoteManager {
    */
   scanNotes(): NoteInfo[] {
     const notes: NoteInfo[] = []
-    const noteIndexMap = new Map<string, string[]>() // 用于检测重复编号：索引 -> [dirNames]
+
+    /**
+     * 用于检测重复编号，若发现重复编号的笔记出现，直接终止程序执行
+     *
+     * 隐射关系：
+     * 笔记 4 位数编号 -> 笔记名称数组
+     */
+    const noteIndexMap = new Map<string, string[]>()
 
     if (!existsSync(NOTES_PATH)) {
       logger.warn(`Notes directory not found: ${NOTES_PATH}`)
@@ -41,8 +44,8 @@ export class NoteManager {
 
     for (const dirName of noteDirs) {
       const notePath = join(NOTES_PATH, dirName)
-      const readmePath = join(notePath, README_FILENAME)
-      const configPath = join(notePath, TNOTES_JSON_FILENAME)
+      const readmePath = join(notePath, 'README.md')
+      const configPath = join(notePath, '.tnotes.json')
 
       if (!existsSync(readmePath)) {
         logger.warn(`README not found in note: ${dirName}`)
@@ -52,9 +55,8 @@ export class NoteManager {
       let config: NoteConfig | undefined
       if (existsSync(configPath)) {
         try {
-          // 使用 ConfigValidator 验证并修复配置
-          config =
-            ConfigValidator.validateAndFix(configPath, notePath) || undefined
+          // 使用 validateAndFixConfig 验证并修复配置
+          config = validateAndFixConfig(configPath) || undefined
         } catch (error) {
           logger.error(`Failed to validate config for note: ${dirName}`, error)
         }
@@ -63,13 +65,11 @@ export class NoteManager {
       const id = this.getNoteIndexFromDir(dirName)
 
       // 记录笔记编号，用于检测重复
-      if (!noteIndexMap.has(id)) {
-        noteIndexMap.set(id, [])
-      }
+      if (!noteIndexMap.has(id)) noteIndexMap.set(id, [])
       noteIndexMap.get(id)!.push(dirName)
 
       notes.push({
-        id,
+        index: id,
         path: notePath,
         dirName,
         readmePath,
@@ -103,7 +103,7 @@ export class NoteManager {
 
   /**
    * 检测重复的笔记编号
-   * @param noteIndexMap - 笔记编号映射表（索引 -> [dirNames]）
+   * @param noteIndexMap - 笔记编号映射表（笔记 4 位数编号 -> 笔记名称数组）
    */
   private checkDuplicateNoteIndexes(noteIndexMap: Map<string, string[]>): void {
     const duplicates: Array<{ id: string; dirNames: string[] }> = []
@@ -221,8 +221,8 @@ export class NoteManager {
       // 找到匹配的笔记
       if (id === noteIndex) {
         const notePath = fullPath
-        const readmePath = join(notePath, README_FILENAME)
-        const configPath = join(notePath, TNOTES_JSON_FILENAME)
+        const readmePath = join(notePath, 'README.md')
+        const configPath = join(notePath, '.tnotes.json')
 
         if (!existsSync(readmePath)) {
           return undefined
@@ -231,8 +231,7 @@ export class NoteManager {
         let config: NoteConfig | undefined
         if (existsSync(configPath)) {
           try {
-            config =
-              ConfigValidator.validateAndFix(configPath, notePath) || undefined
+            config = validateAndFixConfig(configPath) || undefined
           } catch (error) {
             logger.error(
               `Failed to validate config for note: ${dirName}`,
@@ -242,7 +241,7 @@ export class NoteManager {
         }
 
         return {
-          id,
+          index: id,
           path: notePath,
           dirName,
           readmePath,

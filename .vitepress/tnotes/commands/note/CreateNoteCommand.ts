@@ -55,7 +55,7 @@ export class CreateNoteCommand extends BaseCommand {
         if (count === 1) {
           this.logger.success(`笔记创建成功: ${note.dirName}`)
           this.logger.info(`笔记路径: ${note.path}`)
-          this.logger.info(`笔记编号: ${note.id}`)
+          this.logger.info(`笔记编号: ${note.index}`)
           this.logger.info(`配置ID: ${configId}`)
         } else {
           this.logger.success(`[${i}/${count}] 创建成功: ${note.dirName}`)

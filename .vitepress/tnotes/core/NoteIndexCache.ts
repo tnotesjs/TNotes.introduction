@@ -45,60 +45,25 @@ export class NoteIndexCache {
 
   /**
    * 初始化索引缓存
-   * @param notes - 扫描得到的笔记列表
-   * @throws 如果检测到重复的笔记 ID
+   * @param notes - 扫描得到的笔记列表（已由 NoteManager.scanNotes 完成重复检测）
    */
   initialize(notes: NoteInfo[]): void {
     this.byNoteIndex.clear()
     this.byConfigId.clear()
 
-    // 检测重复的 noteIndex
-    const duplicates = this.findDuplicateNoteIndexes(notes)
-    if (duplicates.length > 0) {
-      const errorMsg = `检测到重复的笔记索引，请修正后再启动服务:\n${duplicates
-        .map((d) => `  - 索引 ${d.index}: ${d.folders.join(', ')}`)
-        .join('\n')}`
-      logger.error(errorMsg)
-      throw new Error(errorMsg)
-    }
-
     // 构建索引
     for (const note of notes) {
       const item: NoteIndexItem = {
-        noteIndex: note.id,
+        noteIndex: note.index,
         folderName: note.dirName,
         noteConfig: note.config,
       }
 
-      this.byNoteIndex.set(note.id, item)
-      this.byConfigId.set(note.config.id, note.id)
+      this.byNoteIndex.set(note.index, item)
+      this.byConfigId.set(note.config.id, note.index)
     }
 
     logger.info(`笔记索引初始化完成，共 ${notes.length} 篇笔记`)
-  }
-
-  /**
-   * 检测重复的笔记索引
-   */
-  private findDuplicateNoteIndexes(
-    notes: NoteInfo[],
-  ): Array<{ index: string; folders: string[] }> {
-    const indexMap = new Map<string, string[]>()
-
-    for (const note of notes) {
-      const existing = indexMap.get(note.id) || []
-      existing.push(note.dirName)
-      indexMap.set(note.id, existing)
-    }
-
-    const duplicates: Array<{ index: string; folders: string[] }> = []
-    for (const [index, folders] of indexMap) {
-      if (folders.length > 1) {
-        duplicates.push({ index, folders })
-      }
-    }
-
-    return duplicates
   }
 
   /**
@@ -181,15 +146,15 @@ export class NoteIndexCache {
    */
   add(note: NoteInfo): void {
     const item: NoteIndexItem = {
-      noteIndex: note.id,
+      noteIndex: note.index,
       folderName: note.dirName,
       noteConfig: note.config,
     }
 
-    this.byNoteIndex.set(note.id, item)
-    this.byConfigId.set(note.config.id, note.id)
+    this.byNoteIndex.set(note.index, item)
+    this.byConfigId.set(note.config.id, note.index)
 
-    logger.info(`添加笔记索引: ${note.id}`)
+    logger.info(`添加笔记索引: ${note.index}`)
   }
 
   /**

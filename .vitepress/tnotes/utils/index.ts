@@ -4,7 +4,7 @@
  * util 统一入口
  */
 
-export { ConfigValidator } from './ConfigValidator'
+export { validateAndFixConfig } from './validateAndFixConfig'
 export { handleError, createError } from './errorHandler'
 export { deleteDirectory, ensureDirectory } from './file'
 export { generateAnchor } from './generateAnchor'

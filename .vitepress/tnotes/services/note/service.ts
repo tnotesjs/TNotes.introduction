@@ -10,13 +10,7 @@ import type { NoteInfo, NoteConfig } from '../../types'
 import { NoteManager } from '../../core/NoteManager'
 import { NoteIndexCache } from '../../core/NoteIndexCache'
 import { generateNoteTitle } from '../../config/templates'
-import {
-  NOTES_PATH,
-  README_FILENAME,
-  TNOTES_JSON_FILENAME,
-  CONSTANTS,
-  REPO_NOTES_URL,
-} from '../../config/constants'
+import { NOTES_PATH, CONSTANTS, REPO_NOTES_URL } from '../../config/constants'
 import { ensureDirectory, logger } from '../../utils'
 
 /**
@@ -124,13 +118,13 @@ export class NoteService {
     await ensureDirectory(notePath)
 
     // 创建 README.md（包含一级标题）
-    const readmePath = join(notePath, README_FILENAME)
+    const readmePath = join(notePath, 'README.md')
     const noteTitle = generateNoteTitle(noteIndex, title, REPO_NOTES_URL)
     const readmeContent = noteTitle + '\n' + NEW_NOTES_README_MD_TEMPLATE
     writeFileSync(readmePath, readmeContent, 'utf-8')
 
     // 创建 .tnotes.json（使用 UUID 作为配置 ID）
-    const configPath = join(notePath, TNOTES_JSON_FILENAME)
+    const configPath = join(notePath, '.tnotes.json')
     const now = Date.now()
     const config: NoteConfig = {
       id: configId || uuidv4(), // 配置 ID 使用 UUID（跨知识库唯一）
@@ -148,7 +142,7 @@ export class NoteService {
     logger.info(`Created new note: ${dirName}`)
 
     return {
-      id: noteIndex, // 返回的 id 是笔记索引（目录前缀）
+      index: noteIndex, // 返回的 id 是笔记索引（目录前缀）
       path: notePath,
       dirName,
       readmePath,
@@ -171,7 +165,7 @@ export class NoteService {
     // 获取所有已使用的编号
     const usedIds = new Set<number>()
     for (const note of notes) {
-      const id = parseInt(note.id, 10)
+      const id = parseInt(note.index, 10)
       if (!isNaN(id) && id >= 1 && id <= 9999) {
         usedIds.add(id)
       }
@@ -370,7 +364,7 @@ export class NoteService {
 
     return notes.filter((note) => {
       const dirNameMatch = note.dirName.toLowerCase().includes(lowerKeyword)
-      const idMatch = note.id.includes(lowerKeyword)
+      const idMatch = note.index.includes(lowerKeyword)
       const categoryMatch = note.config?.category
         ?.toLowerCase()
         .includes(lowerKeyword)
@@ -398,7 +392,7 @@ export class NoteService {
 
       const expectedTitle = match[1]
       const expectedH1 = generateNoteTitle(
-        noteInfo.id,
+        noteInfo.index,
         expectedTitle,
         REPO_NOTES_URL,
       )

@@ -66,10 +66,6 @@ export const CONSTANTS = {
   // 端口配置
   DEFAULT_PORT: 5173,
 
-  // 文件名配置
-  README_FILENAME: 'README.md',
-  CONFIG_FILENAME: '.tnotes.json',
-
   // 笔记索引配置（文件夹前缀的 4 位数字）
   NOTE_INDEX_LENGTH: 4,
   NOTE_INDEX_PATTERN: /^\d{4}\./,
@@ -110,10 +106,6 @@ export const CONSTANTS = {
     DEBUG: '🐛',
   } as const,
 } as const
-
-// 导出常用的文件名常量（便于直接导入）
-export const README_FILENAME = CONSTANTS.README_FILENAME
-export const TNOTES_JSON_FILENAME = CONSTANTS.CONFIG_FILENAME
 
 // 导出路径常量别名（向后兼容）
 export const NOTES_PATH = NOTES_DIR_PATH

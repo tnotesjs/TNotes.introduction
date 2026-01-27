@@ -19,10 +19,8 @@ export function updateConfigPlugin(): PluginOption {
       // 初始化 ServiceManager（包含笔记索引缓存）
       if (!isInitialized) {
         try {
-          logger.info('updateConfigPlugin: 正在初始化服务...')
           await serviceManager.initialize()
           isInitialized = true
-          logger.success('updateConfigPlugin: 服务初始化完成')
         } catch (error) {
           logger.error('updateConfigPlugin: 服务初始化失败，插件将无法正常工作')
           logger.error(error)

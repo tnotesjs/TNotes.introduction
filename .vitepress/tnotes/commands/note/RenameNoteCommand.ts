@@ -8,11 +8,7 @@ import { join } from 'path'
 import { BaseCommand } from '../BaseCommand'
 import { ReadmeService, NoteService } from '../../services'
 import { validateNoteTitle } from '../../utils'
-import {
-  NOTES_PATH,
-  README_FILENAME,
-  REPO_NOTES_URL,
-} from '../../config/constants'
+import { NOTES_PATH, REPO_NOTES_URL } from '../../config/constants'
 import { generateNoteTitle } from '../../config/templates'
 
 interface RenameNoteParams {
@@ -93,7 +89,7 @@ export class RenameNoteCommand extends BaseCommand {
     // 更新笔记内部的标题（README.md 第一行）
     try {
       this.logger.info('正在更新笔记内部标题...')
-      const readmePath = join(newPath, README_FILENAME)
+      const readmePath = join(newPath, 'README.md')
 
       if (existsSync(readmePath)) {
         const content = readFileSync(readmePath, 'utf-8')

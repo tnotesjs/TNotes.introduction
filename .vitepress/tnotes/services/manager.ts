@@ -51,8 +51,6 @@ class ServiceManager {
       return
     }
 
-    logger.info('正在初始化 ServiceManager...')
-
     try {
       // 1. 扫描所有笔记
       logger.info('扫描笔记目录...')
@@ -63,12 +61,7 @@ class ServiceManager {
       logger.info('初始化笔记索引缓存...')
       this.noteIndexCache.initialize(notes)
 
-      // 3. 输出统计信息
-      const stats = this.noteIndexCache.getStats()
-      logger.success(`索引缓存初始化完成，共 ${stats.totalNotes} 篇笔记`)
-
       this.initialized = true
-      logger.success('ServiceManager 初始化完成')
     } catch (error) {
       logger.error('ServiceManager 初始化失败:', error)
       throw error

@@ -3,6 +3,7 @@
  *
  * 文件夹重命名/删除检测
  */
+
 import { existsSync } from 'fs'
 import { join } from 'path'
 import { extractNoteIndex } from '../../utils'
@@ -21,7 +22,7 @@ interface RenameDetectorConfig {
   /** 笔记删除事件回调 */
   onDelete: (oldName: string) => void
   /** 笔记重命名事件回调 */
-  onRename: (noteIndex: string, oldName: string, newName: string) => void
+  onRename: (oldName: string, newName: string) => void
   /** 无效索引事件回调 */
   onInvalidIndex: (name: string) => void
   /** 重命名冲突事件回调 */
@@ -102,7 +103,7 @@ export class RenameDetector {
             clearTimeout(this.folderRenameTimer)
             this.folderRenameTimer = null
           }
-          onRename(noteIndex, oldName, folderName)
+          onRename(oldName, folderName)
           this.pendingFolderRename = null
         } else if (oldNoteIndex && oldNoteIndex !== noteIndex) {
           onRenameConflict(oldName, folderName)

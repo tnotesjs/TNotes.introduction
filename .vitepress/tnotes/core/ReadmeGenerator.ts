@@ -43,10 +43,10 @@ export class ReadmeGenerator {
 
     const repoName = this.configManager.get('repoName')
     this.tocGenerator.updateNoteToc(
-      noteInfo.id,
+      noteInfo.index,
       lines,
       noteInfo.config,
-      repoName
+      repoName,
     )
 
     const updatedContent = lines.join(EOL)
@@ -71,7 +71,7 @@ export class ReadmeGenerator {
     // 创建笔记配置映射，以笔记索引为键
     const noteByIndexMap = new Map<string, NoteInfo>()
     for (const note of notes) {
-      noteByIndexMap.set(note.id, note)
+      noteByIndexMap.set(note.index, note)
     }
 
     // 获取仓库信息
@@ -131,7 +131,7 @@ export class ReadmeGenerator {
       if (titleMatch) {
         // 检查是否是需要编号的标题（2~3 级）
         const isNumberedHeader = numberedHeaders.some((header) =>
-          line.startsWith(header)
+          line.startsWith(header),
         )
 
         if (isNumberedHeader) {
@@ -171,7 +171,7 @@ export class ReadmeGenerator {
     // 查找缺失的笔记（在真实目录中存在但 README 中不存在）
     const missingNotes: NoteInfo[] = []
     for (const note of notes) {
-      if (!existingNoteIndexes.has(note.id)) {
+      if (!existingNoteIndexes.has(note.index)) {
         missingNotes.push(note)
       }
     }
@@ -181,7 +181,7 @@ export class ReadmeGenerator {
       logger.info(`添加 ${missingNotes.length} 篇缺失的笔记到 README`)
 
       // 按笔记索引排序
-      missingNotes.sort((a, b) => a.id.localeCompare(b.id))
+      missingNotes.sort((a, b) => a.index.localeCompare(b.index))
 
       for (const note of missingNotes) {
         const noteLine = buildNoteLineMarkdown(note, repoOwner, repoName)

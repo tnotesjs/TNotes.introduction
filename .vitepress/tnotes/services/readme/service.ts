@@ -61,7 +61,7 @@ export class ReadmeService {
 
     let notesToUpdate = notes
     if (shouldIncrementalUpdate) {
-      notesToUpdate = notes.filter((note) => changedIndexes.has(note.id))
+      notesToUpdate = notes.filter((note) => changedIndexes.has(note.index))
       logger.info(
         `检测到 ${changedIndexes.size} 篇笔记有变更，使用增量更新模式`,
       )
@@ -218,7 +218,7 @@ export class ReadmeService {
       const parsed = parseNoteLine(line)
       if (parsed.isMatch && parsed.noteIndex) {
         // 通过笔记索引查找对应的笔记信息
-        const note = notes.find((n) => n.id === parsed.noteIndex)
+        const note = notes.find((n) => n.index === parsed.noteIndex)
         if (!note) {
           logger.warn(`未找到笔记索引: ${parsed.noteIndex}`)
           continue
@@ -319,7 +319,7 @@ export class ReadmeService {
 
     // 构建一个临时的 NoteInfo 对象用于生成 markdown
     const tempNoteInfo: NoteInfo = {
-      id: noteIndex,
+      index: noteIndex,
       dirName: item.folderName,
       path: '',
       readmePath: '',
@@ -396,7 +396,7 @@ export class ReadmeService {
 
     // 构建临时 NoteInfo
     const tempNoteInfo: NoteInfo = {
-      id: noteIndex,
+      index: noteIndex,
       dirName: item.folderName,
       path: '',
       readmePath: '',
