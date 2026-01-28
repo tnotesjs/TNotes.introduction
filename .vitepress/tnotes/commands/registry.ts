@@ -18,7 +18,7 @@ import { SyncScriptsCommand, FixTimestampsCommand } from './maintenance'
 import { HelpCommand } from './misc'
 import { type Command, type CommandName } from './models'
 
-/** 命令工厂函数映射（懒加载） */
+/** 命令注册表（懒加载） */
 const commandFactories: Record<CommandName, () => Command> = {
   dev: () => new DevCommand(),
   build: () => new BuildCommand(),

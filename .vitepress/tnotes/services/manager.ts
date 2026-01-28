@@ -16,7 +16,7 @@ class ServiceManager {
   private static instance: ServiceManager
 
   /** 文件监听服务 */
-  private fileWatcherService: FileWatcherService | null = null
+  private fileWatcherService: FileWatcherService
 
   /** 笔记索引缓存 */
   private noteIndexCache: NoteIndexCache
@@ -30,6 +30,7 @@ class ServiceManager {
   private constructor() {
     this.noteIndexCache = NoteIndexCache.getInstance()
     this.noteManager = new NoteManager()
+    this.fileWatcherService = new FileWatcherService()
   }
 
   /** 获取 ServiceManager 单例 */
@@ -61,6 +62,9 @@ class ServiceManager {
       logger.info('初始化笔记索引缓存...')
       this.noteIndexCache.initialize(notes)
 
+      // 3. 启动文件监听服务
+      this.fileWatcherService.start()
+
       this.initialized = true
     } catch (error) {
       logger.error('ServiceManager 初始化失败:', error)
@@ -80,9 +84,6 @@ class ServiceManager {
 
   /** 获取 FileWatcherService 实例 */
   getFileWatcherService(): FileWatcherService {
-    if (!this.fileWatcherService) {
-      this.fileWatcherService = new FileWatcherService()
-    }
     return this.fileWatcherService
   }
 

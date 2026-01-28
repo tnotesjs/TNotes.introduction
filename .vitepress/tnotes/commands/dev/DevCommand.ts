@@ -22,8 +22,6 @@ export class DevCommand extends BaseCommand {
       this.logger.success(`笔记服务已启动 - PID: ${pid}`)
 
       await serviceManager.initialize()
-      const fileWatcherService = serviceManager.getFileWatcherService()
-      fileWatcherService.start()
     } else {
       this.logger.error('启动服务器失败')
     }

@@ -25,7 +25,13 @@ export class WatchState {
 
   constructor(private config: WatchStateConfig) {}
 
-  getFileHash(filePath: string): string | null {
+  /**
+   * 获取指定文件的 MD5 哈希值，若文件不存在或读取失败返回 null
+   *
+   * @param filePath 文件路径
+   * @returns 文件哈希
+   */
+  private getFileHash(filePath: string): string | null {
     try {
       if (!existsSync(filePath)) return null
       const content = readFileSync(filePath, 'utf-8')
@@ -35,6 +41,12 @@ export class WatchState {
     }
   }
 
+  /**
+   * 更新文件哈希缓存，只有当文件内容发生变化时才更新并返回 true
+   *
+   * @param filePath 文件路径
+   * @returns 是否发生变化
+   */
   updateFileHash(filePath: string): boolean {
     const current = this.getFileHash(filePath)
     if (!current) return false
@@ -42,14 +54,6 @@ export class WatchState {
     if (prev === current) return false
     this.fileHashes.set(filePath, current)
     return true
-  }
-
-  getFileHashCache() {
-    return this.fileHashes
-  }
-
-  getNoteDirs() {
-    return this.noteDirCache
   }
 
   hasNoteDir(name: string) {
