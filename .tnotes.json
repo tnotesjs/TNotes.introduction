@@ -30,12 +30,13 @@
       "25.10": 9,
       "25.11": 14,
       "25.12": 15,
-      "26.01": 15
+      "26.01": 15,
+      "26.02": 15
     },
     "details": "TNotes 说明文档",
     "link": "https://tnotesjs.github.io/TNotes.introduction/",
     "created_at": 1740850835000,
-    "updated_at": 1769418036199,
+    "updated_at": 1769948353211,
     "days_since_birth": 9690
   },
   "port": 9379,
