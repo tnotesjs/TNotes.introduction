@@ -3,6 +3,7 @@
  *
  * 服务管理器 - 管理全局共享服务实例
  */
+
 import { FileWatcherService } from './file-watcher'
 import { NoteIndexCache } from '../core/NoteIndexCache'
 import { NoteManager } from '../core/NoteManager'
@@ -53,9 +54,9 @@ class ServiceManager {
     }
 
     try {
-      // 1. 扫描所有笔记
+      // 1. 扫描所有笔记（跳过重复检测，dev 流程已在 countNotes 中完成）
       logger.info('扫描笔记目录...')
-      const notes = this.noteManager.scanNotes()
+      const notes = this.noteManager.scanNotes({ skipDuplicateCheck: true })
       logger.info(`扫描到 ${notes.length} 篇笔记`)
 
       // 2. 初始化笔记索引缓存（如果有重复 ID 会抛出错误）

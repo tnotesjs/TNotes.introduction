@@ -86,7 +86,53 @@
     ]
   },
   {
-    "text": "4. ⏰ TNotes 核心功能的实现",
+    "text": "4. TNotes 命令",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "⏰ build",
+        "link": "/notes/0020. build/README"
+      },
+      {
+        "text": "⏰ create-notes",
+        "link": "/notes/0021. create-notes/README"
+      },
+      {
+        "text": "⏰ dev",
+        "link": "/notes/0018. dev/README"
+      },
+      {
+        "text": "⏰ fix-timestamps",
+        "link": "/notes/0024. fix-timestamps/README"
+      },
+      {
+        "text": "⏰ help",
+        "link": "/notes/0026. help/README"
+      },
+      {
+        "text": "⏰ preview",
+        "link": "/notes/0029. preview/README"
+      },
+      {
+        "text": "⏰ pull、push、sync",
+        "link": "/notes/0030. pull、push、sync/README"
+      },
+      {
+        "text": "⏰ sync-scripts",
+        "link": "/notes/0033. sync-scripts/README"
+      },
+      {
+        "text": "⏰ update",
+        "link": "/notes/0031. update/README"
+      },
+      {
+        "text": "⏰ update-completed-count",
+        "link": "/notes/0032. update-completed-count/README"
+      }
+    ]
+  },
+  {
+    "text": "5. ⏰ TNotes 核心功能的实现",
     "collapsed": true,
     "items": [
       {
@@ -104,7 +150,7 @@
     ]
   },
   {
-    "text": "5. 关于作者",
+    "text": "6. 关于作者",
     "collapsed": true,
     "items": [
       {
@@ -120,38 +166,32 @@
         "link": "/notes/0017. 统计知识库近 12 个月每个月的笔记完成数量/README"
       },
       {
-        "text": "⏰ dev",
-        "link": "/notes/0018. dev/README"
-      },
-      {
-        "text": "⏰ build",
-        "link": "/notes/0020. build/README"
-      }
-    ]
-  },
-  {
-    "text": "6. pending",
-    "collapsed": true,
-    "items": [
-      {
         "text": "⏰ new",
-        "link": "/notes/0021. new/README"
+        "link": "/notes/0034. new/README"
       },
       {
         "text": "⏰ new",
-        "link": "/notes/0024. new/README"
+        "link": "/notes/0035. new/README"
       },
       {
         "text": "⏰ new",
-        "link": "/notes/0026. new/README"
+        "link": "/notes/0036. new/README"
       },
       {
         "text": "⏰ new",
-        "link": "/notes/0029. new/README"
+        "link": "/notes/0037. new/README"
       },
       {
         "text": "⏰ new",
-        "link": "/notes/0030. new/README"
+        "link": "/notes/0038. new/README"
+      },
+      {
+        "text": "⏰ new",
+        "link": "/notes/0039. new/README"
+      },
+      {
+        "text": "⏰ new",
+        "link": "/notes/0040. new/README"
       }
     ]
   }

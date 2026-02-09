@@ -5,9 +5,9 @@
 - [1. 知识库简介](#1-知识库简介)
 - [2. TNotes](#2-tnotes)
 - [3. TNotes 组件](#3-tnotes-组件)
-- [4. ⏰ TNotes 核心功能的实现](#4--tnotes-核心功能的实现)
-- [5. 关于作者](#5-关于作者)
-- [6. pending](#6-pending)
+- [4. TNotes 命令](#4-tnotes-命令)
+- [5. ⏰ TNotes 核心功能的实现](#5--tnotes-核心功能的实现)
+- [6. 关于作者](#6-关于作者)
 
 <!-- endregion:toc -->
 
@@ -37,24 +37,34 @@
 - [x] [0005. 开启评论功能](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0005.%20%E5%BC%80%E5%90%AF%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD/README.md)
 - [x] [0010. 足迹纪录](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0010.%20%E8%B6%B3%E8%BF%B9%E7%BA%AA%E5%BD%95/README.md)
 
-## 4. ⏰ TNotes 核心功能的实现
+## 4. TNotes 命令
+
+- [ ] [0020. build](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0020.%20build/README.md)
+- [ ] [0021. create-notes](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0021.%20create-notes/README.md)
+- [ ] [0018. dev](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0018.%20dev/README.md)
+- [ ] [0024. fix-timestamps](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0024.%20fix-timestamps/README.md)
+- [ ] [0026. help](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0026.%20help/README.md)
+- [ ] [0029. preview](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0029.%20preview/README.md)
+- [ ] [0030. pull、push、sync](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0030.%20pull%E3%80%81push%E3%80%81sync/README.md)
+- [ ] [0033. sync-scripts](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0033.%20sync-scripts/README.md)
+- [ ] [0031. update](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0031.%20update/README.md)
+- [ ] [0032. update-completed-count](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0032.%20update-completed-count/README.md)
+
+## 5. ⏰ TNotes 核心功能的实现
 
 - [ ] [0003. 评论功能的技术实现](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0003.%20%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD%E7%9A%84%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0/README.md)
 - [ ] [0009. 优化搜索配置](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0009.%20%E4%BC%98%E5%8C%96%E6%90%9C%E7%B4%A2%E9%85%8D%E7%BD%AE/README.md)
 - [ ] [0023. 处理笨重的 git log 问题（待迁移到 git-notes 中）](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0023.%20%E5%A4%84%E7%90%86%E7%AC%A8%E9%87%8D%E7%9A%84%20git%20log%20%E9%97%AE%E9%A2%98%EF%BC%88%E5%BE%85%E8%BF%81%E7%A7%BB%E5%88%B0%20git-notes%20%E4%B8%AD%EF%BC%89/README.md)
 
-## 5. 关于作者
+## 6. 关于作者
 
 - [x] [0019. 关于作者 Tdahuyou](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0019.%20%E5%85%B3%E4%BA%8E%E4%BD%9C%E8%80%85%20Tdahuyou/README.md)
 - [ ] [0025. Q&A](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0025.%20Q%26A/README.md)
 - [ ] [0017. 统计知识库近 12 个月每个月的笔记完成数量](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0017.%20%E7%BB%9F%E8%AE%A1%E7%9F%A5%E8%AF%86%E5%BA%93%E8%BF%91%2012%20%E4%B8%AA%E6%9C%88%E6%AF%8F%E4%B8%AA%E6%9C%88%E7%9A%84%E7%AC%94%E8%AE%B0%E5%AE%8C%E6%88%90%E6%95%B0%E9%87%8F/README.md)
-- [ ] [0018. dev](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0018.%20dev/README.md)
-- [ ] [0020. build](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0020.%20build/README.md)
-
-## 6. pending
-
-- [ ] [0021. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0021.%20new/README.md)
-- [ ] [0024. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0024.%20new/README.md)
-- [ ] [0026. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0026.%20new/README.md)
-- [ ] [0029. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0029.%20new/README.md)
-- [ ] [0030. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0030.%20new/README.md)
+- [ ] [0034. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0034.%20new/README.md)
+- [ ] [0035. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0035.%20new/README.md)
+- [ ] [0036. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0036.%20new/README.md)
+- [ ] [0037. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0037.%20new/README.md)
+- [ ] [0038. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0038.%20new/README.md)
+- [ ] [0039. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0039.%20new/README.md)
+- [ ] [0040. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0040.%20new/README.md)

@@ -97,7 +97,7 @@ export class VitepressService {
         })
       }
       logger.error(
-        '\n请检查并删除或重命名重复的笔记文件夹，确保每个笔记编号唯一！\n',
+        '\n请检查并删除/重命名重复的笔记文件夹，确保每个笔记编号唯一！\n',
       )
       process.exit(1)
     }

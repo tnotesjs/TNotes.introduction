@@ -45,7 +45,6 @@
 
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue'
-import { defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
   modelValue: { type: Boolean, required: true },
@@ -87,7 +86,7 @@ watch(
       document.body.style.overflow = ''
     }
   },
-  { immediate: false }
+  { immediate: false },
 )
 
 onMounted(() => {

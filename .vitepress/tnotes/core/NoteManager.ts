@@ -3,6 +3,7 @@
  *
  * 笔记管理器 - 负责笔记的扫描、验证和基本操作
  */
+
 import { existsSync, readdirSync, statSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import type { NoteInfo, NoteConfig, NoteCountResult } from '../types'
@@ -17,18 +18,12 @@ export class NoteManager {
 
   /**
    * 扫描所有笔记
+   * @param options - 可选配置
+   * @param options.skipDuplicateCheck - 跳过重复编号检测（当调用方已通过 countNotes 完成检测时使用）
    * @returns 笔记信息数组
    */
-  scanNotes(): NoteInfo[] {
+  scanNotes(options?: { skipDuplicateCheck?: boolean }): NoteInfo[] {
     const notes: NoteInfo[] = []
-
-    /**
-     * 用于检测重复编号，若发现重复编号的笔记出现，直接终止程序执行
-     *
-     * 隐射关系：
-     * 笔记 4 位数编号 -> 笔记名称数组
-     */
-    const noteIndexMap = new Map<string, string[]>()
 
     if (!existsSync(NOTES_PATH)) {
       logger.warn(`Notes directory not found: ${NOTES_PATH}`)
@@ -38,7 +33,11 @@ export class NoteManager {
     const noteDirs = readdirSync(NOTES_PATH)
       .filter((dir) => {
         const fullPath = join(NOTES_PATH, dir)
-        return statSync(fullPath).isDirectory() && !dir.startsWith('.')
+        return (
+          statSync(fullPath).isDirectory() &&
+          !dir.startsWith('.') &&
+          /^\d{4}\./.test(dir)
+        )
       })
       .sort()
 
@@ -64,10 +63,6 @@ export class NoteManager {
 
       const id = this.getNoteIndexFromDir(dirName)
 
-      // 记录笔记编号，用于检测重复
-      if (!noteIndexMap.has(id)) noteIndexMap.set(id, [])
-      noteIndexMap.get(id)!.push(dirName)
-
       notes.push({
         index: id,
         path: notePath,
@@ -79,9 +74,11 @@ export class NoteManager {
     }
 
     // 检测并报告重复的笔记编号
-    this.checkDuplicateNoteIndexes(noteIndexMap)
+    if (!options?.skipDuplicateCheck) {
+      const noteIndexMap = this.buildNoteIndexMap(notes.map((n) => n.dirName))
+      this.checkDuplicateNoteIndexes(noteIndexMap)
+    }
 
-    // 移除日志输出，由调用方决定是否输出
     return notes
   }
 
@@ -107,41 +104,56 @@ export class NoteManager {
     const total = noteDirs.length
 
     // 按 4 位数字编号分组，检测重复
-    const indexMap = new Map<string, string[]>()
-    for (const entry of noteDirs) {
-      const index = entry.name.slice(0, 4)
-      if (!indexMap.has(index)) indexMap.set(index, [])
-      indexMap.get(index)!.push(entry.name)
-    }
-
+    const indexMap = this.buildNoteIndexMap(noteDirs.map((e) => e.name))
     const unique = indexMap.size
+    const conflicts = this.findConflicts(indexMap)
+
+    return { total, unique, conflicts }
+  }
+
+  /**
+   * 按 4 位数字编号对目录名分组
+   * @param dirNames - 目录名数组
+   * @returns 编号 -> 目录名数组 的映射
+   */
+  private buildNoteIndexMap(dirNames: string[]): Map<string, string[]> {
+    const indexMap = new Map<string, string[]>()
+    for (const name of dirNames) {
+      const index = name.slice(0, 4)
+      if (!indexMap.has(index)) indexMap.set(index, [])
+      indexMap.get(index)!.push(name)
+    }
+    return indexMap
+  }
+
+  /**
+   * 从编号映射中提取冲突项（编号对应多个目录）
+   * @param indexMap - 编号映射表
+   * @returns 冲突列表
+   */
+  private findConflicts(
+    indexMap: Map<string, string[]>,
+  ): NoteCountResult['conflicts'] {
     const conflicts: NoteCountResult['conflicts'] = []
     for (const [index, dirNames] of indexMap.entries()) {
       if (dirNames.length > 1) {
         conflicts.push({ index, dirNames })
       }
     }
-
-    return { total, unique, conflicts }
+    return conflicts
   }
 
   /**
-   * 检测重复的笔记编号
+   * 检测重复的笔记编号，发现重复则终止进程
    * @param noteIndexMap - 笔记编号映射表（笔记 4 位数编号 -> 笔记名称数组）
    */
   private checkDuplicateNoteIndexes(noteIndexMap: Map<string, string[]>): void {
-    const duplicates: Array<{ id: string; dirNames: string[] }> = []
+    const conflicts = this.findConflicts(noteIndexMap)
 
-    for (const [id, dirNames] of noteIndexMap.entries()) {
-      if (dirNames.length > 1) {
-        duplicates.push({ id, dirNames })
-      }
-    }
-
-    if (duplicates.length > 0) {
+    if (conflicts.length > 0) {
       logger.error('⚠️  检测到重复的笔记编号！')
-      for (const { id, dirNames } of duplicates) {
-        logger.error(`   编号 ${id} 被以下笔记重复使用：`)
+      for (const { index, dirNames } of conflicts) {
+        logger.error(`   编号 ${index} 被以下笔记重复使用：`)
         dirNames.forEach((dirName) => {
           logger.error(`      - ${dirName}`)
         })
@@ -234,8 +246,12 @@ export class NoteManager {
     for (const dirName of noteDirs) {
       const fullPath = join(NOTES_PATH, dirName)
 
-      // 跳过非目录和隐藏目录
-      if (!statSync(fullPath).isDirectory() || dirName.startsWith('.')) {
+      // 跳过非目录、隐藏目录、不符合笔记命名规范的目录
+      if (
+        !statSync(fullPath).isDirectory() ||
+        dirName.startsWith('.') ||
+        !/^\d{4}\./.test(dirName)
+      ) {
         continue
       }
 

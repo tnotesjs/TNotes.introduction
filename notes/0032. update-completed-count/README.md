@@ -1,4 +1,4 @@
-# [0024. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0024.%20new)
+# [0032. update-completed-count](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0032.%20update-completed-count)
 
 <!-- region:toc -->
 

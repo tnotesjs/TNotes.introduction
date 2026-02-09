@@ -1,4 +1,4 @@
-# [0021. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0021.%20new)
+# [0024. fix-timestamps](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0024.%20fix-timestamps)
 
 <!-- region:toc -->
 

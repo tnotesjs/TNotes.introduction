@@ -1,4 +1,4 @@
-# [0029. new](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0029.%20new)
+# [0026. help](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0026.%20help)
 
 <!-- region:toc -->
 
