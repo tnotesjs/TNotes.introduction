@@ -8,7 +8,12 @@ import { existsSync, readdirSync, statSync } from 'fs'
 import { join } from 'path'
 import type { NoteInfo, NoteConfig, NoteCountResult } from '../types'
 import { NOTES_PATH } from '../config/constants'
-import { logger, validateAndFixConfig, extractNoteIndex, writeNoteConfig } from '../utils'
+import {
+  logger,
+  validateAndFixConfig,
+  extractNoteIndex,
+  writeNoteConfig,
+} from '../utils'
 
 /**
  * 笔记管理器类（单例）
@@ -63,7 +68,6 @@ export class NoteManager {
       let config: NoteConfig | undefined
       if (existsSync(configPath)) {
         try {
-          // 使用 validateAndFixConfig 验证并修复配置
           config = validateAndFixConfig(configPath) || undefined
         } catch (error) {
           logger.error(`Failed to validate config for note: ${dirName}`, error)

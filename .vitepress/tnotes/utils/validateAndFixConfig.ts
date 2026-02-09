@@ -17,7 +17,7 @@ const DEFAULT_CONFIG_FIELDS = {
   yuque: [],
   done: false,
   enableDiscussions: false,
-  description: '', // 笔记简介(一句话描述)
+  description: '',
 } as const
 
 /**
