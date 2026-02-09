@@ -1,15 +1,17 @@
 import { ref, computed, watch } from 'vue'
+import type { Ref } from 'vue'
 import { useData } from 'vitepress'
+import type { NoteConfig } from '../../../../types'
 
 /**
  * 管理笔记配置状态
  * 包括可编辑字段、原始值、变更检测等
  */
 export function useNoteConfig(
-  currentNoteId: any,
-  currentNoteConfig: any,
-  currentNoteTitle: any,
-  timeModalOpen: any
+  currentNoteId: Ref<string>,
+  currentNoteConfig: Ref<NoteConfig | null>,
+  currentNoteTitle: Ref<string>,
+  timeModalOpen: Ref<boolean>
 ) {
   const vpData = useData()
 

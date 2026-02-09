@@ -3,24 +3,7 @@
  *
  * Markdown 处理工具函数
  */
-import GithubSlugger from 'github-slugger'
-
-const slugger = new GithubSlugger()
-
-/**
- * 生成 GitHub 风格的锚点
- *
- * !注意：锚点的生成规则要保持一致：
- * - .vitepress/config/markdown.config.ts - markdown.anchor.slugify
- * - .vitepress/tnotes/update.ts
- *
- * @param label - 标题文本
- * @returns 生成的锚点字符串
- */
-function generateAnchor(label: string): string {
-  slugger.reset()
-  return slugger.slug(label)
-}
+import { generateAnchor } from './generateAnchor'
 
 /**
  * 工厂函数，创建一个带有独立编号状态的标题编号生成器

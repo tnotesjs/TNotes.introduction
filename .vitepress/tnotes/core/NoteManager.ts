@@ -4,17 +4,26 @@
  * 笔记管理器 - 负责笔记的扫描、验证和基本操作
  */
 
-import { existsSync, readdirSync, statSync, writeFileSync } from 'fs'
+import { existsSync, readdirSync, statSync } from 'fs'
 import { join } from 'path'
 import type { NoteInfo, NoteConfig, NoteCountResult } from '../types'
 import { NOTES_PATH } from '../config/constants'
-import { logger, validateAndFixConfig, extractNoteIndex } from '../utils'
+import { logger, validateAndFixConfig, extractNoteIndex, writeNoteConfig } from '../utils'
 
 /**
- * 笔记管理器类
+ * 笔记管理器类（单例）
  */
 export class NoteManager {
-  constructor() {}
+  private static instance: NoteManager
+
+  private constructor() {}
+
+  static getInstance(): NoteManager {
+    if (!NoteManager.instance) {
+      NoteManager.instance = new NoteManager()
+    }
+    return NoteManager.instance
+  }
 
   /**
    * 扫描所有笔记
@@ -225,8 +234,7 @@ export class NoteManager {
     }
 
     config.updated_at = Date.now()
-    const configContent = JSON.stringify(config, null, 2)
-    writeFileSync(noteInfo.configPath, configContent, 'utf-8')
+    writeNoteConfig(noteInfo.configPath, config)
     logger.info(`Updated config for note: ${noteInfo.dirName}`)
   }
 

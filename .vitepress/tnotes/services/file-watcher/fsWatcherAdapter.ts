@@ -10,6 +10,8 @@ import type { WatchEvent, WatchEventType } from './internal'
 import { WATCH_EVENT_TYPES } from './internal'
 import { extractNoteIndex, warnInvalidNoteIndex } from '../../utils'
 
+import type { Logger } from '../../utils'
+
 interface FsWatcherAdapterConfig {
   /** 笔记目录路径 */
   notesDir: string
@@ -20,7 +22,7 @@ interface FsWatcherAdapterConfig {
   /** 笔记事件处理回调 */
   onNoteEvent: (event: WatchEvent) => void
   /** 日志记录器 */
-  logger: any
+  logger: Logger
 }
 
 export class FsWatcherAdapter {
@@ -40,7 +42,7 @@ export class FsWatcherAdapter {
     this.watcher = watch(
       this.config.notesDir,
       { recursive: true },
-      (eventType, filename) => this.handleFsEvent(eventType, filename)
+      (eventType, filename) => this.handleFsEvent(eventType, filename),
     )
 
     logger.success(`文件监听服务已启动`)
@@ -101,7 +103,7 @@ export class FsWatcherAdapter {
 
   private buildWatchEvent(
     fullPath: string,
-    filename: string
+    filename: string,
   ): WatchEvent | null {
     const noteDirName = basename(dirname(fullPath))
     const noteIndex = extractNoteIndex(noteDirName)

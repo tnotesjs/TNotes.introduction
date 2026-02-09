@@ -1,5 +1,7 @@
-import { ref, watch, onMounted } from 'vue'
+import { ref } from 'vue'
+import type { Ref, ComputedRef } from 'vue'
 import { useData } from 'vitepress'
+import type { Router } from 'vitepress'
 import { NOTES_DIR_KEY } from '../../constants'
 
 /**
@@ -20,7 +22,10 @@ export function useVSCodeIntegration() {
   }
 
   // 拦截 home README 中的笔记链接，将 GitHub 链接转换为站点内跳转
-  const interceptHomeReadmeLinks = (isHomeReadme: any, router: any) => {
+  const interceptHomeReadmeLinks = (
+    isHomeReadme: Ref<boolean> | ComputedRef<boolean>,
+    router: Router,
+  ) => {
     if (typeof window === 'undefined') return
 
     // 只在 home README 页面执行
@@ -33,7 +38,7 @@ export function useVSCodeIntegration() {
 
       // 查找所有指向 GitHub 的笔记链接
       const links = content.querySelectorAll(
-        'a[href*="github.com"][href*="/notes/"]'
+        'a[href*="github.com"][href*="/notes/"]',
       )
 
       links.forEach((link) => {
@@ -42,7 +47,7 @@ export function useVSCodeIntegration() {
 
         // 匹配 GitHub 链接格式：https://github.com/{owner}/{repo}/tree/main/notes/{noteDir}/README.md
         const match = href.match(
-          /github\.com\/[^/]+\/[^/]+\/tree\/main\/notes\/([^/]+)\/README\.md/
+          /github\.com\/[^/]+\/[^/]+\/tree\/main\/notes\/([^/]+)\/README\.md/,
         )
 
         if (match) {

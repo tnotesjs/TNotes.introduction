@@ -30,7 +30,7 @@ class ServiceManager {
 
   private constructor() {
     this.noteIndexCache = NoteIndexCache.getInstance()
-    this.noteManager = new NoteManager()
+    this.noteManager = NoteManager.getInstance()
     this.fileWatcherService = new FileWatcherService()
   }
 

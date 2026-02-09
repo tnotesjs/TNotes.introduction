@@ -3,7 +3,7 @@
  *
  * 笔记服务 - 封装笔记相关的业务逻辑
  */
-import { writeFileSync, rmSync, readFileSync } from 'fs'
+import { writeFileSync, readFileSync } from 'fs'
 import { join } from 'path'
 import { v4 as uuidv4 } from 'uuid'
 import type { NoteInfo, NoteConfig } from '../../types'
@@ -11,7 +11,8 @@ import { NoteManager } from '../../core/NoteManager'
 import { NoteIndexCache } from '../../core/NoteIndexCache'
 import { generateNoteTitle } from '../../config/templates'
 import { NOTES_PATH, CONSTANTS, REPO_NOTES_URL } from '../../config/constants'
-import { ensureDirectory, logger } from '../../utils'
+import { ReadmeService } from '../readme/service'
+import { ensureDirectory, logger, writeNoteConfig } from '../../utils'
 
 /**
  * 新增笔记 README.md 模板
@@ -43,19 +44,29 @@ interface CreateNoteOptions {
   category?: string
   enableDiscussions?: boolean
   configId?: string // 配置文件中的 UUID（跨所有知识库唯一）
+  usedIndexes?: Set<number> // 可选的已使用编号集合，用于批量创建时避免重复扫描
 }
 
 /**
  * 笔记服务类
  */
 export class NoteService {
+  private static instance: NoteService
+
   private noteManager: NoteManager
   private noteIndexCache: NoteIndexCache
   private ignoredConfigPaths: Set<string> = new Set()
 
-  constructor() {
-    this.noteManager = new NoteManager()
+  private constructor() {
+    this.noteManager = NoteManager.getInstance()
     this.noteIndexCache = NoteIndexCache.getInstance()
+  }
+
+  static getInstance(): NoteService {
+    if (!NoteService.instance) {
+      NoteService.instance = new NoteService()
+    }
+    return NoteService.instance
   }
 
   /**
@@ -81,9 +92,13 @@ export class NoteService {
 
   /**
    * 获取所有笔记
+   * dev 模式下（缓存已初始化）从内存读取，其他模式回退到文件扫描
    * @returns 笔记信息数组
    */
   getAllNotes(): NoteInfo[] {
+    if (this.noteIndexCache.isInitialized()) {
+      return this.noteIndexCache.toNoteInfoList()
+    }
     return this.noteManager.scanNotes()
   }
 
@@ -107,10 +122,11 @@ export class NoteService {
       category,
       enableDiscussions = false,
       configId,
+      usedIndexes,
     } = options
 
     // 生成笔记索引（填充空缺）
-    const noteIndex = this.generateNextNoteIndex()
+    const noteIndex = this.generateNextNoteIndex(usedIndexes)
     const dirName = `${noteIndex}. ${title}`
     const notePath = join(NOTES_PATH, dirName)
 
@@ -137,7 +153,7 @@ export class NoteService {
       created_at: now,
       updated_at: now,
     }
-    writeFileSync(configPath, JSON.stringify(config, null, 2), 'utf-8')
+    writeNoteConfig(configPath, config)
 
     logger.info(`Created new note: ${dirName}`)
 
@@ -153,48 +169,34 @@ export class NoteService {
 
   /**
    * 生成下一个笔记索引（填充空缺）
+   * @param usedIndexes - 可选的已使用编号集合，不传则内部扫描
    * @returns 新的笔记索引（4位数字字符串，从 0001 到 9999）
    */
-  private generateNextNoteIndex(): string {
-    const notes = this.getAllNotes()
-
-    if (notes.length === 0) {
-      return '0001'
+  private generateNextNoteIndex(usedIndexes?: Set<number>): string {
+    if (!usedIndexes) {
+      const notes = this.getAllNotes()
+      usedIndexes = new Set<number>()
+      for (const note of notes) {
+        const id = parseInt(note.index, 10)
+        if (!isNaN(id) && id >= 1 && id <= 9999) {
+          usedIndexes.add(id)
+        }
+      }
     }
 
-    // 获取所有已使用的编号
-    const usedIds = new Set<number>()
-    for (const note of notes) {
-      const id = parseInt(note.index, 10)
-      if (!isNaN(id) && id >= 1 && id <= 9999) {
-        usedIds.add(id)
-      }
+    if (usedIndexes.size === 0) {
+      return '0001'
     }
 
     // 从 1 开始查找第一个未使用的编号
     for (let i = 1; i <= 9999; i++) {
-      if (!usedIds.has(i)) {
+      if (!usedIndexes.has(i)) {
         return i.toString().padStart(CONSTANTS.NOTE_INDEX_LENGTH, '0')
       }
     }
 
     // 如果所有编号都被占用（极端情况）
     throw new Error('所有笔记编号 (0001-9999) 已被占用，无法创建新笔记')
-  }
-
-  /**
-   * 删除笔记
-   * @param noteIndex - 笔记索引
-   */
-  async deleteNote(noteIndex: string): Promise<void> {
-    const note = this.getNoteByIndex(noteIndex)
-    if (!note) {
-      throw new Error(`Note not found: ${noteIndex}`)
-    }
-
-    // 删除笔记目录
-    rmSync(note.path, { recursive: true, force: true })
-    logger.info(`Deleted note: ${note.dirName}`)
   }
 
   /**
@@ -237,8 +239,7 @@ export class NoteService {
       logger.info(`检测到全局字段变更 (${noteIndex})，正在增量更新全局文件...`)
 
       // 使用增量更新
-      const ReadmeService = require('../readme').ReadmeService
-      const readmeService = new ReadmeService()
+      const readmeService = ReadmeService.getInstance()
 
       // 增量更新 README.md 中的笔记
       await readmeService.updateNoteInReadme(noteIndex, updates)
@@ -272,105 +273,6 @@ export class NoteService {
     }
 
     return false
-  }
-
-  /**
-   * 标记笔记为完成
-   * @param noteIndex - 笔记索引
-   */
-  async markNoteAsDone(noteIndex: string): Promise<void> {
-    await this.updateNoteConfig(noteIndex, { done: true })
-    logger.info(`Marked note as done: ${noteIndex}`)
-  }
-
-  /**
-   * 标记笔记为未完成
-   * @param noteIndex - 笔记索引
-   */
-  async markNoteAsUndone(noteIndex: string): Promise<void> {
-    await this.updateNoteConfig(noteIndex, { done: false })
-    logger.info(`Marked note as undone: ${noteIndex}`)
-  }
-
-  /**
-   * 验证所有笔记配置
-   * @returns 验证结果 { valid: 有效数量, invalid: 无效数量 }
-   */
-  validateAllNotes(): { valid: number; invalid: number } {
-    const notes = this.getAllNotes()
-    let valid = 0
-    let invalid = 0
-
-    for (const note of notes) {
-      if (note.config && this.noteManager.validateConfig(note.config)) {
-        valid++
-      } else {
-        invalid++
-        logger.warn(`Invalid config for note: ${note.dirName}`)
-      }
-    }
-
-    logger.info(`Validation complete: ${valid} valid, ${invalid} invalid`)
-    return { valid, invalid }
-  }
-
-  /**
-   * 获取笔记统计信息
-   * @returns 统计信息对象
-   */
-  getStatistics() {
-    const notes = this.getAllNotes()
-
-    const total = notes.length
-    const done = notes.filter((n) => n.config?.done).length
-    const withDiscussions = notes.filter(
-      (n) => n.config?.enableDiscussions,
-    ).length
-
-    const bilibiliCount = notes.reduce(
-      (sum, n) => sum + (n.config?.bilibili?.length || 0),
-      0,
-    )
-    const tnotesCount = notes.reduce(
-      (sum, n) => sum + (n.config?.tnotes?.length || 0),
-      0,
-    )
-    const yuqueCount = notes.reduce(
-      (sum, n) => sum + (n.config?.yuque?.length || 0),
-      0,
-    )
-
-    return {
-      total,
-      done,
-      inProgress: total - done,
-      withDiscussions,
-      externalResources: {
-        bilibili: bilibiliCount,
-        tnotes: tnotesCount,
-        yuque: yuqueCount,
-      },
-    }
-  }
-
-  /**
-   * 搜索笔记
-   * @param keyword - 搜索关键词
-   * @returns 匹配的笔记数组
-   */
-  searchNotes(keyword: string): NoteInfo[] {
-    const notes = this.getAllNotes()
-    const lowerKeyword = keyword.toLowerCase()
-
-    return notes.filter((note) => {
-      const dirNameMatch = note.dirName.toLowerCase().includes(lowerKeyword)
-      const idMatch = note.index.includes(lowerKeyword)
-      const categoryMatch = note.config?.category
-        ?.toLowerCase()
-        .includes(lowerKeyword)
-
-      return dirNameMatch || idMatch || categoryMatch
-    })
   }
 
   /**
@@ -426,10 +328,11 @@ export class NoteService {
 
   /**
    * 修正所有笔记的标题
+   * @param providedNotes - 可选的笔记列表，不传则内部扫描
    * @returns 修正的笔记数量
    */
-  async fixAllNoteTitles(): Promise<number> {
-    const notes = this.getAllNotes()
+  async fixAllNoteTitles(providedNotes?: NoteInfo[]): Promise<number> {
+    const notes = providedNotes ?? this.getAllNotes()
     // logger.debug('打印前 3 篇笔记信息：', notes.slice(0, 3))
     let fixedCount = 0
 

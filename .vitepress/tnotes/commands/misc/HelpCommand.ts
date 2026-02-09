@@ -12,7 +12,12 @@ import {
 } from '../models'
 import { createLogger, LogLevel } from '../../utils'
 
-/** 命令分组（用于帮助信息展示） */
+/**
+ * 命令分组（用于帮助信息展示）
+ *
+ * 注意：`update-note-config` 和 `rename-note` 是内部命令，
+ * 由 VitePress dev server 通过 HTTP API 调用，不在 CLI 帮助中展示。
+ */
 const COMMAND_CATEGORIES = {
   开发和构建: [COMMAND_NAMES.DEV, COMMAND_NAMES.BUILD, COMMAND_NAMES.PREVIEW],
   内容管理: [

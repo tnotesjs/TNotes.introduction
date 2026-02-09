@@ -8,7 +8,13 @@ import { NoteManager } from '../../core/NoteManager'
 import { ReadmeGenerator } from '../../core/ReadmeGenerator'
 import { ConfigManager } from '../../config/ConfigManager'
 import { NoteIndexCache } from '../../core/NoteIndexCache'
-import { parseNoteLine, buildNoteLineMarkdown, logger } from '../../utils'
+import {
+  parseNoteLine,
+  buildNoteLineMarkdown,
+  logger,
+  getChangedIds,
+  genHierarchicalSidebar,
+} from '../../utils'
 import { ROOT_README_PATH, VP_SIDEBAR_PATH } from '../../config/constants'
 import {
   existsSync,
@@ -23,22 +29,31 @@ import {
 interface UpdateReadmeOptions {
   updateSidebar?: boolean
   updateHome?: boolean
+  notes?: NoteInfo[]
 }
 
 /**
- * README 服务类
+ * README 服务类（单例）
  */
 export class ReadmeService {
+  private static instance: ReadmeService
   private noteManager: NoteManager
   private readmeGenerator: ReadmeGenerator
   private configManager: ConfigManager
   private noteIndexCache: NoteIndexCache
 
-  constructor() {
-    this.noteManager = new NoteManager()
+  private constructor() {
+    this.noteManager = NoteManager.getInstance()
     this.readmeGenerator = new ReadmeGenerator()
     this.configManager = ConfigManager.getInstance()
     this.noteIndexCache = NoteIndexCache.getInstance()
+  }
+
+  static getInstance(): ReadmeService {
+    if (!ReadmeService.instance) {
+      ReadmeService.instance = new ReadmeService()
+    }
+    return ReadmeService.instance
   }
 
   /**
@@ -46,12 +61,16 @@ export class ReadmeService {
    * @param options - 更新选项
    */
   async updateAllReadmes(options: UpdateReadmeOptions = {}): Promise<void> {
-    const { updateSidebar = true, updateHome = true } = options
+    const {
+      updateSidebar = true,
+      updateHome = true,
+      notes: providedNotes,
+    } = options
 
     logger.info('开始更新知识库...')
 
-    // 扫描所有笔记
-    const notes = this.noteManager.scanNotes()
+    // 使用传入的笔记列表或重新扫描
+    const notes = providedNotes ?? this.noteManager.scanNotes()
     logger.info(`扫描到 ${notes.length} 篇笔记`)
 
     // 检测变更的笔记（增量更新优化）
@@ -129,7 +148,6 @@ export class ReadmeService {
    */
   private async getChangedNoteIndexes(): Promise<Set<string>> {
     try {
-      const { getChangedIds } = await import('../../utils')
       return getChangedIds()
     } catch (error) {
       // 如果获取失败（比如不在 Git 仓库中），返回空集合，触发全量更新
@@ -191,7 +209,6 @@ export class ReadmeService {
     const lines = content.split('\n')
 
     // 解析 README.md 的层次结构
-    const { genHierarchicalSidebar } = await import('../../utils')
 
     const itemList: Array<{ text: string; link: string }> = []
     const titles: string[] = []
@@ -414,10 +431,15 @@ export class ReadmeService {
 
   /**
    * 重新生成 sidebar.json（基于当前 README.md）
+   * @param notes - 可选的笔记列表，不传则内部扫描
    */
-  async regenerateSidebar(): Promise<void> {
-    const notes = this.noteManager.scanNotes()
-    await this.updateSidebar(notes)
+  async regenerateSidebar(notes?: NoteInfo[]): Promise<void> {
+    const allNotes =
+      notes ??
+      (this.noteIndexCache.isInitialized()
+        ? this.noteIndexCache.toNoteInfoList()
+        : this.noteManager.scanNotes())
+    await this.updateSidebar(allNotes)
     logger.info('重新生成 sidebar.json')
   }
 }

@@ -81,7 +81,7 @@ export class PushCommand extends BaseCommand {
         this.logger.warn('使用强制推送模式 (--force)')
       }
       this.logger.info('正在推送到远程仓库...')
-      await this.gitService.quickPush({ force })
+      await this.gitService.quickPush({ force, skipCheck: true })
 
       this.logger.success('推送完成')
     } finally {

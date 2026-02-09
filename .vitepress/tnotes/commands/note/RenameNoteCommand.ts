@@ -22,8 +22,8 @@ export class RenameNoteCommand extends BaseCommand {
 
   constructor() {
     super('rename-note')
-    this.noteService = new NoteService()
-    this.readmeService = new ReadmeService()
+    this.noteService = NoteService.getInstance()
+    this.readmeService = ReadmeService.getInstance()
   }
 
   protected async run(): Promise<void> {
@@ -32,8 +32,7 @@ export class RenameNoteCommand extends BaseCommand {
     const newTitle = process.env.NOTE_TITLE
 
     if (!noteIndex || !newTitle) {
-      this.logger.error('缺少 NOTE_ID 或 NOTE_TITLE 参数')
-      process.exit(1)
+      throw new Error('缺少 NOTE_ID 或 NOTE_TITLE 参数')
     }
 
     try {
@@ -41,7 +40,7 @@ export class RenameNoteCommand extends BaseCommand {
       this.logger.success(`笔记 ${noteIndex} 已重命名为: ${newTitle}`)
     } catch (error) {
       this.logger.error('重命名失败', error)
-      process.exit(1)
+      throw error
     }
   }
 
@@ -129,9 +128,6 @@ export class RenameNoteCommand extends BaseCommand {
     // 重命名成功后,更新全局 README.md 和 sidebar.json
     try {
       this.logger.info('正在更新全局 README.md 和 sidebar.json...')
-
-      // 重新扫描笔记以获取最新状态
-      const allNotes = this.noteService.getAllNotes()
 
       // 更新 README.md 和 sidebar.json
       await this.readmeService.updateAllReadmes()

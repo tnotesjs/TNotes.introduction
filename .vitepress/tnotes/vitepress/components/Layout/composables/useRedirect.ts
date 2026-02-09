@@ -1,11 +1,13 @@
 import { ref, watch } from 'vue'
 import { useRoute, useData } from 'vitepress'
 
+import type { NoteConfig } from '../../../../types'
+
 /**
  * 处理 404 重定向逻辑
  * 当用户访问旧的笔记 URL 时,自动重定向到新的 URL
  */
-export function useRedirect(allNotesConfig: Record<string, any>) {
+export function useRedirect(allNotesConfig: Record<string, NoteConfig & { redirect?: string }>) {
   const route = useRoute()
   const vpData = useData()
 

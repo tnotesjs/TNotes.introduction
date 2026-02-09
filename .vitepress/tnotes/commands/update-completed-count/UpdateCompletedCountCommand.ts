@@ -6,9 +6,10 @@
  */
 import { BaseCommand } from '../BaseCommand'
 import { readFileSync, writeFileSync } from 'fs'
-import { ROOT_DIR_PATH, ROOT_CONFIG_PATH } from '../../config'
+import { ROOT_DIR_PATH, ROOT_CONFIG_PATH, EN_WORDS_DIR, TNOTES_BASE_DIR } from '../../config'
 import type { TNotesConfig } from '../../types'
 import { execSync } from 'child_process'
+import { getTargetDirs, runCommand, parseReadmeCompletedNotes } from '../../utils'
 
 export class UpdateCompletedCountCommand extends BaseCommand {
   private updateAll: boolean = false
@@ -79,10 +80,7 @@ export class UpdateCompletedCountCommand extends BaseCommand {
    * 更新所有知识库
    */
   private async updateAllRepos(): Promise<void> {
-    const { getTargetDirs } = await import('../../utils')
-    const { EN_WORDS_DIR, TNOTES_BASE_DIR } =
-      await import('../../config/constants')
-    const { runCommand } = await import('../../utils')
+
 
     try {
       // 获取所有目标知识库
@@ -248,7 +246,7 @@ export class UpdateCompletedCountCommand extends BaseCommand {
     month: number,
     fallbackCount: number = 0,
   ): Promise<number> {
-    const { parseReadmeCompletedNotes } = await import('../../utils')
+
 
     // 计算该月的最后一天
     const lastDayOfMonth = new Date(year, month + 1, 0, 23, 59, 59)

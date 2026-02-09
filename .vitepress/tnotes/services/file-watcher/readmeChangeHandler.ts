@@ -4,10 +4,11 @@
  * README 变更处理
  */
 import type { WatchEvent } from './internal'
+import type { NoteService } from '../note/service'
 
 interface ReadmeChangeHandlerConfig {
   /** 笔记服务实例 */
-  noteService: any
+  noteService: NoteService
 }
 
 export class ReadmeChangeHandler {

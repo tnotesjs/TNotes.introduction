@@ -19,7 +19,7 @@ export class UpdateNoteConfigCommand extends BaseCommand {
 
   constructor() {
     super('update-note-config')
-    this.noteService = new NoteService()
+    this.noteService = NoteService.getInstance()
   }
 
   protected async run(): Promise<void> {
@@ -30,8 +30,7 @@ export class UpdateNoteConfigCommand extends BaseCommand {
     const description = process.env.NOTE_DESCRIPTION || ''
 
     if (!noteIndex) {
-      this.logger.error('缺少 NOTE_ID 参数')
-      process.exit(1)
+      throw new Error('缺少 NOTE_ID 参数')
     }
 
     try {
@@ -47,7 +46,7 @@ export class UpdateNoteConfigCommand extends BaseCommand {
       this.logger.success(`笔记 ${noteIndex} 配置已更新`)
     } catch (error) {
       this.logger.error('更新配置失败', error)
-      process.exit(1)
+      throw error
     }
   }
 

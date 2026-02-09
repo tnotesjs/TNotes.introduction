@@ -3,9 +3,10 @@
  *
  * 配置验证和修复工具 - 确保 .tnotes.json 配置完整性
  */
-import { readFileSync, writeFileSync } from 'fs'
+import { readFileSync } from 'fs'
 import type { NoteConfig } from '../types'
 import { logger } from './logger'
+import { writeNoteConfig, sortConfigKeys } from './writeNoteConfig'
 
 /**
  * 默认配置字段
@@ -23,47 +24,6 @@ const DEFAULT_CONFIG_FIELDS = {
  * 必需字段（不能缺失）
  */
 const REQUIRED_FIELDS = ['id'] as const
-
-/**
- * 配置字段顺序（用于排序）
- */
-const FIELD_ORDER = [
-  'bilibili',
-  'tnotes',
-  'yuque',
-  'done',
-  'category',
-  'enableDiscussions',
-  'description',
-  'id',
-  'created_at',
-  'updated_at',
-] as const
-
-/**
- * 按指定顺序排序配置对象的键
- * @param config - 原始配置对象
- * @returns 排序后的配置对象
- */
-function sortConfigKeys(config: NoteConfig): NoteConfig {
-  const sorted: any = {}
-
-  // 按照定义的顺序添加字段
-  for (const key of FIELD_ORDER) {
-    if (key in config) {
-      sorted[key] = (config as any)[key]
-    }
-  }
-
-  // 添加其他未在顺序列表中的字段（如 category）
-  for (const key of Object.keys(config)) {
-    if (!(key in sorted)) {
-      sorted[key] = (config as any)[key]
-    }
-  }
-
-  return sorted as NoteConfig
-}
 
 /**
  * 验证并修复配置文件
@@ -99,7 +59,7 @@ export function validateAndFixConfig(configPath: string): NoteConfig | null {
     // 2. 补充缺失的可选字段
     for (const [key, defaultValue] of Object.entries(DEFAULT_CONFIG_FIELDS)) {
       if (!(key in config)) {
-        ;(config as any)[key] = defaultValue
+        ;(config as Record<string, unknown>)[key] = defaultValue
         needsUpdate = true
         logger.info(`补充缺失字段 "${key}": ${configPath}`)
       }
@@ -123,19 +83,7 @@ export function validateAndFixConfig(configPath: string): NoteConfig | null {
 
     // 5. 写回文件（如果有变更）
     if (needsUpdate) {
-      // 手动构建 JSON 字符串以保持字段顺序
-      const jsonLines: string[] = ['{']
-      const keys = Object.keys(sortedConfig)
-      keys.forEach((key, index) => {
-        const value = (sortedConfig as any)[key]
-        const jsonValue = JSON.stringify(value)
-        const comma = index < keys.length - 1 ? ',' : ''
-        jsonLines.push(`  "${key}": ${jsonValue}${comma}`)
-      })
-      jsonLines.push('}')
-      const sortedJson = jsonLines.join('\n')
-
-      writeFileSync(configPath, sortedJson + '\n', 'utf-8')
+      writeNoteConfig(configPath, sortedConfig)
       logger.info(`配置文件已修复: ${configPath}`)
     }
 

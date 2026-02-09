@@ -189,7 +189,7 @@ export async function syncAllRepos(options?: {
   continueOnError?: boolean
 }): Promise<void> {
   const { parallel = true, continueOnError = true } = options || {}
-  const targetDirs = getTargetDirs(TNOTES_BASE_DIR, 'TNotes.')
+  const targetDirs = getTargetDirs(TNOTES_BASE_DIR, 'TNotes.', [EN_WORDS_DIR])
 
   logger.info(`正在同步 ${targetDirs.length} 个仓库...`)
 

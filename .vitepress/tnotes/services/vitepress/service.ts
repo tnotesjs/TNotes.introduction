@@ -44,7 +44,7 @@ export class VitepressService {
   constructor() {
     this.processManager = ProcessManager.getInstance()
     this.configManager = ConfigManager.getInstance()
-    this.noteManager = new NoteManager()
+    this.noteManager = NoteManager.getInstance()
   }
 
   /**

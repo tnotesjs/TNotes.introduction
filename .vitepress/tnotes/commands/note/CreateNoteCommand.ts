@@ -3,6 +3,7 @@
  *
  * 新建笔记命令 - 使用 NoteService（支持批量创建，生成全局唯一 ID）
  */
+
 import { BaseCommand } from '../BaseCommand'
 import { NoteService, ReadmeService } from '../../services'
 import { createInterface } from 'readline'
@@ -14,8 +15,8 @@ export class CreateNoteCommand extends BaseCommand {
 
   constructor() {
     super('create-notes')
-    this.noteService = new NoteService()
-    this.readmeService = new ReadmeService()
+    this.noteService = NoteService.getInstance()
+    this.readmeService = ReadmeService.getInstance()
   }
 
   protected async run(): Promise<void> {
@@ -28,6 +29,16 @@ export class CreateNoteCommand extends BaseCommand {
     let successCount = 0
     let failCount = 0
     const createdNotes: string[] = []
+
+    // 预先扫描一次，构建已使用编号集合，避免循环内重复扫描
+    const existingNotes = this.noteService.getAllNotes()
+    const usedIndexes = new Set<number>()
+    for (const note of existingNotes) {
+      const index = parseInt(note.index, 10)
+      if (!isNaN(index) && index >= 1 && index <= 9999) {
+        usedIndexes.add(index)
+      }
+    }
 
     for (let i = 1; i <= count; i++) {
       try {
@@ -47,7 +58,14 @@ export class CreateNoteCommand extends BaseCommand {
           title: title || `new`,
           enableDiscussions: false,
           configId, // 传递 UUID 作为配置 ID（跨知识库唯一）
+          usedIndexes, // 传入已使用编号集合，避免重复扫描
         })
+
+        // 将新创建的笔记编号加入集合，确保后续创建不会冲突
+        const newIndex = parseInt(note.index, 10)
+        if (!isNaN(newIndex)) {
+          usedIndexes.add(newIndex)
+        }
 
         createdNotes.push(note.dirName)
         successCount++

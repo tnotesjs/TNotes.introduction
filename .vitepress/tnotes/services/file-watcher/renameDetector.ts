@@ -119,6 +119,10 @@ export class RenameDetector {
   }
 
   clearTimers() {
-    if (this.folderRenameTimer) clearTimeout(this.folderRenameTimer)
+    if (this.folderRenameTimer) {
+      clearTimeout(this.folderRenameTimer)
+      this.folderRenameTimer = null
+    }
+    this.pendingFolderRename = null
   }
 }

@@ -5,10 +5,21 @@
  */
 import { BaseCommand } from '../BaseCommand'
 import { ReadmeService, NoteService } from '../../services'
-import { logger, LogLevel } from '../../utils'
+import {
+  logger,
+  LogLevel,
+  getTargetDirs,
+  runCommand,
+  parseReadmeCompletedNotes,
+} from '../../utils'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
-import { ROOT_DIR_PATH, TNOTES_BASE_DIR, ROOT_CONFIG_PATH } from '../../config'
+import {
+  ROOT_DIR_PATH,
+  TNOTES_BASE_DIR,
+  ROOT_CONFIG_PATH,
+  EN_WORDS_DIR,
+} from '../../config'
 import type { TNotesConfig } from '../../types'
 
 export class UpdateCommand extends BaseCommand {
@@ -19,8 +30,8 @@ export class UpdateCommand extends BaseCommand {
 
   constructor() {
     super('update')
-    this.readmeService = new ReadmeService()
-    this.noteService = new NoteService()
+    this.readmeService = ReadmeService.getInstance()
+    this.noteService = NoteService.getInstance()
   }
 
   /**
@@ -58,17 +69,20 @@ export class UpdateCommand extends BaseCommand {
   private async updateCurrentRepo(): Promise<void> {
     const startTime = Date.now()
 
+    // 扫描一次笔记，复用于后续步骤
+    const notes = this.noteService.getAllNotes()
+
     // 修正所有笔记的标题
     if (!this.quiet) {
       this.logger.info('正在修正笔记标题...')
     }
-    const fixedCount = await this.noteService.fixAllNoteTitles()
+    const fixedCount = await this.noteService.fixAllNoteTitles(notes)
     if (!this.quiet && fixedCount > 0) {
       this.logger.success(`修正了 ${fixedCount} 个笔记标题`)
     }
 
-    // 更新知识库
-    await this.readmeService.updateAllReadmes()
+    // 更新知识库（传入已扫描的笔记列表，避免重复扫描）
+    await this.readmeService.updateAllReadmes({ notes })
 
     // 更新 root_item 配置
     await this.updateRootItem()
@@ -87,10 +101,6 @@ export class UpdateCommand extends BaseCommand {
    * 更新所有知识库
    */
   private async updateAllRepos(): Promise<void> {
-    const { getTargetDirs } = await import('../../utils')
-    const { EN_WORDS_DIR } = await import('../../config/constants')
-    const { runCommand } = await import('../../utils')
-
     try {
       // 获取所有目标知识库
       const targetDirs = getTargetDirs(TNOTES_BASE_DIR, 'TNotes.', [
@@ -173,7 +183,7 @@ export class UpdateCommand extends BaseCommand {
       const readmeContent = readFileSync(readmePath, 'utf-8')
 
       // 2. 解析完成笔记数量
-      const { parseReadmeCompletedNotes } = await import('../../utils')
+
       const { completedCount } = parseReadmeCompletedNotes(readmeContent)
 
       // 3. 生成当前月份的键名（如 '25.12'）

@@ -23,6 +23,7 @@ import { ReadmeService } from '../readme/service'
 import { NoteService } from '../note/service'
 import { NoteIndexCache } from '../../core/NoteIndexCache'
 import { NOTES_DIR_PATH } from '../../config/constants'
+import type { NoteConfig } from '../../types'
 
 const RENAME_REVERT_DELAY_MS = 2000
 
@@ -55,8 +56,8 @@ export class FileWatcherService {
   }
 
   private init(): void {
-    this.noteService = new NoteService()
-    this.readmeService = new ReadmeService()
+    this.noteService = NoteService.getInstance()
+    this.readmeService = ReadmeService.getInstance()
     this.noteIndexCache = NoteIndexCache.getInstance()
 
     this.watchState = this.initWatchState()
@@ -296,8 +297,7 @@ export class FileWatcherService {
 
     await this.readmeService.deleteNoteFromReadme(oldNoteIndex)
 
-    const allNotes = this.noteService.getAllNotes()
-    const newNote = allNotes.find((n) => n.index === newNoteIndex)
+    const newNote = this.noteService.getNoteByIndex(newNoteIndex)
 
     if (newNote) {
       const cache = this.noteIndexCache
@@ -350,7 +350,7 @@ export class FileWatcherService {
     try {
       if (!existsSync(configPath)) return null
       const content = readFileSync(configPath, 'utf-8')
-      const config = JSON.parse(content) as any
+      const config = JSON.parse(content) as Partial<NoteConfig>
       return {
         done: Boolean(config.done),
         enableDiscussions: Boolean(config.enableDiscussions),

@@ -65,6 +65,16 @@ export type CommandOption =
   (typeof COMMAND_OPTIONS)[keyof typeof COMMAND_OPTIONS]
 
 /**
+ * 命令选项类型（传递给 BaseCommand.setOptions 的参数类型）
+ */
+export interface CommandOptions {
+  force?: boolean
+  all?: boolean
+  quiet?: boolean
+  [key: string]: unknown
+}
+
+/**
  * 命令参数类型
  */
 export type CommandArgs = {

@@ -3,7 +3,10 @@
  *
  * 笔记索引缓存 - 维护笔记的内存索引，避免重复扫描文件系统
  */
+
 import type { NoteInfo, NoteConfig } from '../types'
+import { join } from 'path'
+import { NOTES_PATH } from '../config/constants'
 import { logger } from '../utils'
 
 /**
@@ -30,6 +33,9 @@ export class NoteIndexCache {
 
   /** configId (UUID) -> noteIndex 的映射，用于快速反向查询 */
   private byConfigId: Map<string, string> = new Map()
+
+  /** 是否已完成初始化 */
+  private _initialized = false
 
   private constructor() {}
 
@@ -63,7 +69,35 @@ export class NoteIndexCache {
       this.byConfigId.set(note.config.id, note.index)
     }
 
+    this._initialized = true
     logger.info(`笔记索引初始化完成，共 ${notes.length} 篇笔记`)
+  }
+
+  /**
+   * 是否已完成初始化
+   */
+  isInitialized(): boolean {
+    return this._initialized
+  }
+
+  /**
+   * 从缓存构建 NoteInfo 列表（纯内存，零 I/O）
+   * @returns 笔记信息数组
+   */
+  toNoteInfoList(): NoteInfo[] {
+    const result: NoteInfo[] = []
+    for (const item of this.byNoteIndex.values()) {
+      const notePath = join(NOTES_PATH, item.folderName)
+      result.push({
+        index: item.noteIndex,
+        path: notePath,
+        dirName: item.folderName,
+        readmePath: join(notePath, 'README.md'),
+        configPath: join(notePath, '.tnotes.json'),
+        config: item.noteConfig,
+      })
+    }
+    return result
   }
 
   /**

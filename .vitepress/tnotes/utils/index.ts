@@ -26,3 +26,8 @@ export {
 export { runCommand } from './runCommand'
 export { pushAllRepos, pullAllRepos, syncAllRepos } from './syncRepo'
 export { validateNoteTitle } from './validators'
+export {
+  writeNoteConfig,
+  sortConfigKeys,
+  serializeNoteConfig,
+} from './writeNoteConfig'

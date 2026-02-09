@@ -7,13 +7,15 @@ import type { WatchEvent } from './internal'
 import type { NoteIndexCache } from '../../core/NoteIndexCache'
 import type { ReadmeService } from '../readme/service'
 
+import type { Logger } from '../../utils'
+
 interface GlobalUpdateCoordinatorConfig {
   /** README 服务实例，用于更新 README 文件和侧边栏 */
   readmeService: ReadmeService
   /** 笔记索引缓存实例 */
   noteIndexCache: NoteIndexCache
   /** 日志记录器 */
-  logger: any
+  logger: Logger
 }
 
 export class GlobalUpdateCoordinator {
@@ -31,7 +33,7 @@ export class GlobalUpdateCoordinator {
         const item = noteIndexCache.getByNoteIndex(noteIndex)
         await readmeService.updateNoteInReadme(
           noteIndex,
-          item?.noteConfig || {}
+          item?.noteConfig || {},
         )
         logger.info(`增量更新 README 中的笔记: ${noteIndex}`)
       } catch (error) {

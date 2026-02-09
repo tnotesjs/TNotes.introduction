@@ -1,3 +1,5 @@
+import type { Ref } from 'vue'
+
 /**
  * 笔记标题验证
  */
@@ -63,13 +65,13 @@ export function useNoteValidation() {
   }
 
   // 标题输入事件处理器
-  function onTitleInput(editableNoteTitle: any, titleError: any) {
+  function onTitleInput(editableNoteTitle: Ref<string>, titleError: Ref<string>) {
     const error = validateTitle(editableNoteTitle.value)
     titleError.value = error || ''
   }
 
   // 标题失焦事件处理器
-  function onTitleBlur(editableNoteTitle: any, titleError: any) {
+  function onTitleBlur(editableNoteTitle: Ref<string>, titleError: Ref<string>) {
     // 去除首尾空格
     editableNoteTitle.value = editableNoteTitle.value.trim()
     onTitleInput(editableNoteTitle, titleError)

@@ -1,23 +1,25 @@
 import { ref, computed } from 'vue'
+import type { Ref, ComputedRef } from 'vue'
 import { useData } from 'vitepress'
+import type { NoteConfig } from '../../../../types'
 
 /**
  * 处理笔记配置的保存和重置逻辑
  */
 export function useNoteSave(
-  currentNoteId: any,
-  isDev: any,
-  hasConfigChanges: any,
-  titleError: any,
-  editableNoteTitle: any,
-  originalNoteTitle: any,
-  editableNoteStatus: any,
-  originalNoteStatus: any,
-  editableDiscussionsEnabled: any,
-  originalDiscussionsEnabled: any,
-  editableDescription: any,
-  originalDescription: any,
-  allNotesConfig: Record<string, any>,
+  currentNoteId: Ref<string>,
+  isDev: Ref<boolean> | ComputedRef<boolean>,
+  hasConfigChanges: ComputedRef<boolean>,
+  titleError: Ref<string>,
+  editableNoteTitle: Ref<string>,
+  originalNoteTitle: Ref<string>,
+  editableNoteStatus: Ref<boolean>,
+  originalNoteStatus: Ref<boolean>,
+  editableDiscussionsEnabled: Ref<boolean>,
+  originalDiscussionsEnabled: Ref<boolean>,
+  editableDescription: Ref<string>,
+  originalDescription: Ref<string>,
+  allNotesConfig: Record<string, NoteConfig & { redirect?: string }>,
   updateOriginalValues: () => void
 ) {
   const vpData = useData()

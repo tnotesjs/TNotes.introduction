@@ -12,7 +12,7 @@ import {
 } from 'fs'
 import { join } from 'path'
 import { execSync } from 'child_process'
-import { logger } from '../../utils'
+import { logger, writeNoteConfig } from '../../utils'
 import {
   NOTES_DIR_PATH,
   ROOT_DIR_PATH,
@@ -144,17 +144,7 @@ export class TimestampService {
 
       if (modified) {
         // 保持字段顺序写回文件
-        const lines: string[] = ['{']
-        const keys = Object.keys(config)
-        keys.forEach((key, index) => {
-          const value = (config as any)[key]
-          const jsonValue = JSON.stringify(value)
-          const comma = index < keys.length - 1 ? ',' : ''
-          lines.push(`  "${key}": ${jsonValue}${comma}`)
-        })
-        lines.push('}')
-
-        writeFileSync(configPath, lines.join('\n') + '\n', 'utf-8')
+        writeNoteConfig(configPath, config)
         return true
       }
 
@@ -336,17 +326,7 @@ export class TimestampService {
         config.updated_at = now
 
         // 保持字段顺序写回文件
-        const lines: string[] = ['{']
-        const keys = Object.keys(config)
-        keys.forEach((key, index) => {
-          const value = (config as any)[key]
-          const jsonValue = JSON.stringify(value)
-          const comma = index < keys.length - 1 ? ',' : ''
-          lines.push(`  "${key}": ${jsonValue}${comma}`)
-        })
-        lines.push('}')
-
-        writeFileSync(configPath, lines.join('\n') + '\n', 'utf-8')
+        writeNoteConfig(configPath, config)
         updatedCount++
       } catch (error) {
         logger.error(`更新时间戳失败: ${noteDir}`, error)
