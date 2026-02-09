@@ -5,7 +5,7 @@
  */
 import { existsSync, readdirSync, statSync, writeFileSync } from 'fs'
 import { join } from 'path'
-import type { NoteInfo, NoteConfig } from '../types'
+import type { NoteInfo, NoteConfig, NoteCountResult } from '../types'
 import { NOTES_PATH } from '../config/constants'
 import { logger, validateAndFixConfig, extractNoteIndex } from '../utils'
 
@@ -87,18 +87,42 @@ export class NoteManager {
 
   /**
    * 统计笔记数量（仅按目录名规则筛选，不读取文件）
+   * @returns 包含去重前数量、去重后数量、冲突笔记列表的统计结果
    */
-  countNotes(): number {
-    if (!existsSync(NOTES_PATH)) return 0
+  countNotes(): NoteCountResult {
+    if (!existsSync(NOTES_PATH)) {
+      return { total: 0, unique: 0, conflicts: [] }
+    }
 
     const entries = readdirSync(NOTES_PATH, { withFileTypes: true })
 
-    return entries.filter(
+    // 筛选出符合 "XXXX. 笔记标题" 格式的目录
+    const noteDirs = entries.filter(
       (entry) =>
         entry.isDirectory() &&
         !entry.name.startsWith('.') &&
         /^\d{4}\./.test(entry.name),
-    ).length
+    )
+
+    const total = noteDirs.length
+
+    // 按 4 位数字编号分组，检测重复
+    const indexMap = new Map<string, string[]>()
+    for (const entry of noteDirs) {
+      const index = entry.name.slice(0, 4)
+      if (!indexMap.has(index)) indexMap.set(index, [])
+      indexMap.get(index)!.push(entry.name)
+    }
+
+    const unique = indexMap.size
+    const conflicts: NoteCountResult['conflicts'] = []
+    for (const [index, dirNames] of indexMap.entries()) {
+      if (dirNames.length > 1) {
+        conflicts.push({ index, dirNames })
+      }
+    }
+
+    return { total, unique, conflicts }
   }
 
   /**

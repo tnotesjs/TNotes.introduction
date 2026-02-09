@@ -4,6 +4,9 @@
 
 - [1. 🎯 本节内容](#1--本节内容)
 - [2. 🫧 评价](#2--评价)
+- [3. 🤔 服务的启动流程是？](#3--服务的启动流程是)
+  - [3.1. 执行启动命令](#31-执行启动命令)
+  - [3.2. 启动 vitepress 服务](#32-启动-vitepress-服务)
 
 <!-- endregion:toc -->
 
@@ -15,10 +18,47 @@
 
 核心流程：
 
-- `tn:dev`
-  - `tsx ./.vitepress/tnotes/index.ts --dev`
-- 启动 vitepress 服务
-  - 确保服务是单例的
-  - 通过端口号检查服务是否已被启动，如果已启动则停止之前的服务，再启动新的服务
-- 启动文件监听服务
-  - 监听知识库目录下的所有文件变动
+## 3. 🤔 服务的启动流程是？
+
+### 3.1. 执行启动命令
+
+```bash
+# 执行以下命令，启动笔记服务
+pnpm tn:dev
+
+# 相当于执行：
+# tsx ./.vitepress/tnotes/index.ts --dev
+# 本质是运行 ./.vitepress/tnotes/index.ts 文件，并传入启动参数 --dev
+```
+
+### 3.2. 启动 vitepress 服务
+
+在 `.vitepress/tnotes/commands/dev/DevCommand.ts` 中引入了二次封装的 `VitepressService` 类，通过 `vitepressService.startServer()` 来启动 vitepress 服务。
+
+需要确保服务是单例的，在服务启动之前会做以下处理：
+
+- 根据服务 ID `${repoName}-vitepress-dev` 检查当前知识库的 vitepress 服务是否已启动过，若检测到服务已经启动则 kill 旧的服务进程。
+- 检查服务端口是否被占用，若被占用则终止占用端口的进程。
+
+经过上述处理之后，再执行 `vitepress dev` 命令：
+
+```ts
+// 启动 VitePress 开发服务器
+const pm = this.configManager.get('packageManager') || DEFAULT_PACKAGE_MANAGER
+const args = ['vitepress', 'dev', '--port', port.toString()]
+
+const processInfo = this.processManager.spawn(processId, pm, args, {
+  cwd: ROOT_DIR_PATH,
+  stdio: ['inherit', 'pipe', 'pipe'],
+})
+```
+
+打印服务的启动状态（比如扫描到多少篇笔记，一共耗时多长时间），在监听到 vitepress 服务启动完成（监听到进程输出 `Local:` 或者 `http://localhost`）之后，打印启动成功后的一些提示信息。
+
+::: tip 备注：服务启动进度问题
+
+启动进度的真实百分比不好获取，通过 vitepress 的钩子做了尝试没能成功，可能需要改 vitepress 源码，目前（26.02）所有 TNotes 知识库的启动耗时大致在十几秒以内，是否能够看到真实进度对体验的影响也不是很大，因此暂时先将这个真实百分比的优化点挂起！
+
+测试了 `3k~4k` 笔记数量的知识库 `TNotes.leetcode`，启动耗时大致在 `10s~20s` 左右，因此暂时将启动的超时时间设置为了 `60s`。
+
+:::

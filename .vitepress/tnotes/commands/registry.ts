@@ -43,8 +43,7 @@ const commandCache = new Map<CommandName, Command>()
 export function getCommand(name: CommandName): Command | undefined {
   if (!commandFactories[name]) return undefined
 
-  if (!commandCache.has(name)) {
-    commandCache.set(name, commandFactories[name]())
-  }
+  if (!commandCache.has(name)) commandCache.set(name, commandFactories[name]())
+
   return commandCache.get(name)
 }

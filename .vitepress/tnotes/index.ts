@@ -27,6 +27,8 @@ import type {
       (key) => key !== '_' && args[key] === true,
     )
 
+    // #region - 非法命令处理
+
     // 若没有检测到命令名，则显示帮助信息
     // 测试命令：npx tsx ./.vitepress/tnotes/index.ts 123
     // 若命令名无效，则显示帮助信息
@@ -60,7 +62,10 @@ import type {
       return
     }
 
-    // 处理命令选项
+    // #endregion - 非法命令处理
+
+    // #region - 处理合法命令选项
+
     if (commandName === COMMAND_NAMES.UPDATE) {
       const cmd = command as UpdateCommand
       if (args.quiet) cmd.setQuiet(true)
@@ -79,6 +84,8 @@ import type {
       const cmd = command as SyncCommand
       if (args.all) cmd.setSyncAll(true)
     }
+
+    // #endregion - 处理合法命令选项
 
     // 执行命令
     await command.execute()

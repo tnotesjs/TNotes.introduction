@@ -28,7 +28,10 @@ const SERVER_STARTUP_TIMEOUT = 60000
 const PORT_RELEASE_TIMEOUT = 3000
 
 /** 进程清理等待时间（毫秒） */
-const PROCESS_CLEANUP_DELAY = 1000
+const PROCESS_CLEANUP_DELAY = 3000
+
+/** 显示启动服务状态行间隔（毫秒） */
+const SERVER_STATUS_LINE_INTERVAL = 1000
 
 /** 默认包管理器 */
 const DEFAULT_PACKAGE_MANAGER = 'pnpm'
@@ -82,16 +85,30 @@ export class VitepressService {
       this.configManager.get('packageManager') || DEFAULT_PACKAGE_MANAGER
     const args = ['vitepress', 'dev', '--port', port.toString()]
 
+    // 预扫描笔记数量，并在启动 VitePress 之前检测冲突
+    const noteCountResult = this.noteManager.countNotes()
+
+    if (noteCountResult.conflicts.length > 0) {
+      logger.error('⚠️  检测到重复的笔记编号，服务启动已终止！')
+      for (const { index, dirNames } of noteCountResult.conflicts) {
+        logger.error(`   编号 ${index} 被以下笔记重复使用：`)
+        dirNames.forEach((dirName) => {
+          logger.error(`      - ${dirName}`)
+        })
+      }
+      logger.error(
+        '\n请检查并删除或重命名重复的笔记文件夹，确保每个笔记编号唯一！\n',
+      )
+      process.exit(1)
+    }
+
     const processInfo = this.processManager.spawn(processId, pm, args, {
       cwd: ROOT_DIR_PATH,
       stdio: ['inherit', 'pipe', 'pipe'], // stdin 继承，stdout/stderr 管道捕获
     })
 
-    // 预扫描笔记数量
-    const noteCount = this.noteManager.countNotes()
-
     // 等待服务就绪，显示启动状态
-    await this.waitForServerReady(processInfo.process, noteCount)
+    await this.waitForServerReady(processInfo.process, noteCountResult.unique)
 
     return processInfo.pid
   }
@@ -117,14 +134,14 @@ export class VitepressService {
         }
 
         const elapsed = Date.now() - startTime
-        const seconds = (elapsed / 1000).toFixed(1)
+        const seconds = (elapsed / 1000).toFixed(0)
         // 使用 stderr 输出，避免与 VitePress 输出混在一起
         process.stderr.clearLine?.(0)
         process.stderr.cursorTo?.(0)
         process.stderr.write(
           `⏳ 启动中: 共 ${noteCount} 篇笔记，已用 ${seconds}s...`,
         )
-      }, 1000)
+      }, SERVER_STATUS_LINE_INTERVAL)
 
       // 处理输出
       const handleOutput = (data: string) => {
