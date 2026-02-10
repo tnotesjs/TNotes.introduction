@@ -65,17 +65,23 @@ export function validateAndFixConfig(configPath: string): NoteConfig | null {
       }
     }
 
-    // 3. 确保时间戳字段存在（但不自动更新，由 TimestampService 在 push 时处理）
+    // 3. 确保时间戳字段存在
+    // 这里仅用 Date.now() 占位，确保字段不缺失。
+    // 真实的 git 时间戳由 tn:fix-timestamps 命令统一校准。
     const now = Date.now()
     if (!config.created_at) {
       config.created_at = now
       needsUpdate = true
-      logger.info(`初始化创建时间（将在首次 push 时更新为正确的 git 时间）`)
+      logger.info(
+        `检测到 ${configPath} 缺失  created_at 字段，请执行 tn:fix-timestamps 校准为笔记首次 git commit 的时间）`,
+      )
     }
     if (!config.updated_at) {
       config.updated_at = now
       needsUpdate = true
-      logger.info(`初始化更新时间（将在首次 push 时更新为正确的 git 时间）`)
+      logger.info(
+        `检测到 ${configPath} 缺失  updated_at 字段，请执行 tn:fix-timestamps 校准为笔记最后一次 git commit 的时间）`,
+      )
     }
 
     // 4. 按字段顺序排序

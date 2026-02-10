@@ -1,6 +1,8 @@
 {
   "bilibili": [],
-  "tnotes": ["git-notes"],
+  "tnotes": [
+    "git-notes"
+  ],
   "yuque": [],
   "done": false,
   "enableDiscussions": false,
