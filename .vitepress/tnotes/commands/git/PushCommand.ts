@@ -64,9 +64,11 @@ export class PushCommand extends BaseCommand {
       const changedFiles = status.files.map((f) => f.path)
 
       // 2. 检查本次 push 是否有笔记 README.md 文件变更
-      this.logger.info(`变更文件: ${changedFiles.join(', ')}`)
+      this.logger.info(`共计检测到 ${changedFiles.length} 个变更文件`)
       const changedNotes = this.timestampService.getChangedNotes(changedFiles)
-      this.logger.info(`变更笔记: [${changedNotes.join(', ')}]`)
+      this.logger.info(
+        `工具检测到 ${changedNotes.length} 个变更笔记（README.md）`,
+      )
 
       if (changedNotes.length > 0) {
         this.logger.info(
