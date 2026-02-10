@@ -71,7 +71,7 @@ PS C:\tnotesjs\TNotes> pnpm tn:changelog
 tnotesjs
 ├── TNotes # 根知识库
 ├── TNotes.algorithms
-├── TNotes.c-cpp
+├── TNotes.c
 ├── TNotes.canvas
 ├── TNotes.chrome
 ├── TNotes.cooking
