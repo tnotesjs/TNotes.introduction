@@ -212,6 +212,7 @@
 
   // 配置在资源管理器中隐藏的文件和文件夹
   "files.exclude": {
+    "**/.ssh": true,
     "**/.eslintcache": true,
     "**/bower_components": true,
     "**/.turbo": true,
@@ -228,6 +229,7 @@
   },
   // 配置文件监视器排除的文件和文件夹
   "files.watcherExclude": {
+    "**/.ssh": true,
     "**/.git/objects/**": true,
     "**/.git/subtree-cache/**": true,
     "**/.vscode/**": true,
@@ -249,6 +251,7 @@
 
   // 在使用搜索功能时，将这些文件夹/文件排除在外
   "search.exclude": {
+    "**/.ssh": true,
     "**/node_modules": true,
     "**/.git": true,
     "**/.gitignore": true,

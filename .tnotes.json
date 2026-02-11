@@ -36,8 +36,8 @@
     "details": "TNotes 说明文档",
     "link": "https://tnotesjs.github.io/TNotes.introduction/",
     "created_at": 1740850835000,
-    "updated_at": 1770693334000,
-    "days_since_birth": 9724
+    "days_since_birth": 9724,
+    "updated_at": 1770773699196
   },
   "port": 9379,
   "menuItems": [
