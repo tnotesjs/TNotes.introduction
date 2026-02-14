@@ -3,6 +3,7 @@
  *
  * 事件调度：防抖 + 批量检测 + 队列
  */
+
 import type { WatchEvent } from './internal'
 
 /**
@@ -55,14 +56,32 @@ export class EventScheduler {
 
   constructor(private config: EventSchedulerConfig) {}
 
+  /**
+   * 设置更新状态锁，用于防止在执行耗时更新操作时被新的文件变更事件打断
+   *
+   * @param flag - true 表示正在更新（锁定），false 表示更新完成（解锁）
+   */
   setUpdating(flag: boolean) {
     this.isUpdating = flag
   }
 
+  /**
+   * 获取当前是否处于更新锁定状态
+   *
+   * @returns true 表示正在执行更新操作（事件处理被暂停），false 表示空闲可处理新事件
+   */
   getUpdating() {
     return this.isUpdating
   }
 
+  /**
+   * 将文件变更事件加入待处理队列，并启动防抖定时器
+   *
+   * - 若同一文件路径的事件已存在，则忽略重复事件（去重）
+   * - 每次新事件都会重置防抖计时器，确保在变更停止后才触发处理
+   *
+   * @param event 文件变更事件
+   */
   enqueue(event: WatchEvent) {
     // 事件去重：同一路径的变更只保留一次，降低抖动
     if (this.pendingEvents.has(event.path)) return
@@ -71,6 +90,13 @@ export class EventScheduler {
     this.updateTimer = setTimeout(() => this.flush(), DEFAULT_DEBOUNCE_MS)
   }
 
+  /**
+   * 立即触发事件队列的处理（防抖到期或手动调用）
+   *
+   * - 若当前正在更新（isUpdating 为 true），则跳过以避免重复处理
+   * - 清空待处理事件队列，并通过 onFlush 回调交由上层服务处理
+   * - 处理开始后会锁定更新状态，防止处理过程中被新事件打断
+   */
   flush() {
     if (this.isUpdating) return
     if (this.pendingEvents.size === 0) return
@@ -80,11 +106,24 @@ export class EventScheduler {
     this.config.onFlush(events)
   }
 
+  /**
+   * 记录当前变更时间并检测是否触发批量更新模式
+   *
+   * - 维护一个滑动时间窗口（BATCH_UPDATE_WINDOW_MS）内的变更记录
+   * - 若短时间内（1秒内）变更次数达到阈值（BATCH_UPDATE_THRESHOLD = 3），则判定为批量操作
+   * - 触发批量模式后：
+   *   1. 清空当前待处理事件队列，避免重复处理
+   *   2. 锁定更新状态（isUpdating = true）
+   *   3. 暂停监听服务，并在延迟（窗口 + 缓冲时间）后自动恢复
+   *
+   * @param now 当前时间戳（默认使用 Date.now()）
+   * @returns true 表示已触发批量更新模式，false 表示仍处于普通监听模式
+   */
   recordChangeAndDetectBatch(now: number = Date.now()): boolean {
     // 记录近期变更时间戳，用于检测“短时间高频”场景并切换到批量模式
     this.recentChanges.push(now)
     this.recentChanges = this.recentChanges.filter(
-      (t) => now - t < BATCH_UPDATE_WINDOW_MS
+      (t) => now - t < BATCH_UPDATE_WINDOW_MS,
     )
 
     if (this.recentChanges.length < BATCH_UPDATE_THRESHOLD) return false

@@ -9,7 +9,7 @@
 
 import { existsSync, readFileSync, promises as fsPromises } from 'fs'
 import { join } from 'path'
-import { NOTES_DIR_NOT_SET_ERROR, WATCH_EVENT_TYPES } from './internal'
+import { WATCH_EVENT_TYPES } from './internal'
 import type { WatchEvent, ConfigSnapshotReader } from './internal'
 import { WatchState } from './watchState'
 import { EventScheduler } from './eventScheduler'
@@ -26,6 +26,8 @@ import { NOTES_DIR_PATH } from '../../config/constants'
 import type { NoteConfig } from '../../types'
 
 const RENAME_REVERT_DELAY_MS = 2000
+
+const NOTES_DIR_NOT_SET_ERROR = 'NOTES_DIR_PATH 未设置，无法启动文件监听'
 
 /**
  * 检测到笔记目录名称变更或者被删除的事件时，需要更新根目录下的 README.md 和 sidebar.json
@@ -154,7 +156,7 @@ export class FileWatcherService {
     return this.adapter.isWatching()
   }
 
-  // === 私有实现 ===
+  // #region - 私有实现
 
   private onNoteEvent(event: WatchEvent): void {
     if (!this.isNoteFile(event.path)) return
@@ -361,4 +363,6 @@ export class FileWatcherService {
       return null
     }
   }
+
+  // #endregion - 私有实现
 }

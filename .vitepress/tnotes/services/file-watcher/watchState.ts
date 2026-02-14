@@ -3,6 +3,7 @@
  *
  * 监听状态存储：哈希缓存、配置缓存、目录缓存
  */
+
 import { existsSync, readFileSync, readdirSync, statSync } from 'fs'
 import { createHash } from 'crypto'
 import { join } from 'path'
@@ -56,24 +57,47 @@ export class WatchState {
     return true
   }
 
+  /**
+   * 检查指定名称的笔记目录是否已存在于缓存中
+   *
+   * @param name 笔记目录名称
+   * @returns 若存在则返回 true，否则返回 false
+   */
   hasNoteDir(name: string) {
     return this.noteDirCache.has(name)
   }
 
+  /**
+   * 将指定名称的笔记目录添加到缓存中
+   *
+   * @param name 笔记目录名称
+   */
   addNoteDir(name: string) {
     this.noteDirCache.add(name)
   }
-
+  /**
+   * 从缓存中移除指定名称的笔记目录
+   *
+   * @param name 笔记目录名称
+   */
   deleteNoteDir(name: string) {
     this.noteDirCache.delete(name)
   }
 
+  /**
+   * 清空所有缓存数据，包括文件哈希、笔记目录和配置快照
+   */
   clearAll(): void {
     this.fileHashes.clear()
     this.noteDirCache.clear()
     this.configCache.clear()
   }
 
+  /**
+   * 清除指定笔记目录相关的缓存数据，包括 README.md 和 .tnotes.json 的文件哈希及配置快照
+   *
+   * @param noteDirName 笔记目录名称
+   */
   clearNoteCaches(noteDirName: string): void {
     const readmePath = join(this.config.notesDir, noteDirName, 'README.md')
     const configPath = join(this.config.notesDir, noteDirName, '.tnotes.json')
@@ -82,14 +106,33 @@ export class WatchState {
     this.configCache.delete(configPath)
   }
 
+  /**
+   * 获取指定配置文件路径对应的配置快照
+   *
+   * @param configPath 配置文件路径（通常为 .tnotes.json 的绝对路径）
+   * @returns 配置快照，若不存在则返回 undefined
+   */
   getConfigSnapshot(configPath: string): ConfigSnapshot | undefined {
     return this.configCache.get(configPath)
   }
 
+  /**
+   * 设置指定配置文件路径的配置快照到缓存中
+   *
+   * @param configPath 配置文件路径（通常为 .tnotes.json 的绝对路径）
+   * @param snapshot 配置快照对象
+   */
   setConfigSnapshot(configPath: string, snapshot: ConfigSnapshot): void {
     this.configCache.set(configPath, snapshot)
   }
 
+  /**
+   * 从磁盘初始化监听状态缓存：
+   * 遍历笔记根目录下的所有子目录，将每个笔记目录的 README.md 和 .tnotes.json
+   * 的哈希值及配置快照加载到缓存中。
+   *
+   * @param readConfigSnapshot 用于读取并解析 .tnotes.json 配置文件的函数
+   */
   initializeFromDisk(readConfigSnapshot: ConfigSnapshotReader): void {
     try {
       const noteDirs = readdirSync(this.config.notesDir)
@@ -103,9 +146,7 @@ export class WatchState {
 
         const readmePath = join(noteDirPath, 'README.md')
         const readmeHash = this.getFileHash(readmePath)
-        if (readmeHash) {
-          this.fileHashes.set(readmePath, readmeHash)
-        }
+        if (readmeHash) this.fileHashes.set(readmePath, readmeHash)
 
         const configPath = join(noteDirPath, '.tnotes.json')
         const configHash = this.getFileHash(configPath)

@@ -15,8 +15,6 @@ export const WATCH_EVENT_TYPES = {
 export type WatchEventType =
   (typeof WATCH_EVENT_TYPES)[keyof typeof WATCH_EVENT_TYPES]
 
-export const NOTES_DIR_NOT_SET_ERROR = 'NOTES_DIR_PATH 未设置，无法启动文件监听'
-
 /**
  * 监听到的文件变更事件
  *

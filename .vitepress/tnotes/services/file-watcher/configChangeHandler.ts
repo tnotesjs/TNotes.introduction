@@ -3,6 +3,7 @@
  *
  * 配置变更处理
  */
+
 import type { WatchEvent, ConfigSnapshotReader } from './internal'
 import type { WatchState } from './watchState'
 import type { NoteService } from '../note/service'

@@ -12,7 +12,7 @@ import { logger } from '../utils'
 /**
  * 索引项结构
  */
-export interface NoteIndexItem {
+interface NoteIndexItem {
   /** 笔记索引（文件夹名前 4 位数字，如 "0001"） */
   noteIndex: string
   /** 完整文件夹名称（如 "0001. TNotes 简介"） */
@@ -141,22 +141,6 @@ export class NoteIndexCache {
   }
 
   /**
-   * 更新笔记的文件夹名称（标题变更时）
-   * @param noteIndex - 笔记索引
-   * @param newFolderName - 新的文件夹名称
-   */
-  updateFolderName(noteIndex: string, newFolderName: string): void {
-    const item = this.byNoteIndex.get(noteIndex)
-    if (!item) {
-      logger.warn(`尝试更新不存在的笔记: ${noteIndex}`)
-      return
-    }
-
-    item.folderName = newFolderName
-    logger.debug(`更新笔记文件夹名称: ${noteIndex} -> ${newFolderName}`)
-  }
-
-  /**
    * 删除笔记
    * @param noteIndex - 笔记索引
    */
@@ -192,12 +176,18 @@ export class NoteIndexCache {
   }
 
   /**
-   * 获取索引统计信息
+   * 更新笔记的文件夹名称（标题变更时）
+   * @param noteIndex - 笔记索引
+   * @param newFolderName - 新的文件夹名称
    */
-  getStats() {
-    return {
-      totalNotes: this.byNoteIndex.size,
-      noteIndexes: Array.from(this.byNoteIndex.keys()).sort(),
+  updateFolderName(noteIndex: string, newFolderName: string): void {
+    const item = this.byNoteIndex.get(noteIndex)
+    if (!item) {
+      logger.warn(`尝试更新不存在的笔记: ${noteIndex}`)
+      return
     }
+
+    item.folderName = newFolderName
+    logger.debug(`更新笔记文件夹名称: ${noteIndex} -> ${newFolderName}`)
   }
 }
