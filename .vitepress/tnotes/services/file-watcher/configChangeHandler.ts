@@ -4,7 +4,7 @@
  * 配置变更处理
  */
 
-import type { WatchEvent, ConfigSnapshotReader } from './internal'
+import type { WatchEvent } from './internal'
 import type { WatchState } from './watchState'
 import type { NoteService } from '../note/service'
 import type { NoteIndexCache } from '../../core/NoteIndexCache'
@@ -13,8 +13,6 @@ import type { Logger } from '../../utils'
 interface ConfigChangeHandlerConfig {
   /** 监听状态管理器 */
   state: WatchState
-  /** 读取配置快照的方法 */
-  readSnapshot: ConfigSnapshotReader
   /** 笔记服务实例 */
   noteService: NoteService
   /** 笔记索引缓存实例 */
@@ -30,8 +28,7 @@ export class ConfigChangeHandler {
     if (events.length === 0) return []
     const changedIndexes: string[] = []
 
-    const { state, readSnapshot, noteService, noteIndexCache, logger } =
-      this.config
+    const { state, noteService, noteIndexCache, logger } = this.config
 
     for (const change of events) {
       // 忽略由 API 主动写入的更新，避免重复触发
@@ -40,7 +37,7 @@ export class ConfigChangeHandler {
         continue
       }
 
-      const snapshot = readSnapshot(change.path)
+      const snapshot = state.readConfigSnapshot(change.path)
       if (!snapshot) continue
 
       const cached = state.getConfigSnapshot(change.path)

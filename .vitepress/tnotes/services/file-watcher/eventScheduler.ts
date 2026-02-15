@@ -6,31 +6,33 @@
 
 import type { WatchEvent } from './internal'
 
-/**
- * 批量更新检测窗口（毫秒）
- *
- * - 如果在 BATCH_UPDATE_WINDOW_MS 时间内检测到超过 BATCH_UPDATE_THRESHOLD 个文件变更，则判定为是批量更新
- * - 暂定是 1s 内 3 个文件变更的阈值，正常编写笔记的情况下，1s 内不会超过 3 个文件同时变更，通常不会误判
- * - 当批量更新的行为被检测到之后，会暂停监听服务（BATCH_UPDATE_WINDOW_MS + BATCH_UPDATE_BUFFER_MS）后再恢复
- */
-const BATCH_UPDATE_WINDOW_MS = 1000
-
-/**
- * 批量更新阈值（文件数）
- */
-const BATCH_UPDATE_THRESHOLD = 3
-
-/**
- * 批量更新安全缓冲（毫秒）
- */
-const BATCH_UPDATE_BUFFER_MS = 2000
-
-/**
- * 默认防抖延迟（毫秒）
- */
+/** 默认防抖延迟（毫秒） */
 const DEFAULT_DEBOUNCE_MS = 1000
 
+/**
+ * 默认批量更新检测窗口（毫秒）
+ *
+ * - 如果在窗口时间内检测到超过阈值个文件变更，则判定为批量更新
+ * - 暂定是 1s 内 3 个文件变更的阈值，正常编写笔记的情况下，1s 内不会超过 3 个文件同时变更，通常不会误判
+ * - 当批量更新的行为被检测到之后，会暂停监听服务（窗口 + 缓冲时间）后再恢复
+ */
+const DEFAULT_BATCH_WINDOW_MS = 1000
+
+/** 默认批量更新阈值（文件数） */
+const DEFAULT_BATCH_THRESHOLD = 3
+
+/** 默认批量更新安全缓冲（毫秒） */
+const DEFAULT_BATCH_BUFFER_MS = 2000
+
 interface EventSchedulerConfig {
+  /** 防抖延迟（毫秒），默认 1000 */
+  debounceMs?: number
+  /** 批量更新检测窗口（毫秒），默认 1000 */
+  batchWindowMs?: number
+  /** 批量更新阈值（文件数），默认 3 */
+  batchThreshold?: number
+  /** 批量更新安全缓冲（毫秒），默认 2000 */
+  batchBufferMs?: number
   /** 当事件队列需要刷新处理时的回调函数 */
   onFlush: (events: WatchEvent[]) => void
   /** 检测到批量更新时暂停监听服务的回调函数 */
@@ -48,13 +50,26 @@ export class EventScheduler {
   /** 防抖定时器 */
   private updateTimer: NodeJS.Timeout | null = null
 
+  /** 批量更新恢复定时器 */
+  private batchResumeTimer: NodeJS.Timeout | null = null
+
   /** 记录最近的变更时间戳 */
   private recentChanges: number[] = []
 
   /** 标记是否正在更新，避免循环触发 - 类似一把更新行为锁 */
   private isUpdating = false
 
-  constructor(private config: EventSchedulerConfig) {}
+  private readonly debounceMs: number
+  private readonly batchWindowMs: number
+  private readonly batchThreshold: number
+  private readonly batchBufferMs: number
+
+  constructor(private config: EventSchedulerConfig) {
+    this.debounceMs = config.debounceMs ?? DEFAULT_DEBOUNCE_MS
+    this.batchWindowMs = config.batchWindowMs ?? DEFAULT_BATCH_WINDOW_MS
+    this.batchThreshold = config.batchThreshold ?? DEFAULT_BATCH_THRESHOLD
+    this.batchBufferMs = config.batchBufferMs ?? DEFAULT_BATCH_BUFFER_MS
+  }
 
   /**
    * 设置更新状态锁，用于防止在执行耗时更新操作时被新的文件变更事件打断
@@ -87,7 +102,7 @@ export class EventScheduler {
     if (this.pendingEvents.has(event.path)) return
     this.pendingEvents.set(event.path, event)
     if (this.updateTimer) clearTimeout(this.updateTimer)
-    this.updateTimer = setTimeout(() => this.flush(), DEFAULT_DEBOUNCE_MS)
+    this.updateTimer = setTimeout(() => this.flush(), this.debounceMs)
   }
 
   /**
@@ -123,23 +138,42 @@ export class EventScheduler {
     // 记录近期变更时间戳，用于检测“短时间高频”场景并切换到批量模式
     this.recentChanges.push(now)
     this.recentChanges = this.recentChanges.filter(
-      (t) => now - t < BATCH_UPDATE_WINDOW_MS,
+      (t) => now - t < this.batchWindowMs,
     )
 
-    if (this.recentChanges.length < BATCH_UPDATE_THRESHOLD) return false
+    if (this.recentChanges.length < this.batchThreshold) return false
 
     this.pendingEvents.clear()
     this.recentChanges = []
     this.isUpdating = true
     this.config.onPauseForBatch()
 
-    setTimeout(() => {
+    this.batchResumeTimer = setTimeout(() => {
       // 批量结束后重建状态并恢复监听
+      this.batchResumeTimer = null
       this.isUpdating = false
       this.config.reinit()
       this.config.onResumeAfterBatch()
-    }, BATCH_UPDATE_WINDOW_MS + BATCH_UPDATE_BUFFER_MS)
+    }, this.batchWindowMs + this.batchBufferMs)
 
     return true
+  }
+
+  /**
+   * 清理所有定时器，释放资源
+   *
+   * 在服务停止时调用，防止定时器在服务销毁后仍然触发回调
+   */
+  clearTimers(): void {
+    if (this.updateTimer) {
+      clearTimeout(this.updateTimer)
+      this.updateTimer = null
+    }
+    if (this.batchResumeTimer) {
+      clearTimeout(this.batchResumeTimer)
+      this.batchResumeTimer = null
+    }
+    this.pendingEvents.clear()
+    this.recentChanges = []
   }
 }

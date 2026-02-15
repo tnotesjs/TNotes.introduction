@@ -7,34 +7,24 @@
  * - 监听笔记配置文件的变化并自动更新笔记的状态
  */
 
-import { existsSync, readFileSync, promises as fsPromises } from 'fs'
-import { join } from 'path'
 import { WATCH_EVENT_TYPES } from './internal'
-import type { WatchEvent, ConfigSnapshotReader } from './internal'
+import type { WatchEvent } from './internal'
+import { safeExecute } from './internal'
 import { WatchState } from './watchState'
 import { EventScheduler } from './eventScheduler'
 import { RenameDetector } from './renameDetector'
 import { ConfigChangeHandler } from './configChangeHandler'
 import { ReadmeChangeHandler } from './readmeChangeHandler'
 import { GlobalUpdateCoordinator } from './globalUpdateCoordinator'
+import { FolderChangeHandler } from './folderChangeHandler'
 import { FsWatcherAdapter } from './fsWatcherAdapter'
 import { logger } from '../../utils'
 import { ReadmeService } from '../readme/service'
 import { NoteService } from '../note/service'
 import { NoteIndexCache } from '../../core/NoteIndexCache'
 import { NOTES_DIR_PATH } from '../../config/constants'
-import type { NoteConfig } from '../../types'
-
-const RENAME_REVERT_DELAY_MS = 2000
 
 const NOTES_DIR_NOT_SET_ERROR = 'NOTES_DIR_PATH 未设置，无法启动文件监听'
-
-/**
- * 检测到笔记目录名称变更或者被删除的事件时，需要更新根目录下的 README.md 和 sidebar.json
- *
- * 暂定 1s 作为缓冲，1s 过后再恢复监听
- */
-const DELETE_REINIT_DELAY_MS = 1000
 
 const UPDATE_UNLOCK_DELAY_MS = 500
 
@@ -45,10 +35,12 @@ export class FileWatcherService {
   private configHandler: ConfigChangeHandler
   private readmeHandler: ReadmeChangeHandler
   private coordinator: GlobalUpdateCoordinator
+  private folderHandler: FolderChangeHandler
   private adapter: FsWatcherAdapter
   private noteService: NoteService
   private readmeService: ReadmeService
   private noteIndexCache: NoteIndexCache
+  private unlockTimer: NodeJS.Timeout | null = null
 
   constructor(private notesDir: string = NOTES_DIR_PATH) {
     if (!this.notesDir) {
@@ -64,6 +56,7 @@ export class FileWatcherService {
 
     this.watchState = this.initWatchState()
     this.scheduler = this.initScheduler()
+    this.folderHandler = this.initFolderHandler()
     this.renameDetector = this.initRenameDetector()
     this.configHandler = this.initConfigHandler()
     this.readmeHandler = this.initReadmeHandler()
@@ -72,8 +65,8 @@ export class FileWatcherService {
   }
 
   private initWatchState(): WatchState {
-    const watchState = new WatchState({ notesDir: this.notesDir })
-    watchState.initializeFromDisk(this.readConfigSnapshot)
+    const watchState = new WatchState({ notesDir: this.notesDir, logger })
+    watchState.initializeFromDisk()
     return watchState
   }
 
@@ -82,32 +75,40 @@ export class FileWatcherService {
       onFlush: (events) => this.handleFileChange(events),
       onPauseForBatch: () => logger.warn('监听服务暂停 3s 等待批量更新完成...'),
       onResumeAfterBatch: () => logger.info('恢复自动监听'),
-      reinit: () => this.watchState.initializeFromDisk(this.readConfigSnapshot),
+      reinit: () => this.watchState.initializeFromDisk(),
+    })
+  }
+
+  private initFolderHandler(): FolderChangeHandler {
+    return new FolderChangeHandler({
+      notesDir: this.notesDir,
+      watchState: this.watchState,
+      scheduler: this.scheduler,
+      noteService: this.noteService,
+      readmeService: this.readmeService,
+      noteIndexCache: this.noteIndexCache,
+      logger,
     })
   }
 
   private initRenameDetector(): RenameDetector {
     return new RenameDetector({
       notesDir: this.notesDir,
-      hasNoteDir: (name) => this.watchState.hasNoteDir(name),
-      addNoteDir: (name) => this.watchState.addNoteDir(name),
-      deleteNoteDir: (name) => this.watchState.deleteNoteDir(name),
-      onDelete: (oldName) => this.handleFolderDeletion(oldName),
+      dirCache: {
+        has: (name) => this.watchState.hasNoteDir(name),
+        add: (name) => this.watchState.addNoteDir(name),
+        delete: (name) => this.watchState.deleteNoteDir(name),
+      },
+      logger,
+      onDelete: (oldName) => this.folderHandler.handleFolderDeletion(oldName),
       onRename: (oldName, newName) =>
-        this.handleFolderRenameUpdate(oldName, newName),
-      onInvalidIndex: (name) =>
-        logger.warn(`无法从文件夹名称提取笔记索引: ${name}`),
-      onRenameConflict: (oldName, newName) =>
-        logger.warn(`索引冲突，回退: ${oldName} -> ${newName}`),
-      logInfo: (msg) => logger.info(msg),
-      logWarn: (msg) => logger.warn(msg),
+        this.folderHandler.handleFolderRenameUpdate(oldName, newName),
     })
   }
 
   private initConfigHandler(): ConfigChangeHandler {
     return new ConfigChangeHandler({
       state: this.watchState,
-      readSnapshot: this.readConfigSnapshot,
       noteService: this.noteService,
       noteIndexCache: this.noteIndexCache,
       logger,
@@ -137,8 +138,20 @@ export class FileWatcherService {
   }
 
   start(): void {
-    this.watchState.initializeFromDisk(this.readConfigSnapshot)
+    this.watchState.initializeFromDisk()
     this.adapter.start()
+  }
+
+  stop(): void {
+    this.adapter.stop()
+    this.scheduler.clearTimers()
+    this.renameDetector.clearTimers()
+    this.folderHandler.clearTimers()
+    if (this.unlockTimer) {
+      clearTimeout(this.unlockTimer)
+      this.unlockTimer = null
+    }
+    logger.info('文件监听服务已停止')
   }
 
   pause(): void {
@@ -147,7 +160,7 @@ export class FileWatcherService {
   }
 
   resume(): void {
-    this.watchState.initializeFromDisk(this.readConfigSnapshot)
+    this.watchState.initializeFromDisk()
     this.scheduler.setUpdating(false)
     logger.info('文件监听已恢复')
   }
@@ -178,190 +191,33 @@ export class FileWatcherService {
       const changedNoteIndexes = await this.configHandler.handle(configChanges)
 
       if (changedNoteIndexes.length > 0) {
-        await this.coordinator.applyConfigUpdates(changedNoteIndexes)
+        await safeExecute(
+          '配置变更更新',
+          () => this.coordinator.applyConfigUpdates(changedNoteIndexes),
+          logger,
+        )
         return
       }
 
-      await this.readmeHandler.handle(readmeChanges)
-      await this.coordinator.updateNoteReadmesOnly(events)
-    } finally {
-      setTimeout(
-        () => this.scheduler.setUpdating(false),
-        UPDATE_UNLOCK_DELAY_MS,
+      await safeExecute(
+        'README 变更更新',
+        async () => {
+          await this.readmeHandler.handle(readmeChanges)
+          await this.coordinator.updateNoteReadmesOnly(events)
+        },
+        logger,
       )
-    }
-  }
-
-  private async handleFolderDeletion(deletedFolderName: string): Promise<void> {
-    if (this.scheduler.getUpdating()) return
-    this.scheduler.setUpdating(true)
-
-    try {
-      const noteIndex = this.extractNoteIndexOrWarn(deletedFolderName)
-      if (!noteIndex) return
-
-      logger.info(`正在处理笔记删除: ${noteIndex} (${deletedFolderName})`)
-
-      // 清理缓存
-      this.watchState.deleteNoteDir(deletedFolderName)
-      this.watchState.clearNoteCaches(deletedFolderName)
-      this.noteIndexCache.delete(noteIndex)
-
-      // 更新根 README.md、sidebar.json
-      await this.readmeService.deleteNoteFromReadme(noteIndex)
-      await this.readmeService.regenerateSidebar()
     } finally {
-      setTimeout(() => {
+      if (this.unlockTimer) clearTimeout(this.unlockTimer)
+      this.unlockTimer = setTimeout(() => {
+        this.unlockTimer = null
         this.scheduler.setUpdating(false)
-        this.watchState.initializeFromDisk(this.readConfigSnapshot)
-      }, DELETE_REINIT_DELAY_MS)
-    }
-  }
-
-  private async handleFolderRenameUpdate(
-    oldName: string,
-    newName: string,
-  ): Promise<void> {
-    if (this.scheduler.getUpdating()) return
-    this.scheduler.setUpdating(true)
-
-    try {
-      const { oldNoteIndex, newNoteIndex } = this.validateRenameIndexes(
-        oldName,
-        newName,
-      )
-      if (!oldNoteIndex || !newNoteIndex) return
-
-      logger.info(`正在处理文件夹重命名: ${oldName} → ${newName}`)
-
-      if (oldNoteIndex === newNoteIndex) {
-        await this.handleTitleOnlyRename(newNoteIndex, newName)
-      } else {
-        await this.handleIndexChangedRename(oldNoteIndex, newNoteIndex)
-      }
-    } finally {
-      setTimeout(() => {
-        this.scheduler.setUpdating(false)
-        this.watchState.initializeFromDisk(this.readConfigSnapshot)
       }, UPDATE_UNLOCK_DELAY_MS)
     }
   }
 
-  private validateRenameIndexes(
-    oldName: string,
-    newName: string,
-  ): { oldNoteIndex: string | null; newNoteIndex: string | null } {
-    const oldNoteIndex = this.extractNoteIndexOrWarn(oldName)
-    const newNoteIndex = this.extractNoteIndexOrWarn(newName)
-
-    if (!oldNoteIndex || !newNoteIndex) {
-      return { oldNoteIndex: null, newNoteIndex: null }
-    }
-
-    if (!/^\d{4}$/.test(newNoteIndex)) {
-      logger.error(`新笔记索引格式非法: ${newNoteIndex}，自动回退`)
-      this.revertFolderRename(oldName, newName)
-      return { oldNoteIndex: null, newNoteIndex: null }
-    }
-
-    if (
-      oldNoteIndex !== newNoteIndex &&
-      this.noteIndexCache.has(newNoteIndex)
-    ) {
-      logger.error(`新笔记索引 ${newNoteIndex} 已存在，自动回退`)
-      this.revertFolderRename(oldName, newName)
-      return { oldNoteIndex: null, newNoteIndex: null }
-    }
-
-    return { oldNoteIndex, newNoteIndex }
-  }
-
-  private async handleTitleOnlyRename(
-    noteIndex: string,
-    newName: string,
-  ): Promise<void> {
-    logger.info(`笔记索引未变 (${noteIndex})，只更新标题`)
-    const cache = this.noteIndexCache
-    cache.updateFolderName(noteIndex, newName)
-    const item = cache.getByNoteIndex(noteIndex)
-    if (item) {
-      await this.readmeService.updateNoteInReadme(noteIndex, item.noteConfig)
-    }
-    await this.readmeService.regenerateSidebar()
-    logger.success(`标题更新完成`)
-  }
-
-  private async handleIndexChangedRename(
-    oldNoteIndex: string,
-    newNoteIndex: string,
-  ): Promise<void> {
-    logger.info(`笔记索引变更: ${oldNoteIndex} → ${newNoteIndex}`)
-
-    await this.readmeService.deleteNoteFromReadme(oldNoteIndex)
-
-    const newNote = this.noteService.getNoteByIndex(newNoteIndex)
-
-    if (newNote) {
-      const cache = this.noteIndexCache
-      cache.delete(oldNoteIndex)
-      cache.add(newNote)
-
-      await this.readmeService.appendNoteToReadme(newNoteIndex)
-      await this.readmeService.regenerateSidebar()
-      logger.success(`笔记索引变更处理完成`)
-    } else {
-      logger.error(`未找到新笔记: ${newNoteIndex}`)
-    }
-  }
-
-  private async revertFolderRename(
-    oldName: string,
-    newName: string,
-  ): Promise<void> {
-    try {
-      const oldPath = join(this.notesDir, oldName)
-      const newPath = join(this.notesDir, newName)
-
-      if (existsSync(newPath)) {
-        this.scheduler.setUpdating(true)
-        await fsPromises.rename(newPath, oldPath)
-        logger.warn(`文件夹已回退: ${newName} → ${oldName}`)
-        setTimeout(() => {
-          this.scheduler.setUpdating(false)
-          this.watchState.initializeFromDisk(this.readConfigSnapshot)
-        }, RENAME_REVERT_DELAY_MS)
-      }
-    } catch (error) {
-      logger.error(`回退文件夹重命名失败: ${error}`)
-    }
-  }
-
-  private extractNoteIndexOrWarn(name: string): string | null {
-    const noteIndex = name.match(/^(\d{4})/)?.[1] || null
-    if (!noteIndex) {
-      logger.warn(`无法从文件夹名称提取笔记索引: ${name}`)
-    }
-    return noteIndex
-  }
-
   private isNoteFile(filePath: string): boolean {
     return filePath.endsWith('README.md') || filePath.endsWith('.tnotes.json')
-  }
-
-  private readConfigSnapshot: ConfigSnapshotReader = (configPath) => {
-    try {
-      if (!existsSync(configPath)) return null
-      const content = readFileSync(configPath, 'utf-8')
-      const config = JSON.parse(content) as Partial<NoteConfig>
-      return {
-        done: Boolean(config.done),
-        enableDiscussions: Boolean(config.enableDiscussions),
-        description: config.description || '',
-      }
-    } catch (error) {
-      logger.error('检测配置状态失败', error)
-      return null
-    }
   }
 
   // #endregion - 私有实现

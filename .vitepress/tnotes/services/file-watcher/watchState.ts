@@ -7,11 +7,15 @@
 import { existsSync, readFileSync, readdirSync, statSync } from 'fs'
 import { createHash } from 'crypto'
 import { join } from 'path'
-import type { ConfigSnapshot, ConfigSnapshotReader } from './internal'
+import type { ConfigSnapshot } from './internal'
+import type { Logger } from '../../utils'
+import type { NoteConfig } from '../../types'
 
 interface WatchStateConfig {
   /** 笔记目录路径 */
   notesDir: string
+  /** 日志记录器 */
+  logger: Logger
 }
 
 export class WatchState {
@@ -127,13 +131,35 @@ export class WatchState {
   }
 
   /**
+   * 读取指定配置文件的快照
+   *
+   * 解析 .tnotes.json 配置文件，提取 done、enableDiscussions、description 字段。
+   *
+   * @param configPath 配置文件路径（通常为 .tnotes.json 的绝对路径）
+   * @returns 配置快照，若文件不存在或解析失败则返回 null
+   */
+  readConfigSnapshot(configPath: string): ConfigSnapshot | null {
+    try {
+      if (!existsSync(configPath)) return null
+      const content = readFileSync(configPath, 'utf-8')
+      const config = JSON.parse(content) as Partial<NoteConfig>
+      return {
+        done: Boolean(config.done),
+        enableDiscussions: Boolean(config.enableDiscussions),
+        description: config.description || '',
+      }
+    } catch (error) {
+      this.config.logger.error(`[读取配置快照] ${error}`)
+      return null
+    }
+  }
+
+  /**
    * 从磁盘初始化监听状态缓存：
    * 遍历笔记根目录下的所有子目录，将每个笔记目录的 README.md 和 .tnotes.json
    * 的哈希值及配置快照加载到缓存中。
-   *
-   * @param readConfigSnapshot 用于读取并解析 .tnotes.json 配置文件的函数
    */
-  initializeFromDisk(readConfigSnapshot: ConfigSnapshotReader): void {
+  initializeFromDisk(): void {
     try {
       const noteDirs = readdirSync(this.config.notesDir)
       this.clearAll()
@@ -152,12 +178,14 @@ export class WatchState {
         const configHash = this.getFileHash(configPath)
         if (configHash) {
           this.fileHashes.set(configPath, configHash)
-          const snapshot = readConfigSnapshot(configPath)
+          const snapshot = this.readConfigSnapshot(configPath)
           if (snapshot) this.configCache.set(configPath, snapshot)
         }
       }
-    } catch {
-      // 静默失败：初始化阶段不让监听直接崩溃
+    } catch (error) {
+      this.config.logger.warn(
+        `[initializeFromDisk] 初始化监听状态失败: ${error}`,
+      )
     }
   }
 }

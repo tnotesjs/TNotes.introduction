@@ -4,6 +4,8 @@
  * 文件监听层内部模型：仅供 file-watcher 层使用
  */
 
+import type { Logger } from '../../utils'
+
 /**
  * 监听事件类型常量
  */
@@ -52,6 +54,26 @@ export type ConfigSnapshot = {
 }
 
 /**
- * 配置快照读取器类型
+ * 统一的异步错误处理辅助函数
+ *
+ * 用于包装可能抛出异常的异步操作，将错误统一通过 logger.error 输出，
+ * 避免各模块错误处理方式不一致（静默吞掉、格式各异等）。
+ *
+ * @param label 操作标签，用于错误日志前缀
+ * @param fn 需要执行的异步函数
+ * @param logger 日志记录器
+ * @returns true 表示执行成功，false 表示捕获到异常
  */
-export type ConfigSnapshotReader = (configPath: string) => ConfigSnapshot | null
+export async function safeExecute(
+  label: string,
+  fn: () => Promise<void>,
+  logger: Logger,
+): Promise<boolean> {
+  try {
+    await fn()
+    return true
+  } catch (error) {
+    logger.error(`[${label}] ${error}`)
+    return false
+  }
+}
