@@ -3,6 +3,7 @@
  *
  * TNotes 内置命令入口模块
  */
+
 import { getCommand, COMMAND_NAMES } from './commands'
 import type { CommandArgs } from './commands'
 import { handleError, parseArgs, createLogger } from './utils'
