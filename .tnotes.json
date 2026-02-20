@@ -1,10 +1,18 @@
 {
   "author": "tnotesjs",
   "repoName": "TNotes.introduction",
-  "keywords": ["TNotes.introduction"],
+  "keywords": [
+    "TNotes.introduction"
+  ],
   "sidebarShowNoteId": false,
   "packageManager": "pnpm",
-  "ignore_dirs": [".vscode", "0000", "assets", "node_modules", "demos"],
+  "ignore_dirs": [
+    ".vscode",
+    "0000",
+    "assets",
+    "node_modules",
+    "demos"
+  ],
   "root_item": {
     "icon": {
       "src": "https://cdn.jsdelivr.net/gh/tnotesjs/imgs@main/assets/icon--introduction.svg"
@@ -28,7 +36,7 @@
     "details": "TNotes 说明文档",
     "link": "https://tnotesjs.github.io/TNotes.introduction/",
     "created_at": 1740850835000,
-    "updated_at": 1770726867907,
+    "updated_at": 1771598363336,
     "days_since_birth": 9724
   },
   "port": 9379,
