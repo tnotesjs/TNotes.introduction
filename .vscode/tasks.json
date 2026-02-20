@@ -70,10 +70,10 @@
       "problemMatcher": ["$tsc"]
     },
     {
-      "label": "tn:sync-scripts",
-      "detail": "同步知识库脚本到其它 TNotes.xxx 知识库中",
+      "label": "tn:sync-core",
+      "detail": "同步所有兄弟知识库的 TNotes.core 到最新版本",
       "type": "shell",
-      "command": "pnpm tn:sync-scripts",
+      "command": "pnpm tn:sync-core",
       "group": "build",
       "problemMatcher": ["$tsc"]
     },
