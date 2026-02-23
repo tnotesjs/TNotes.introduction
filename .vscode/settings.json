@@ -326,7 +326,11 @@
   // 禁用 Less 内置验证
   "less.validate": false,
   // 禁用 SCSS 内置验证
-  "scss.validate": false
+  "scss.validate": false,
+
+  // Prettier 配置：使用单引号，不加分号
+  "prettier.singleQuote": true,
+  "prettier.semi": false
 
   // #endregion - Others（其他相关配置）
 
