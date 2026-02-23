@@ -33,7 +33,7 @@
 - [x] [0007. 英文单词列表](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0007.%20%E8%8B%B1%E6%96%87%E5%8D%95%E8%AF%8D%E5%88%97%E8%A1%A8/README.md)
 - [x] [0008. 图片轮播](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0008.%20%E5%9B%BE%E7%89%87%E8%BD%AE%E6%92%AD/README.md)
 - [x] [0012. Mermaid 图表](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0012.%20Mermaid%20%E5%9B%BE%E8%A1%A8/README.md)
-- [ ] [0013. MarkMap 思维导图](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0013.%20MarkMap%20%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE/README.md)
+- [x] [0013. MarkMap 思维导图](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0013.%20MarkMap%20%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE/README.md)
 - [x] [0005. 开启评论功能](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0005.%20%E5%BC%80%E5%90%AF%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD/README.md)
 - [x] [0010. 足迹纪录](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0010.%20%E8%B6%B3%E8%BF%B9%E7%BA%AA%E5%BD%95/README.md)
 

@@ -21,7 +21,7 @@
 
 想要在纯 markdown 中集成思维导图功能，目前测试下来最佳方案是使用 [markmap][1]。
 
-TNotes 中的 MarkMap 思维导图组件就是基于 markmap 实现的。
+TNotes.core 中的 MarkMap 思维导图组件就是基于 markmap 实现的。
 
 ## 3. 🤔 思维导图组件如何使用？
 
@@ -93,4 +93,6 @@ TNotes 中的 MarkMap 思维导图组件就是基于 markmap 实现的。
 
 ## 4. 🔗 引用
 
-[1]: https://github.com/gera2ld/markmap
+- [github - markmap][1]
+
+[1]: https://github.com/markmap/markmap
