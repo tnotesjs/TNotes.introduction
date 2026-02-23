@@ -2,7 +2,7 @@
 
 <!-- region:toc -->
 
-- [1. 知识库简介](#1-知识库简介)
+- [1. TNotes.introduction](#1-tnotesintroduction)
 - [2. TNotes](#2-tnotes)
 - [3. TNotes 组件](#3-tnotes-组件)
 - [4. TNotes 命令](#4-tnotes-命令)
@@ -11,9 +11,9 @@
 
 <!-- endregion:toc -->
 
-## 1. 知识库简介
+## 1. TNotes.introduction
 
-- [x] [0015. TNotes.introduction 简介](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0015.%20TNotes.introduction%20%E7%AE%80%E4%BB%8B/README.md)
+- [x] [0015. TNotes.introduction](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0015.%20TNotes.introduction/README.md)
 - [x] [0016. TNotes 更新日志](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0016.%20TNotes%20%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97/README.md)
 
 ## 2. TNotes

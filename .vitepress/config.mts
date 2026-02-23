@@ -19,6 +19,8 @@
  *
  * TODO - v2 版本发布后，考虑升级
  */
+import fs from 'fs'
+import path from 'path'
 import { defineConfig } from 'vitepress'
 import { repoName } from '../.tnotes.json'
 import {
@@ -89,6 +91,16 @@ export default defineConfig({
       // 提高 chunk 大小警告阈值到 1000KB
       chunkSizeWarningLimit: 1000,
     },
+  },
+  transformPageData(pageData) {
+    if (/^notes\/\d{4}/.test(pageData.relativePath)) {
+      const fullPath = path.resolve(__dirname, '../', pageData.relativePath)
+      try {
+        pageData.frontmatter.rawContent = fs.readFileSync(fullPath, 'utf-8')
+      } catch {
+        pageData.frontmatter.rawContent = null
+      }
+    }
   },
   router: {
     /**
