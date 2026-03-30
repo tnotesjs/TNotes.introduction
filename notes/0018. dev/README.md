@@ -4,13 +4,16 @@
 
 - [1. 🎯 本节内容](#1--本节内容)
 - [2. 🫧 评价](#2--评价)
-- [3. 🤔 服务的启动流程是？](#3--服务的启动流程是)
-  - [3.1. 执行启动命令](#31-执行启动命令)
-  - [3.2. 启动 vitepress 服务](#32-启动-vitepress-服务)
-    - [启动预查1：单例服务](#启动预查1单例服务)
-    - [启动预查2：检查冲突的笔记索引](#启动预查2检查冲突的笔记索引)
-    - [输出启动状态](#输出启动状态)
-  - [3.3. 启动缓存与监听服务](#33-启动缓存与监听服务)
+- [3. 🤔 TNotes 知识库的开发环境启动命令是？](#3--tnotes-知识库的开发环境启动命令是)
+- [4. 🤔 服务的启动流程是？](#4--服务的启动流程是)
+- [5. 🤔 为什么需要对 `vitepress dev` 做二次封装？](#5--为什么需要对-vitepress-dev-做二次封装)
+- [6. 🤔 服务启动阶段都做了哪些检查？](#6--服务启动阶段都做了哪些检查)
+  - [6.1. 确保是单例服务](#61-确保是单例服务)
+  - [6.2. 确保无冲突的笔记索引](#62-确保无冲突的笔记索引)
+- [7. 🤔 如何获取笔记启动的真实进度？](#7--如何获取笔记启动的真实进度)
+- [8. 🤔 服务启动的超时时间是？](#8--服务启动的超时时间是)
+- [9. 🤔 监听服务是？](#9--监听服务是)
+  - [9.1. 启动缓存与监听服务](#91-启动缓存与监听服务)
     - [步骤 1：扫描笔记目录](#步骤-1扫描笔记目录)
     - [步骤 2：初始化笔记索引缓存](#步骤-2初始化笔记索引缓存)
     - [步骤 3：启动文件监听服务](#步骤-3启动文件监听服务)
@@ -25,11 +28,7 @@
 
 这篇笔记用于记录 `tn:dev` 命令启动知识库开发服务的核心流程。
 
-## 3. 🤔 服务的启动流程是？
-
-![1.svg](./assets/1.svg)
-
-### 3.1. 执行启动命令
+## 3. 🤔 TNotes 知识库的开发环境启动命令是？
 
 ```bash
 # 执行以下命令，启动笔记服务
@@ -40,11 +39,19 @@ pnpm tn:dev
 # 本质是运行 ./.vitepress/tnotes/index.ts 文件，并传入启动参数 --dev
 ```
 
-### 3.2. 启动 vitepress 服务
+## 4. 🤔 服务的启动流程是？
 
-在 `.vitepress/tnotes/commands/dev/DevCommand.ts` 中引入了二次封装的 `VitepressService` 类，通过 `vitepressService.startServer()` 来启动 vitepress 服务。
+![1.svg](./assets/1.svg)
 
-#### 启动预查1：单例服务
+## 5. 🤔 为什么需要对 `vitepress dev` 做二次封装？
+
+核心目的：实现 vitepress 单例服务，以免误操作同时启动多个服务，导致监听行为冲突。
+
+相关逻辑所在位置：在 `.vitepress/tnotes/commands/dev/DevCommand.ts` 中引入了二次封装的 `VitepressService` 类，通过 `vitepressService.startServer()` 来启动 vitepress 服务。
+
+## 6. 🤔 服务启动阶段都做了哪些检查？
+
+### 6.1. 确保是单例服务
 
 需要确保服务是单例的，在服务启动之前会做以下处理：
 
@@ -53,7 +60,9 @@ pnpm tn:dev
 
 经过上述处理之后，再执行 `vitepress dev` 命令：
 
-```ts
+```ts {7-10}
+// .vitepress/tnotes/services/VitepressService.ts
+
 // 启动 VitePress 开发服务器
 const pm = this.configManager.get('packageManager') || DEFAULT_PACKAGE_MANAGER
 const args = ['vitepress', 'dev', '--port', port.toString()]
@@ -64,11 +73,11 @@ const processInfo = this.processManager.spawn(processId, pm, args, {
 })
 ```
 
-#### 启动预查2：检查冲突的笔记索引
+### 6.2. 确保无冲突的笔记索引
 
 通过 `noteManager.countNotes()` 预扫描笔记数量，并在启动 VitePress 之前检测冲突。
 
-```ts
+```ts {3}
 // .vitepress/tnotes/services/VitepressService.ts
 
 const noteCountResult = this.noteManager.countNotes()
@@ -86,7 +95,11 @@ if (noteCountResult.conflicts.length > 0) {
   )
   process.exit(1)
 }
+```
 
+在 `noteManager.countNotes()` 统计笔记数量的同时，会对 notes 目录下的笔记索引进行检查。
+
+```ts {34-40}
 // .vitepress/tnotes/core/NoteManager.ts
 
 /**
@@ -119,6 +132,8 @@ countNotes(): NoteCountResult {
   }
 
   const unique = indexMap.size
+
+  // 记录冲突的笔记索引和完整的笔记目录名称
   const conflicts: NoteCountResult['conflicts'] = []
   for (const [index, dirNames] of indexMap.entries()) {
     if (dirNames.length > 1) {
@@ -130,7 +145,9 @@ countNotes(): NoteCountResult {
 }
 ```
 
-冲突示例：
+在笔记服务启动的过程中，如果出现了索引冲突，会终止启动流程，并输出存在冲突的笔记索引及对应的笔记目录名称。
+
+下面是一个冲突示例：
 
 ```bash
 pnpm tn:dev
@@ -149,9 +166,68 @@ pnpm tn:dev
 #  ELIFECYCLE  Command failed with exit code 1.
 ```
 
-#### 输出启动状态
+## 7. 🤔 如何获取笔记启动的真实进度？
 
-打印服务的启动状态（比如扫描到多少篇笔记，一共耗时多长时间），在监听到 vitepress 服务启动完成（监听到进程输出 `Local:` 或者 `http://localhost`）之后，打印启动成功后的一些提示信息。
+启动进度的真实百分比不好获取，通过 vitepress 的钩子做了尝试没能成功，可能需要改 vitepress 源码，目前（26.03）所有 TNotes 知识库的启动耗时大致在十几秒以内，是否能够看到真实进度对体验的影响也不是很大，因此暂时先将这个真实百分比的优化点挂起！
+
+::: tip 无法获取 dev 阶段的百分比进度的根本原因
+
+VitePress 及其底层的 Vite 在启动过程中没有提供进度事件机制。
+
+Vite dev 模式采用 unbundled 设计，启动时只做配置解析和启动 HTTP 服务器，模块在浏览器请求时才按需处理（触发 `resolveId`/`load`/`transform` 钩子），启动阶段根本不存在“逐文件处理”的过程，也就没有进度可报告。
+
+VitePress 的 Build Hooks（如 `buildEnd`、`transformHead`）仅在 SSG 构建时触发（因此 build 阶段可以获取到真实打包进度），dev 模式下不会被调用；`transformPageData` 虽然在 dev 模式可用，但它是按页面请求触发的，不是启动时批量触发的。
+
+开发时曾尝试通过 VitePress 的生命周期钩子和 Vite 插件钩子（`buildStart`、`configureServer` 等）来获取启动进度，但这些钩子在启动时都只触发一次，无法提供逐步的进度信息。
+
+无论是通过 CLI（`spawn`）还是 Node API（`createServer`）启动，都只能知道“未就绪”和“已就绪”两个状态，中间不会暴露逐步的进度信息。这不是调用方式的问题，而是 VitePress/Vite 本身的设计如此。
+
+:::
+
+## 8. 🤔 服务启动的超时时间是？
+
+测试了 `3k~4k` 笔记数量的知识库 `TNotes.leetcode`，启动耗时大致在 `10s~20s` 左右，因此暂时将启动的超时时间设置为了 `60s`。
+
+如果 60s 还是没启动成功，那大概率是系统 BUG。
+
+```ts {4,21-30}
+// .vitepress/tnotes/services/VitepressService.ts
+
+/** 服务启动超时时间（毫秒） */
+const SERVER_STARTUP_TIMEOUT = 60000
+
+// ...
+
+/**
+ * 等待服务就绪，显示启动状态
+ * @param childProcess - 子进程
+ * @param noteCount - 笔记数量
+ */
+private waitForServerReady(
+  childProcess: import('child_process').ChildProcess,
+  noteCount: number,
+): Promise<void> {
+  return new Promise((resolve) => {
+    // ...
+
+    // 超时处理
+    setTimeout(() => {
+      if (!serverReady) {
+        serverReady = true
+        clearInterval(statusTimer)
+        process.stderr.clearLine?.(0)
+        process.stderr.cursorTo?.(0)
+        console.log('⚠️  启动超时，请检查 VitePress 输出')
+        resolve()
+      }
+    }, SERVER_STARTUP_TIMEOUT)
+  })
+}
+```
+
+在服务启动过程中，会打印服务的启动状态（比如扫描到多少篇笔记，一共耗时多长时间），在监听到 vitepress 服务启动完成（监听到进程输出 `Local:` 或者 `http://localhost`）之后，打印启动成功后的一些提示信息。
+
+启动成功示例：
 
 ```bash
 pnpm tn:dev
@@ -169,15 +245,15 @@ pnpm tn:dev
 
 看到终端打印 `http://localhost:9379/TNotes.introduction/` 之后，意味着 vitepress 服务已经启动成功，此时就可以通过浏览器打开此链接访问开发环境下的知识库了。
 
-::: tip 备注：服务启动进度问题
+::: tip ⏰ TODO
 
-启动进度的真实百分比不好获取，通过 vitepress 的钩子做了尝试没能成功，可能需要改 vitepress 源码，目前（26.02）所有 TNotes 知识库的启动耗时大致在十几秒以内，是否能够看到真实进度对体验的影响也不是很大，因此暂时先将这个真实百分比的优化点挂起！
-
-测试了 `3k~4k` 笔记数量的知识库 `TNotes.leetcode`，启动耗时大致在 `10s~20s` 左右，因此暂时将启动的超时时间设置为了 `60s`。
+将这个启动超时的时间做成可配置的或许会更好！
 
 :::
 
-### 3.3. 启动缓存与监听服务
+## 9. 🤔 监听服务是？
+
+### 9.1. 启动缓存与监听服务
 
 在 VitePress 服务启动成功之后，`DevCommand` 会调用 `serviceManager.initialize()` 来初始化缓存和文件监听服务。`ServiceManager` 是一个单例，内部依次完成以下三个步骤：
 
