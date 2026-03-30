@@ -7,16 +7,15 @@
 - [3. 🤔 TNotes 知识库的开发环境启动命令是？](#3--tnotes-知识库的开发环境启动命令是)
 - [4. 🤔 服务的启动流程是？](#4--服务的启动流程是)
 - [5. 🤔 为什么需要对 `vitepress dev` 做二次封装？](#5--为什么需要对-vitepress-dev-做二次封装)
-- [6. 🤔 服务启动阶段都做了哪些检查？](#6--服务启动阶段都做了哪些检查)
+- [6. 🤔 vitepress 服务启动阶段都做了哪些检查？](#6--vitepress-服务启动阶段都做了哪些检查)
   - [6.1. 确保是单例服务](#61-确保是单例服务)
-  - [6.2. 确保无冲突的笔记索引](#62-确保无冲突的笔记索引)
-- [7. 🤔 如何获取笔记启动的真实进度？](#7--如何获取笔记启动的真实进度)
-- [8. 🤔 服务启动的超时时间是？](#8--服务启动的超时时间是)
-- [9. 🤔 监听服务是？](#9--监听服务是)
-  - [9.1. 启动缓存与监听服务](#91-启动缓存与监听服务)
-    - [步骤 1：扫描笔记目录](#步骤-1扫描笔记目录)
-    - [步骤 2：初始化笔记索引缓存](#步骤-2初始化笔记索引缓存)
-    - [步骤 3：启动文件监听服务](#步骤-3启动文件监听服务)
+  - [6.2. 确保无冲突的笔记索引和配置 id](#62-确保无冲突的笔记索引和配置-id)
+- [7. 🤔 如何获取 vitepress 服务启动的真实进度？](#7--如何获取-vitepress-服务启动的真实进度)
+- [8. 🤔 vitepress 服务启动的超时时间是？](#8--vitepress-服务启动的超时时间是)
+- [9. 🤔 TNotes 笔记监听服务的启动流程是？](#9--tnotes-笔记监听服务的启动流程是)
+  - [9.1. 步骤 1：获取笔记数据](#91-步骤-1获取笔记数据)
+  - [9.2. 步骤 2：初始化笔记索引缓存](#92-步骤-2初始化笔记索引缓存)
+  - [9.3. 步骤 3：启动文件监听服务](#93-步骤-3启动文件监听服务)
 
 <!-- endregion:toc -->
 
@@ -26,7 +25,10 @@
 
 ## 2. 🫧 评价
 
-这篇笔记用于记录 `tn:dev` 命令启动知识库开发服务的核心流程。
+这篇笔记用于记录 `tn:dev` 命令启动知识库开发服务的核心流程，主要可分为两个阶段：
+
+1. 启动 vitepress 服务
+2. 启动 TNotes 笔记监听服务
 
 ## 3. 🤔 TNotes 知识库的开发环境启动命令是？
 
@@ -49,7 +51,7 @@ pnpm tn:dev
 
 相关逻辑所在位置：在 `.vitepress/tnotes/commands/dev/DevCommand.ts` 中引入了二次封装的 `VitepressService` 类，通过 `vitepressService.startServer()` 来启动 vitepress 服务。
 
-## 6. 🤔 服务启动阶段都做了哪些检查？
+## 6. 🤔 vitepress 服务启动阶段都做了哪些检查？
 
 ### 6.1. 确保是单例服务
 
@@ -73,100 +75,118 @@ const processInfo = this.processManager.spawn(processId, pm, args, {
 })
 ```
 
-### 6.2. 确保无冲突的笔记索引
+### 6.2. 确保无冲突的笔记索引和配置 id
 
-通过 `noteManager.countNotes()` 预扫描笔记数量，并在启动 VitePress 之前检测冲突。
+在 `DevCommand.run()` 中，扫描笔记目录并读取配置信息后，会对笔记数据进行完整性校验。校验内容包括：
 
-```ts {3}
-// .vitepress/tnotes/services/VitepressService.ts
+1. 笔记索引冲突 — 检查是否有多个笔记文件夹使用了相同的 4 位数字编号
+2. 配置 ID 缺失 — 检查是否有笔记的 `.tnotes.json` 配置文件缺失或 `id` 字段为空
+3. 配置 ID 重复 — 检查是否有多个笔记使用了相同的 UUID 配置 ID
 
-const noteCountResult = this.noteManager.countNotes()
+任一检查失败都会终止启动流程，并输出错误信息指引用户修复。
 
-if (noteCountResult.conflicts.length > 0) {
-  logger.error('⚠️  检测到重复的笔记编号，服务启动已终止！')
-  for (const { index, dirNames } of noteCountResult.conflicts) {
-    logger.error(`   编号 ${index} 被以下笔记重复使用：`)
-    dirNames.forEach((dirName) => {
-      logger.error(`      - ${dirName}`)
-    })
-  }
-  logger.error(
-    '\n请检查并删除/重命名重复的笔记文件夹，确保每个笔记编号唯一！\n',
-  )
-  process.exit(1)
-}
-```
+```ts
+// .vitepress/tnotes/commands/dev/DevCommand.ts
 
-在 `noteManager.countNotes()` 统计笔记数量的同时，会对 notes 目录下的笔记索引进行检查。
+private validateNotes(notes: NoteInfo[]): void {
+  const errors: string[] = []
 
-```ts {34-40}
-// .vitepress/tnotes/core/NoteManager.ts
-
-/**
- * 统计笔记数量（仅按目录名规则筛选，不读取文件）
- * @returns 包含去重前数量、去重后数量、冲突笔记列表的统计结果
- */
-countNotes(): NoteCountResult {
-  if (!existsSync(NOTES_PATH)) {
-    return { total: 0, unique: 0, conflicts: [] }
-  }
-
-  const entries = readdirSync(NOTES_PATH, { withFileTypes: true })
-
-  // 筛选出符合 "XXXX. 笔记标题" 格式的目录
-  const noteDirs = entries.filter(
-    (entry) =>
-      entry.isDirectory() &&
-      !entry.name.startsWith('.') &&
-      /^\d{4}\./.test(entry.name),
-  )
-
-  const total = noteDirs.length
-
-  // 按 4 位数字编号分组，检测重复
+  // 检查 noteIndex 冲突
   const indexMap = new Map<string, string[]>()
-  for (const entry of noteDirs) {
-    const index = entry.name.slice(0, 4)
-    if (!indexMap.has(index)) indexMap.set(index, [])
-    indexMap.get(index)!.push(entry.name)
+  for (const note of notes) {
+    if (!indexMap.has(note.index)) indexMap.set(note.index, [])
+    indexMap.get(note.index)!.push(note.dirName)
   }
-
-  const unique = indexMap.size
-
-  // 记录冲突的笔记索引和完整的笔记目录名称
-  const conflicts: NoteCountResult['conflicts'] = []
   for (const [index, dirNames] of indexMap.entries()) {
     if (dirNames.length > 1) {
-      conflicts.push({ index, dirNames })
+      errors.push(`⚠️  检测到重复的笔记编号：`)
+      errors.push(`   编号 ${index} 被以下笔记重复使用：`)
+      dirNames.forEach((dirName) => errors.push(`      - ${dirName}`))
     }
   }
 
-  return { total, unique, conflicts }
+  // 检查 config id 缺失
+  const missingConfigId: string[] = []
+  for (const note of notes) {
+    if (!note.config || !note.config.id) {
+      missingConfigId.push(note.dirName)
+    }
+  }
+  if (missingConfigId.length > 0) {
+    errors.push(`⚠️  检测到笔记配置 ID 缺失：`)
+    missingConfigId.forEach((dirName) => errors.push(`      - ${dirName}`))
+  }
+
+  // 检查 config id 重复
+  const configIdMap = new Map<string, string[]>()
+  for (const note of notes) {
+    if (note.config?.id) {
+      if (!configIdMap.has(note.config.id))
+        configIdMap.set(note.config.id, [])
+      configIdMap.get(note.config.id)!.push(note.dirName)
+    }
+  }
+  for (const [configId, dirNames] of configIdMap.entries()) {
+    if (dirNames.length > 1) {
+      errors.push(`⚠️  检测到重复的笔记配置 ID：`)
+      errors.push(`   配置 ID ${configId} 被以下笔记重复使用：`)
+      dirNames.forEach((dirName) => errors.push(`      - ${dirName}`))
+    }
+  }
+
+  if (errors.length > 0) {
+    for (const line of errors) {
+      this.logger.error(line)
+    }
+    this.logger.error('\n请修复上述问题后重新启动服务。\n')
+    process.exit(1)
+  }
 }
 ```
 
-在笔记服务启动的过程中，如果出现了索引冲突，会终止启动流程，并输出存在冲突的笔记索引及对应的笔记目录名称。
-
-下面是一个冲突示例：
+笔记索引冲突示例：
 
 ```bash
 pnpm tn:dev
 
-# > @ tn:dev C:\tnotesjs\TNotes.introduction
-# >                          tsx ./.vitepress/tnotes/index.ts --dev
-
 # 🚀 [13:08:28.377] [dev] 启动知识库开发服务
-# ❌ [13:08:28.590] ⚠️  检测到重复的笔记编号，服务启动已终止！
+# ℹ️  [13:08:28.378] 扫描笔记目录...
+# ℹ️  [13:08:28.390] 扫描到 31 篇笔记
+# ❌ [13:08:28.590] ⚠️  检测到重复的笔记编号：
 # ❌ [13:08:28.590]    编号 0001 被以下笔记重复使用：
 # ❌ [13:08:28.590]       - 0001. new
 # ❌ [13:08:28.590]       - 0001. TNotes 简介
 # ❌ [13:08:28.591]
-# 请检查并删除/重命名重复的笔记文件夹，确保每个笔记编号唯一！
+# 请修复上述问题后重新启动服务。
 
-#  ELIFECYCLE  Command failed with exit code 1.
+#  ELIFECYCLE  Command failed with exit code 1.
 ```
 
-## 7. 🤔 如何获取笔记启动的真实进度？
+配置 ID 缺失示例：
+
+```bash
+pnpm tn:dev
+
+# ❌ ⚠️  检测到笔记配置 ID 缺失：
+# ❌       - 0003. 评论功能的技术实现
+# ❌
+# 请修复上述问题后重新启动服务。
+```
+
+配置 ID 重复示例：
+
+```bash
+pnpm tn:dev
+
+# ❌ ⚠️  检测到重复的笔记配置 ID：
+# ❌    配置 ID f3625513-ef8b-4ef5-b01b-69875d0fdcd9 被以下笔记重复使用：
+# ❌       - 0001. TNotes 简介
+# ❌       - 0005. 开启评论功能
+# ❌
+# 请修复上述问题后重新启动服务。
+```
+
+## 7. 🤔 如何获取 vitepress 服务启动的真实进度？
 
 启动进度的真实百分比不好获取，通过 vitepress 的钩子做了尝试没能成功，可能需要改 vitepress 源码，目前（26.03）所有 TNotes 知识库的启动耗时大致在十几秒以内，是否能够看到真实进度对体验的影响也不是很大，因此暂时先将这个真实百分比的优化点挂起！
 
@@ -184,21 +204,21 @@ VitePress 的 Build Hooks（如 `buildEnd`、`transformHead`）仅在 SSG 构建
 
 :::
 
-## 8. 🤔 服务启动的超时时间是？
+## 8. 🤔 vitepress 服务启动的超时时间是？
 
-测试了 `3k~4k` 笔记数量的知识库 `TNotes.leetcode`，启动耗时大致在 `10s~20s` 左右，因此暂时将启动的超时时间设置为了 `60s`。
+测试了 `3k~4k` 笔记数量的知识库 `TNotes.leetcode`，总的启动耗时（vitepress 服务 + TNotes 笔记监听服务）大致在 `10s~20s` 左右，因此暂时将 vitepress 启动的超时时间设置为了 `60s`。
 
-如果 60s 还是没启动成功，那大概率是系统 BUG。
+基于 vite 的 unbundled 机制，vitepress 服务基本都是秒开的，如果 60s 还是没启动成功，那大概率是系统 BUG。
 
 ```ts {4,21-30}
 // .vitepress/tnotes/services/VitepressService.ts
 
-/** 服务启动超时时间（毫秒） */
+/ 服务启动超时时间（毫秒） */
 const SERVER_STARTUP_TIMEOUT = 60000
 
 // ...
 
-/**
+/
  * 等待服务就绪，显示启动状态
  * @param childProcess - 子进程
  * @param noteCount - 笔记数量
@@ -236,7 +256,7 @@ pnpm tn:dev
 # >                          tsx ./.vitepress/tnotes/index.ts --dev
 
 # 🚀 [13:20:32.156] [dev] 启动知识库开发服务
-# ✅ 服务已就绪 - 共 30 篇笔记，启动耗时 3.7s
+# ✅ VitePress 服务已就绪 - 共 30 篇笔记，启动耗时 3.7s
 
 #   ➜  Local:   http://localhost:9379/TNotes.introduction/
 #   ➜  Network: use --host to expose
@@ -251,45 +271,27 @@ pnpm tn:dev
 
 :::
 
-## 9. 🤔 监听服务是？
+## 9. 🤔 TNotes 笔记监听服务的启动流程是？
 
-### 9.1. 启动缓存与监听服务
-
-在 VitePress 服务启动成功之后，`DevCommand` 会调用 `serviceManager.initialize()` 来初始化缓存和文件监听服务。`ServiceManager` 是一个单例，内部依次完成以下三个步骤：
-
-#### 步骤 1：扫描笔记目录
-
-调用 `noteManager.scanNotes({ skipDuplicateCheck: true })` 全量扫描 `notes/` 目录。与 `countNotes()` 只读取目录名不同，`scanNotes()` 会深入读取每篇笔记的 `.tnotes.json` 配置文件并进行校验修复。
-
-这里传入 `skipDuplicateCheck: true` 跳过重复编号检测，因为在上一阶段（3.2）的 `countNotes()` 中已经完成了冲突检测，避免重复工作。
-
-#### 步骤 2：初始化笔记索引缓存
-
-将扫描结果注入 `NoteIndexCache` 单例，构建两个内存索引：
-
-- `byNoteIndex`：笔记编号（如 `"0001"`）→ 笔记索引项
-- `byConfigId`：配置文件中的 UUID → 笔记编号
-
-有了这两个索引，后续通过笔记编号或配置 ID 查询笔记信息时，直接从内存读取，无需再扫描文件系统。
-
-#### 步骤 3：启动文件监听服务
-
-启动 `FileWatcherService`，监听 `notes/` 目录下的文件变化。监听到变化后，会根据事件类型（笔记目录重命名/删除、配置文件变更、README 变更等）自动触发对应的更新逻辑，并同步更新 `NoteIndexCache` 中的缓存数据。
+在 VitePress 服务启动成功之后，`DevCommand` 会调用 `serviceManager.initialize(notes)` 来初始化缓存和文件监听服务，传入的 `notes` 是 `DevCommand.run()` 中已经扫描并校验通过的笔记数据，避免重复扫描。`ServiceManager` 是一个单例，内部依次完成以下三个步骤：
 
 ```ts
 // .vitepress/tnotes/services/manager.ts
 
-async initialize(): Promise<void> {
-  if (this.initialized) {
-    logger.warn('ServiceManager 已经初始化')
-    return
-  }
-
+async initialize(preScannedNotes?: NoteInfo[]): Promise<void> {
   try {
-    // 1. 扫描所有笔记（跳过重复检测，dev 流程已在 countNotes 中完成）
-    logger.info('扫描笔记目录...')
-    const notes = this.noteManager.scanNotes({ skipDuplicateCheck: true })
-    logger.info(`扫描到 ${notes.length} 篇笔记`)
+    let notes: NoteInfo[]
+
+    if (preScannedNotes) {
+      // 使用外部传入的扫描结果（避免重复扫描）
+      notes = preScannedNotes
+      logger.info(`使用预扫描结果，共 ${notes.length} 篇笔记`)
+    } else {
+      // 内部自行扫描（兼容 updateConfigPlugin 等场景）
+      logger.info('扫描笔记目录...')
+      notes = this.noteManager.scanNotes()
+      logger.info(`扫描到 ${notes.length} 篇笔记`)
+    }
 
     // 2. 初始化笔记索引缓存
     logger.info('初始化笔记索引缓存...')
@@ -306,16 +308,82 @@ async initialize(): Promise<void> {
 }
 ```
 
+`initialize()` 支持两种调用方式：
+
+- 有参调用 `initialize(notes)` — `DevCommand` 启动流程使用，传入预扫描结果，跳过重复扫描
+- 无参调用 `initialize()` — `updateConfigPlugin` 等其他场景使用，内部自行扫描
+
+### 9.1. 步骤 1：获取笔记数据
+
+当 `DevCommand` 传入预扫描结果时，`initialize()` 直接使用这些已经过校验的笔记数据，无需再次扫描文件系统。
+
+扫描目录得到 `notes` 数据结构：
+
+```js
+// notes = [
+//   {
+//     index: '0001',
+//     path: 'C:\\tnotesjs\\TNotes.introduction\\notes\\0001. TNotes 简介',
+//     dirName: '0001. TNotes 简介',
+//     readmePath: 'C:\\tnotesjs\\TNotes.introduction\\notes\\0001. TNotes 简介\\README.md',
+//     configPath: 'C:\\tnotesjs\\TNotes.introduction\\notes\\0001. TNotes 简介\\.tnotes.json',
+//     config: {
+//       bilibili: [],
+//       tnotes: [],
+//       yuque: [],
+//       done: true,
+//       enableDiscussions: true,
+//       description: 'TNotes 是一个基于开源技术构建的免费个人在线知识库系统，采用分仓库模式管理笔记，支持公式渲染和自定义组件扩展，旨在提供高效便捷的知识管理和分享体验。',
+//       id: 'f3625513-ef8b-4ef5-b01b-69875d0fdcd9',
+//       created_at: 1748866888000,
+//       updated_at: 1762784040000
+//     }
+//   },
+//   {
+//     index: '0002',
+//     path: 'C:\\tnotesjs\\TNotes.introduction\\notes\\0002. TNotes 公式支持',
+//     dirName: '0002. TNotes 公式支持',
+//     readmePath: 'C:\\tnotesjs\\TNotes.introduction\\notes\\0002. TNotes 公式支持\\README.md',
+//     configPath: 'C:\\tnotesjs\\TNotes.introduction\\notes\\0002. TNotes 公式支持\\.tnotes.json',
+//     config: {
+//       bilibili: [],
+//       tnotes: [],
+//       yuque: [],
+//       done: true,
+//       enableDiscussions: true,
+//       description: '本文介绍了 TNotes 对数学公式的支持，通过集成 markdown-it-mathjax3 实现了 LaTeX 公式渲染功能，并提供了测试用例验证其正确性。',
+//       id: '4bd88b23-afee-4c89-a7b6-f4bd17f2e556',
+//       created_at: 1759507206000,
+//       updated_at: 1762330131000
+//     }
+//   },
+//   ...
+// ]
+```
+
+### 9.2. 步骤 2：初始化笔记索引缓存
+
+将扫描结果注入 `NoteIndexCache` 单例，构建两个内存索引：
+
+- `byNoteIndex`：笔记编号（如 `"0001"`）→ 笔记索引项
+- `byConfigId`：配置文件中的 UUID → 笔记编号
+
+有了这两个索引，后续通过笔记编号或配置 ID 查询笔记信息时，直接从内存读取，无需再扫描文件系统。
+
+### 9.3. 步骤 3：启动文件监听服务
+
+启动 `FileWatcherService`，监听 `notes/` 目录下的文件变化。监听到变化后，会根据事件类型（笔记目录重命名/删除、配置文件变更、README 变更等）自动触发对应的更新逻辑，并同步更新 `NoteIndexCache` 中的缓存数据。
+
 对应终端输出：
 
 ```bash
-# ✅ [13:20:36.227] [dev] 笔记服务已启动 - PID: 664708
+# ✅ [13:20:36.227] [dev] PID: 664708
 # ℹ️  [13:20:36.227] 扫描笔记目录...
 # ℹ️  [13:20:36.234] 扫描到 30 篇笔记
 # ℹ️  [13:20:36.235] 初始化笔记索引缓存...
 # ℹ️  [13:20:36.235] 笔记索引初始化完成，共 30 篇笔记
 # ✅ [13:20:36.250] 文件监听服务已启动
-# ✅ [13:20:36.251] 监听目录 - C:\tnotesjs\TNotes.introduction\notes
+# ✅ [13:20:36.251] TNotes 文件监听服务已就绪 - C:\tnotesjs\TNotes.introduction\notes
 # ✨ [13:20:36.255] [dev] 命令执行耗时：4099 ms
 ```
 

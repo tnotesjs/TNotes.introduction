@@ -4,43 +4,6 @@
   "source": "https://marketplace.visualstudio.com/items?itemName=pomdtr.excalidraw-editor",
   "elements": [
     {
-      "id": "B_tvhBssurTVsd6Bs99Ey",
-      "type": "text",
-      "x": 280.476249,
-      "y": -501.28127900000004,
-      "width": 720.478515625,
-      "height": 775,
-      "angle": 0,
-      "strokeColor": "#1e1e1e",
-      "backgroundColor": "transparent",
-      "fillStyle": "solid",
-      "strokeWidth": 2,
-      "strokeStyle": "solid",
-      "roughness": 1,
-      "opacity": 100,
-      "groupIds": [],
-      "frameId": null,
-      "index": "a0",
-      "roundness": null,
-      "seed": 1580263889,
-      "version": 94,
-      "versionNonce": 1046277453,
-      "isDeleted": false,
-      "boundElements": [],
-      "updated": 1774508510550,
-      "link": null,
-      "locked": false,
-      "text": "flowchart TD\n    A[\"pnpm tn:dev\"] --> B[\"DevCommand.run()\"]\n\n    B --> C[\"vitepressService.startServer()\"]\n\n    C --> D{\"预查1：单例服务\"}\n    D --> D1[\"检查旧进程 → kill\"]\n    D --> D2[\"检查端口占用 → 释放\"]\n\n    D1 --> E{\"预查2：笔记冲突检测\\ncountNotes()\"}\n    D2 --> E\n\n    E -->|有冲突| F[\"❌ 输出冲突详情\\nprocess.exit(1)\"]\n    E -->|无冲突| G[\"spawn VitePress 子进程\\npnpm vitepress dev\"]\n\n    G --> H[\"waitForServerReady()\\n等待输出 Local: ...\"]\n    H --> I[\"✅ 服务已就绪\\n打印访问地址\"]\n\n    I --> J[\"startServer() 返回 PID\"]\n\n    J --> K[\"serviceManager.initialize()\"]\n\n    K --> L[\"步骤1：scanNotes()\\n全量扫描笔记目录\\n（跳过重复检测）\"]\n    L --> M[\"步骤2：NoteIndexCache\\n构建内存索引\\nbyNoteIndex / byConfigId\"]\n    M --> N[\"步骤3：FileWatcherService\\n启动文件监听\"]\n\n    N --> O[\"✨ 服务就绪\\n命令执行完成\"]\n\n    style F fill:#f44336,color:#fff\n    style O fill:#4CAF50,color:#fff\n    style I fill:#2196F3,color:#fff",
-      "fontSize": 20,
-      "fontFamily": 5,
-      "textAlign": "left",
-      "verticalAlign": "top",
-      "containerId": null,
-      "originalText": "flowchart TD\n    A[\"pnpm tn:dev\"] --> B[\"DevCommand.run()\"]\n\n    B --> C[\"vitepressService.startServer()\"]\n\n    C --> D{\"预查1：单例服务\"}\n    D --> D1[\"检查旧进程 → kill\"]\n    D --> D2[\"检查端口占用 → 释放\"]\n\n    D1 --> E{\"预查2：笔记冲突检测\\ncountNotes()\"}\n    D2 --> E\n\n    E -->|有冲突| F[\"❌ 输出冲突详情\\nprocess.exit(1)\"]\n    E -->|无冲突| G[\"spawn VitePress 子进程\\npnpm vitepress dev\"]\n\n    G --> H[\"waitForServerReady()\\n等待输出 Local: ...\"]\n    H --> I[\"✅ 服务已就绪\\n打印访问地址\"]\n\n    I --> J[\"startServer() 返回 PID\"]\n\n    J --> K[\"serviceManager.initialize()\"]\n\n    K --> L[\"步骤1：scanNotes()\\n全量扫描笔记目录\\n（跳过重复检测）\"]\n    L --> M[\"步骤2：NoteIndexCache\\n构建内存索引\\nbyNoteIndex / byConfigId\"]\n    M --> N[\"步骤3：FileWatcherService\\n启动文件监听\"]\n\n    N --> O[\"✨ 服务就绪\\n命令执行完成\"]\n\n    style F fill:#f44336,color:#fff\n    style O fill:#4CAF50,color:#fff\n    style I fill:#2196F3,color:#fff",
-      "autoResize": true,
-      "lineHeight": 1.25
-    },
-    {
       "id": "JrZ5YnC8En0G0VtE1ujPn",
       "type": "rectangle",
       "x": -512.0416278839111,
@@ -459,11 +422,11 @@
       "locked": false
     },
     {
-      "id": "PKEw5guTAnUt8ME46OiXo",
+      "id": "Y8JC-bsEyFNQA1henRY9-",
       "type": "rectangle",
-      "x": -378.63017082214355,
-      "y": 866.9479351043701,
-      "width": 181.8645782470703,
+      "x": -443.2676268221436,
+      "y": 867.0100931043702,
+      "width": 309.53126525878906,
       "height": 88.33333587646484,
       "angle": 0,
       "strokeColor": "#1e1e1e",
@@ -477,14 +440,14 @@
       "frameId": null,
       "index": "aB",
       "roundness": null,
-      "seed": 1598601503,
-      "version": 46,
-      "versionNonce": 221693521,
+      "seed": 1512797493,
+      "version": 106,
+      "versionNonce": 1315109397,
       "isDeleted": false,
       "boundElements": [
         {
-          "type": "text",
-          "id": "M9UaAqaeGD9-IsaoemqUA"
+          "id": "08XW6X92TniCw2jcwsHhs",
+          "type": "text"
         },
         {
           "id": "yeepsj_eq1FtXhdG6tep-",
@@ -495,7 +458,7 @@
           "type": "arrow"
         }
       ],
-      "updated": 1770624229627,
+      "updated": 1774849013447,
       "link": null,
       "locked": false
     },
@@ -799,9 +762,9 @@
       "id": "k1sew63GtjLITOGL69Rpi",
       "type": "arrow",
       "x": -433.3596202545166,
-      "y": -363.4482786102295,
+      "y": -362.94794273376465,
       "width": 0,
-      "height": 43.69999999999999,
+      "height": 43.199664123535115,
       "angle": 0,
       "strokeColor": "#1e1e1e",
       "backgroundColor": "transparent",
@@ -817,11 +780,11 @@
         "type": 2
       },
       "seed": 1026976287,
-      "version": 128,
-      "versionNonce": 481994015,
+      "version": 129,
+      "versionNonce": 559461072,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1770624229835,
+      "updated": 1774856493065,
       "link": null,
       "locked": false,
       "points": [
@@ -831,7 +794,7 @@
         ],
         [
           0,
-          43.69999999999999
+          43.199664123535115
         ]
       ],
       "lastCommittedPoint": null,
@@ -852,10 +815,10 @@
     {
       "id": "b_N-zR9AZL8h0gsh0mUK_",
       "type": "arrow",
-      "x": -432.8596202545166,
-      "y": -269.7812786102295,
-      "width": 0.603999999999985,
-      "height": 44.20100000000002,
+      "x": -432.8698244140002,
+      "y": -269.2812747955323,
+      "width": 0.5973292897870692,
+      "height": 44.37034699377264,
       "angle": 0,
       "strokeColor": "#1e1e1e",
       "backgroundColor": "transparent",
@@ -871,11 +834,11 @@
         "type": 2
       },
       "seed": 809619007,
-      "version": 128,
-      "versionNonce": 578627935,
+      "version": 129,
+      "versionNonce": 1868159184,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1770624229836,
+      "updated": 1774856493066,
       "link": null,
       "locked": false,
       "points": [
@@ -884,12 +847,12 @@
           0
         ],
         [
-          -0.5,
-          24.5
+          -0.48979584051636493,
+          23.99999618530279
         ],
         [
-          -0.603999999999985,
-          44.20100000000002
+          -0.5973292897870692,
+          44.37034699377264
         ]
       ],
       "lastCommittedPoint": null,
@@ -1322,10 +1285,10 @@
     {
       "id": "yeepsj_eq1FtXhdG6tep-",
       "type": "arrow",
-      "x": -287.69762025451655,
-      "y": 817.4477213897705,
-      "width": 0,
-      "height": 43.700000000000045,
+      "x": -288.885887376456,
+      "y": 817.9479351043701,
+      "width": 0.2062190607100547,
+      "height": 43.261944285400546,
       "angle": 0,
       "strokeColor": "#1e1e1e",
       "backgroundColor": "transparent",
@@ -1341,11 +1304,11 @@
         "type": 2
       },
       "seed": 32530239,
-      "version": 128,
-      "versionNonce": 835652447,
+      "version": 191,
+      "versionNonce": 964770005,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1770624229836,
+      "updated": 1774849013447,
       "link": null,
       "locked": false,
       "points": [
@@ -1354,8 +1317,8 @@
           0
         ],
         [
-          0,
-          43.700000000000045
+          0.2062190607100547,
+          43.261944285400546
         ]
       ],
       "lastCommittedPoint": null,
@@ -1365,7 +1328,7 @@
         "gap": 1
       },
       "endBinding": {
-        "elementId": "PKEw5guTAnUt8ME46OiXo",
+        "elementId": "Y8JC-bsEyFNQA1henRY9-",
         "focus": 0.0000028751513281063044,
         "gap": 5.800213714599522
       },
@@ -1376,10 +1339,10 @@
     {
       "id": "nKAviZjefk9oBGLt_Cool",
       "type": "arrow",
-      "x": -287.69762025451655,
-      "y": 955.7817213897706,
-      "width": 0,
-      "height": 43.69999999999982,
+      "x": -288.61872147877983,
+      "y": 956.3434289808351,
+      "width": 0.15471597308618357,
+      "height": 43.13829240893506,
       "angle": 0,
       "strokeColor": "#1e1e1e",
       "backgroundColor": "transparent",
@@ -1395,11 +1358,11 @@
         "type": 2
       },
       "seed": 1883250527,
-      "version": 128,
-      "versionNonce": 2044526495,
+      "version": 191,
+      "versionNonce": 1928156725,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1770624229836,
+      "updated": 1774849013447,
       "link": null,
       "locked": false,
       "points": [
@@ -1408,13 +1371,13 @@
           0
         ],
         [
-          0,
-          43.69999999999982
+          -0.15471597308618357,
+          43.13829240893506
         ]
       ],
       "lastCommittedPoint": null,
       "startBinding": {
-        "elementId": "PKEw5guTAnUt8ME46OiXo",
+        "elementId": "Y8JC-bsEyFNQA1henRY9-",
         "focus": -0.0000028751513281063044,
         "gap": 1
       },
@@ -1774,9 +1737,9 @@
     {
       "id": "St_oCVM3K_gnotx5tBHJC",
       "type": "text",
-      "x": -579.5692157745361,
+      "x": -491.92930030822754,
       "y": -304.61460876464844,
-      "width": 292.41973876953125,
+      "width": 117.13990783691406,
       "height": 25,
       "angle": 0,
       "strokeColor": "#1e1e1e",
@@ -1791,20 +1754,20 @@
       "index": "ab",
       "roundness": null,
       "seed": 800297055,
-      "version": 45,
-      "versionNonce": 1772650609,
+      "version": 52,
+      "versionNonce": 951036464,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1770624229627,
+      "updated": 1774856505340,
       "link": null,
       "locked": false,
-      "text": "vitepressService.startServer()",
+      "text": "scanNotes()",
       "fontSize": 20,
       "fontFamily": 5,
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "jNaS-lnat4-zw7DMmkWtT",
-      "originalText": "vitepressService.startServer()",
+      "originalText": "scanNotes()",
       "autoResize": true,
       "lineHeight": 1.25
     },
@@ -2068,11 +2031,11 @@
       "lineHeight": 1.25
     },
     {
-      "id": "M9UaAqaeGD9-IsaoemqUA",
+      "id": "08XW6X92TniCw2jcwsHhs",
       "type": "text",
-      "x": -355.4283504486084,
-      "y": 886.1146030426025,
-      "width": 135.4609375,
+      "x": -406.62242418542485,
+      "y": 886.1767610426026,
+      "width": 236.24085998535156,
       "height": 50,
       "angle": 0,
       "strokeColor": "#fff",
@@ -2086,21 +2049,21 @@
       "frameId": null,
       "index": "aj",
       "roundness": null,
-      "seed": 535167327,
-      "version": 48,
-      "versionNonce": 1971509004,
+      "seed": 265356949,
+      "version": 122,
+      "versionNonce": 545582965,
       "isDeleted": false,
       "boundElements": [],
-      "updated": 1770624343038,
+      "updated": 1774849013447,
       "link": null,
       "locked": false,
-      "text": "✅ 服务已就绪\n打印访问地址",
+      "text": "✅ VitePress 服务已就绪\n打印访问地址",
       "fontSize": 20,
       "fontFamily": 5,
       "textAlign": "center",
       "verticalAlign": "middle",
-      "containerId": "PKEw5guTAnUt8ME46OiXo",
-      "originalText": "✅ 服务已就绪\n打印访问地址",
+      "containerId": "Y8JC-bsEyFNQA1henRY9-",
+      "originalText": "✅ VitePress 服务已就绪\n打印访问地址",
       "autoResize": true,
       "lineHeight": 1.25
     },
@@ -2460,7 +2423,7 @@
       "version": 97,
       "versionNonce": 1514246381,
       "isDeleted": false,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1774508399825,
       "link": null,
       "locked": false,
@@ -2556,7 +2519,7 @@
       "version": 64,
       "versionNonce": 1299466733,
       "isDeleted": false,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1774508464497,
       "link": null,
       "locked": false,

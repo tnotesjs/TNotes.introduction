@@ -212,6 +212,7 @@
 
   // 配置在资源管理器中隐藏的文件和文件夹
   "files.exclude": {
+    // "**/notes/**/.tnotes.json": true,
     "**/.ssh": true,
     "**/.eslintcache": true,
     "**/bower_components": true,
