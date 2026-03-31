@@ -375,12 +375,12 @@ export class NoteIndexCache {
 - 根据服务 ID `${repoName}-vitepress-dev` 检查当前知识库的 vitepress 服务是否已启动过，若检测到服务已经启动则 kill 旧的服务进程。
 - 检查服务端口是否被占用，若被占用则终止占用端口的进程。
 
-```ts {7-14}
+```ts
 // services/VitepressService.ts
 
-const port = this.configManager.get('port') || VITEPRESS_DEV_PORT
+const port = this.configManager.get('port') || VitepressService.DEFAULT_DEV_PORT
 const repoName = this.configManager.get('repoName')
-const processId = `${repoName}-${PROCESS_ID_DEV_SUFFIX}`
+const processId = `${repoName}-${VitepressService.PROCESS_ID_DEV_SUFFIX}`
 
 // 检查内存中的进程管理器（清理残留）
 if (
@@ -388,17 +388,21 @@ if (
   this.processManager.isRunning(processId)
 ) {
   this.processManager.kill(processId)
-  await new Promise((resolve) => setTimeout(resolve, PROCESS_CLEANUP_DELAY))
+  await new Promise((resolve) =>
+    setTimeout(resolve, VitepressService.PROCESS_CLEANUP_DELAY),
+  )
 }
 ```
 
 经过上述处理之后，再执行 `vitepress dev` 命令：
 
-```ts {7-10}
+```ts
 // services/VitepressService.ts
 
 // 启动 VitePress 开发服务器
-const pm = this.configManager.get('packageManager') || DEFAULT_PACKAGE_MANAGER
+const pm =
+  this.configManager.get('packageManager') ||
+  VitepressService.DEFAULT_PACKAGE_MANAGER
 const args = ['vitepress', 'dev', '--port', port.toString()]
 
 const processInfo = this.processManager.spawn(processId, pm, args, {
