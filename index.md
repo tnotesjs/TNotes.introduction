@@ -9,7 +9,7 @@ hero:
 ---
 
 <script setup>
-import SidebarCard from './.vitepress/tnotes/vitepress/components/SidebarCard/SidebarCard.vue'
+import SidebarCard from '@tnotesjs/core/vitepress/components/SidebarCard/SidebarCard.vue'
 </script>
 
 <SidebarCard pending />
