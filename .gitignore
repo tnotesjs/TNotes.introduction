@@ -1,6 +1,9 @@
 MERGED_README.md
 .vitepress-pid
 
+# 本地开发覆盖配置（link 本地 core，不提交避免 CI 失败）
+pnpm-workspace.yaml
+
 # 忽略视频｜音频文件
 *.mp3
 *.mp4
