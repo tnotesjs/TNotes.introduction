@@ -31,17 +31,6 @@
 ## 3. 🤔 TNotes 知识库的开发环境启动命令是？
 
 ```bash
-# 执行以下命令，启动笔记服务
-pnpm tn:dev
-
-# 相当于执行：
-# tsx ./.vitepress/tnotes/index.ts --dev
-# 本质是运行 ./.vitepress/tnotes/index.ts 文件，并传入启动参数 --dev
-```
-
-下面是一个完整的 `pnpm tn:dev` 命令执行输出示例：
-
-```bash
 $ pnpm tn:dev
 
 # > @ tn:dev /Users/huyouda/tnotesjs/TNotes.introduction
