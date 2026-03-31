@@ -19,7 +19,6 @@
     },
     "title": "introduction",
     "completed_notes_count": {
-      "25.04": 5,
       "25.05": 5,
       "25.06": 0,
       "25.07": 1,
@@ -30,13 +29,14 @@
       "25.12": 15,
       "26.01": 15,
       "26.02": 16,
-      "26.03": 16
+      "26.03": 16,
+      "26.04": 16
     },
     "details": "TNotes 说明文档",
     "link": "https://tnotesjs.github.io/TNotes.introduction/",
     "created_at": 1740850835000,
-    "updated_at": 1774953881000,
-    "days_since_birth": 9773
+    "updated_at": 1775000873000,
+    "days_since_birth": 9774
   },
   "port": 9379,
   "menuItems": [
