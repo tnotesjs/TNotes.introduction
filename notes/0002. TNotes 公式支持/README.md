@@ -4,11 +4,13 @@
 
 - [1. 🎯 本节内容](#1--本节内容)
 - [2. 🫧 评价](#2--评价)
-- [3. 💻 数学公式支持测试](#3--数学公式支持测试)
-  - [3.1. test 1](#31-test-1)
+- [3. 🤔 TNotes 中支持数学公式吗？](#3--tnotes-中支持数学公式吗)
+  - [3.1. `test 1`](#31-test-1)
     - [输入](#输入)
     - [输出](#输出)
-  - [3.2. test 2](#32-test-2)
+  - [3.2. `test 2`](#32-test-2)
+    - [输入](#输入)
+    - [输出](#输出)
 - [4. 🔗 引用](#4--引用)
 
 <!-- endregion:toc -->
@@ -19,15 +21,20 @@
 
 ## 2. 🫧 评价
 
-- 印象中，在早期的 vitepress 中是没有 [数学公式支持][3] 的，需要手动去引第三方的库来实现，现在已经提供了支持，需要下载一个第三方库 `markdown-it-mathjax3` 然后开启 `math` 配置即可。
-- 在 TNotes 中已经做好了必要的准备工作，加上了数学公式的支持。
+印象中，在早期的 vitepress 中是没有 [数学公式支持][3] 的，需要手动去引第三方的库来实现，现在已经提供了支持，需要下载一个第三方库 `markdown-it-mathjax3` 然后开启 `math` 配置即可。
 
-## 3. 💻 数学公式支持测试
+## 3. 🤔 TNotes 中支持数学公式吗？
 
-- `test 1` 是引用自 vitepress 官方的测试用例
-- `test 2` 是写 TNotes.leetcode 题解的时候经常要用到的复杂度的一些写法测试
+在 TNotes 中已经开启了 vitepress 提供的数学公式支持功能。
 
-### 3.1. test 1
+以下是两个简单的测试用例：
+
+| 测试用例 | 描述                                                              |
+| -------- | ----------------------------------------------------------------- |
+| `test 1` | 这是引用自 vitepress 官方的测试用例                               |
+| `test 2` | 这是写 TNotes.leetcode 题解的时候经常要用到的复杂度的一些写法测试 |
+
+### 3.1. `test 1`
 
 #### 输入
 
@@ -59,13 +66,17 @@ Maxwell's equations:
 | $\nabla \times \vec{\mathbf{E}}\, +\, \frac1c\, \frac{\partial\vec{\mathbf{B}}}{\partial t}  = \vec{\mathbf{0}}$ | curl of $\vec{\mathbf{E}}$ is proportional to the rate of change of $\vec{\mathbf{B}}$ |
 | $\nabla \times \vec{\mathbf{B}} -\, \frac1c\, \frac{\partial\vec{\mathbf{E}}}{\partial t} = \frac{4\pi}{c}\vec{\mathbf{j}}    \nabla \cdot \vec{\mathbf{E}} = 4 \pi \rho$ | _wha?_ |
 
-### 3.2. test 2
+### 3.2. `test 2`
+
+#### 输入
 
 ```md
 - $O(n)$
 - $O(n^2)$
 - $O(\log n)$
 ```
+
+#### 输出
 
 - $O(n)$
 - $O(n^2)$
@@ -74,8 +85,8 @@ Maxwell's equations:
 ## 4. 🔗 引用
 
 - [Vitepress - markdown 扩展 - 数学方程][3]
-- [markdown-it-mathjax3 github][2]
-- [markdown-it-mathjax3 github page][1]
+- [markdown-it-mathjax3 - github][2]
+- [markdown-it-mathjax3 - github page][1]
 
 [1]: https://tani.github.io/markdown-it-mathjax3/
 [2]: https://github.com/tani/markdown-it-mathjax3

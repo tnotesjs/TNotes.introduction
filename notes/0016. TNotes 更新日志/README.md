@@ -44,21 +44,21 @@
 在根知识库 TNotes 中执行 `pnpm tn:changelog` 命令即可自动在 `changelogs` 目录下生成指定范围的日志文件：
 
 ```powershell
-PS C:\tnotesjs\TNotes> pnpm tn:changelog
+pnpm tn:changelog
 
-> tnotes@0.0.1 tn:changelog C:\tnotesjs\TNotes
-> tsx scripts/generate-changelog.ts
+# > tnotes@0.0.1 tn:changelog C:\tnotesjs\TNotes
+# > tsx scripts/generate-changelog.ts
 
 
-📝 月度更新日志生成工具
+# 📝 月度更新日志生成工具
 
-请选择日志生成范围：
-  1. 本月更新日志
-  2. 上个月更新日志
-  3. 所有月份更新日志
-  4. 指定年份和月份
+# 请选择日志生成范围：
+#   1. 本月更新日志
+#   2. 上个月更新日志
+#   3. 所有月份更新日志
+#   4. 指定年份和月份
 
-请输入选项（1-4）：
+# 请输入选项（1-4）：
 ```
 
 目前（25.12）的策略如下：
@@ -103,9 +103,9 @@ tnotesjs
 
 ## 6. 🔗 引用
 
-- [tnotesjs 组织][2]
-- [TNotes 日志模块][1]
-- [25.11 日志][3]
+- [tnotesjs 组织 - github][2]
+- [TNotes 日志模块 - github - tnotesjs][1]
+- [25.11 日志 - github - tnotesjs][3]
 
 [1]: https://github.com/orgs/tnotesjs/projects/4
 [2]: https://github.com/tnotesjs

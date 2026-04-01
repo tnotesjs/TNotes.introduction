@@ -5,6 +5,7 @@
 - [1. 🎯 本节内容](#1--本节内容)
 - [2. 🫧 评价](#2--评价)
 - [3. 🤔 `TNotes.introduction` 这个知识库主要记录些什么内容呢？](#3--tnotesintroduction-这个知识库主要记录些什么内容呢)
+- [4. 🔗 引用](#4--引用)
 
 <!-- endregion:toc -->
 
@@ -14,7 +15,7 @@
 
 ## 2. 🫧 评价
 
-`TNotes.introduction` 知识库是基于 `TNotes.core` 搭建的一个开源知识库，顾名思义，（introduction）这个知识库就是用来介绍和 `TNotes` 这款工具相关内容的，可以将它视作 `TNotes` 的使用说明文档。
+`TNotes.introduction` 知识库是基于 @tnotesjs/core 搭建的一个开源知识库，顾名思义，（introduction）这个知识库就是用来介绍和 `TNotes` 这款工具相关内容的，可以将它视作 `TNotes` 的使用说明文档。
 
 ## 3. 🤔 `TNotes.introduction` 这个知识库主要记录些什么内容呢？
 
@@ -24,3 +25,11 @@
 - TNotes 架构以实现原理简介
 - TNotes 的一些迭代 Log
 - ……
+
+## 4. 🔗 引用
+
+- [tnotesjs/core - github][1]
+- [tnotesjs/core - npm][2]
+
+[1]: https://github.com/tnotesjs/core
+[2]: https://www.npmjs.com/package/@tnotesjs/core

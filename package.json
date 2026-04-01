@@ -18,6 +18,7 @@
     "vue": "^3.5.27"
   },
   "dependencies": {
-    "@tnotesjs/core": "^0.1.12"
+    "@tnotesjs/core": "^0.1.12",
+    "list": "link:../../Users/Tdahuyou/AppData/Local/pnpm/global/5/node_modules/list"
   }
 }

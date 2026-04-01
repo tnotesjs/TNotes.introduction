@@ -1,10 +1,13 @@
-# [0027. TNotes 中常用的 emoji](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0027.%20TNotes%20%E4%B8%AD%E5%B8%B8%E7%94%A8%E7%9A%84%20emoji)
+# [0027. emoji 规范](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0027.%20emoji%20%E8%A7%84%E8%8C%83)
 
 <!-- region:toc -->
 
 - [1. 🎯 本节内容](#1--本节内容)
 - [2. 🫧 评价](#2--评价)
 - [3. 🤔 在 TNotes 中，常用的 emoji 都有哪些？分别表示什么含义？](#3--在-tnotes-中常用的-emoji-都有哪些分别表示什么含义)
+  - [3.1. 常用](#31-常用)
+  - [3.2. 不常用](#32-不常用)
+- [4. 🤔 TNotes 中使用最多的 emoji 是什么？](#4--tnotes-中使用最多的-emoji-是什么)
 
 <!-- endregion:toc -->
 
@@ -23,21 +26,33 @@
 
 ## 3. 🤔 在 TNotes 中，常用的 emoji 都有哪些？分别表示什么含义？
 
+### 3.1. 常用
+
 | Emoji | 微信输入法（拼音） | 描述 |
 | --- | --- | --- |
 | 🎯 | `ba xin` | 通常用在笔记开头，列出「本节内容」。 |
-| 🧠 | `nao zi` | 表示这一部分可能是比较烧脑的内容。 |
 | 🫧 | `mao pao` | 通常用在笔记开头位置，用来表示个人的评价。 |
 | ⏰ | `nao zhong` | 表示待办事项。 |
-| 📝 | `ji lu` | 表示总结性内容（summary / 概述）。 |
 | 💻 | `dian nao` | 表示示例（demo）。 |
-| 📒 | `bi ji` | 表示笔记（notes）。 |
-| ⚙️ | `chi lun` | 表示 xxx 中的组成部分，如函数、变量、属性、成员、组件等。 |
 | 🔍 | `fang da jing` / `cha xun` / `sou suo` | 表示搜索、查看源码或查阅具体文章等。 |
 | 🔗 | `lian jie` | 表示链接的集合，常用于汇总笔记中的所有链接。 |
 | 🤖 | `ji qi ren` | 表示 AI 回复。 |
+| 🤔 | `si kao` | 表示思考问题、提出疑问，在笔记中经常使用 |
+
+### 3.2. 不常用
+
+| Emoji | 微信输入法（拼音） | 描述 |
+| --- | --- | --- |
+| 🧠 | `nao zi` | 表示这一部分可能是比较烧脑的内容。 |
+| 📝 | `ji lu` | 表示总结性内容（summary / 概述）。 |
+| 📒 | `bi ji` | 表示笔记（notes）。 |
+| ⚙️ | `chi lun` | 表示 xxx 中的组成部分，如函数、变量、属性、成员、组件等。 |
 | ✍️ | `xie zi` | 表示“随笔”、“练习题”、“面试题”等内容。 |
 | 🔨 | `chui zi` | 表示“工具”、“架构”等。 |
-| 🤔 | `si kao` | 表示思考问题、提出疑问，在笔记中经常使用（以问题驱动的形式来整理笔记）。 |
 | 💡 | `deng pao` | 表示想法、建议、灵感等，常用在思维导图部分。 |
 | 👨‍🏫 | `lao shi` | 表示学习资源，如 Bilibili 上的教程或其它大佬文章等内容。 |
+| …… | …… | …… |
+
+## 4. 🤔 TNotes 中使用最多的 emoji 是什么？
+
+最常用的 emoji 是 🤔，以满足问题驱动的记笔记模式。

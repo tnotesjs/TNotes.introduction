@@ -38,10 +38,6 @@
         "link": "/notes/0002. TNotes 公式支持/README"
       },
       {
-        "text": "✅ TNotes 中常用的 emoji",
-        "link": "/notes/0027. TNotes 中常用的 emoji/README"
-      },
-      {
         "text": "⏰ TNotes 笔记配置文件",
         "link": "/notes/0011. TNotes 笔记配置文件/README"
       }
@@ -132,7 +128,25 @@
     ]
   },
   {
-    "text": "5. ⏰ TNotes 核心功能的实现",
+    "text": "5. TNotes 笔记书写规范",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "⏰ TNotes 笔记书写规范",
+        "link": "/notes/0037. TNotes 笔记书写规范/README"
+      },
+      {
+        "text": "⏰ 问题驱动的记笔记模式",
+        "link": "/notes/0038. 问题驱动的记笔记模式/README"
+      },
+      {
+        "text": "✅ emoji 规范",
+        "link": "/notes/0027. emoji 规范/README"
+      }
+    ]
+  },
+  {
+    "text": "6. ⏰ TNotes 核心功能的实现",
     "collapsed": true,
     "items": [
       {
@@ -150,7 +164,17 @@
     ]
   },
   {
-    "text": "6. 关于作者",
+    "text": "7. core 开发工作流",
+    "collapsed": true,
+    "items": [
+      {
+        "text": "⏰ core 开发工作流",
+        "link": "/notes/0036. core 开发工作流/README"
+      }
+    ]
+  },
+  {
+    "text": "8. 其他",
     "collapsed": true,
     "items": [
       {
@@ -172,18 +196,6 @@
       {
         "text": "⏰ TNotes 规范",
         "link": "/notes/0035. TNotes 规范/README"
-      },
-      {
-        "text": "⏰ new",
-        "link": "/notes/0036. new/README"
-      },
-      {
-        "text": "⏰ new",
-        "link": "/notes/0037. new/README"
-      },
-      {
-        "text": "⏰ new",
-        "link": "/notes/0038. new/README"
       },
       {
         "text": "⏰ new",
