@@ -14,7 +14,7 @@
     ]
   },
   {
-    "text": "2. TNotes",
+    "text": "2. TNotes 简介",
     "collapsed": true,
     "items": [
       {
@@ -52,32 +52,32 @@
         "link": "/notes/0006. TNotes 组件/README"
       },
       {
-        "text": "✅ 嵌入 B 站视频",
-        "link": "/notes/0004. 嵌入 B 站视频/README"
+        "text": "✅ BilibiliOutsidePlayer",
+        "link": "/notes/0004. BilibiliOutsidePlayer/README"
       },
       {
-        "text": "✅ 英文单词列表",
-        "link": "/notes/0007. 英文单词列表/README"
+        "text": "✅ EnWordList",
+        "link": "/notes/0007. EnWordList/README"
       },
       {
-        "text": "✅ 图片轮播",
-        "link": "/notes/0008. 图片轮播/README"
+        "text": "✅ Swiper",
+        "link": "/notes/0008. Swiper/README"
       },
       {
-        "text": "✅ Mermaid 图表",
-        "link": "/notes/0012. Mermaid 图表/README"
+        "text": "✅ Mermaid",
+        "link": "/notes/0012. Mermaid/README"
       },
       {
-        "text": "✅ MarkMap 思维导图",
-        "link": "/notes/0013. MarkMap 思维导图/README"
+        "text": "✅ MarkMap",
+        "link": "/notes/0013. MarkMap/README"
       },
       {
-        "text": "✅ 开启评论功能",
-        "link": "/notes/0005. 开启评论功能/README"
+        "text": "✅ Discussions",
+        "link": "/notes/0005. Discussions/README"
       },
       {
-        "text": "✅ 足迹纪录",
-        "link": "/notes/0010. 足迹纪录/README"
+        "text": "✅ Footprints",
+        "link": "/notes/0010. Footprints/README"
       }
     ]
   },
@@ -150,8 +150,8 @@
     "collapsed": true,
     "items": [
       {
-        "text": "⏰ 评论功能的技术实现",
-        "link": "/notes/0003. 评论功能的技术实现/README"
+        "text": "⏰ 评论功能的技术实现（Giscus）",
+        "link": "/notes/0003. 评论功能的技术实现（Giscus）/README"
       },
       {
         "text": "⏰ 优化搜索配置",

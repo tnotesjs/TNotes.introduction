@@ -1,4 +1,4 @@
-# [0008. 图片轮播](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0008.%20%E5%9B%BE%E7%89%87%E8%BD%AE%E6%92%AD)
+# [0008. Swiper](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0008.%20Swiper)
 
 <!-- region:toc -->
 

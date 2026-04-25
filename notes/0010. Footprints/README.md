@@ -1,4 +1,4 @@
-# [0010. 足迹纪录](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0010.%20%E8%B6%B3%E8%BF%B9%E7%BA%AA%E5%BD%95)
+# [0010. Footprints](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0010.%20Footprints)
 
 <!-- region:toc -->
 

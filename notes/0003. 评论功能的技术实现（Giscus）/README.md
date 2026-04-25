@@ -1,4 +1,4 @@
-# [0003. 评论功能的技术实现](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0003.%20%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD%E7%9A%84%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0)
+# [0003. 评论功能的技术实现（Giscus）](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0003.%20%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD%E7%9A%84%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0%EF%BC%88Giscus%EF%BC%89)
 
 <!-- region:toc -->
 

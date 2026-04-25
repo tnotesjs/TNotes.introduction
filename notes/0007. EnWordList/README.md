@@ -1,4 +1,4 @@
-# [0007. 英文单词列表](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0007.%20%E8%8B%B1%E6%96%87%E5%8D%95%E8%AF%8D%E5%88%97%E8%A1%A8)
+# [0007. EnWordList](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0007.%20EnWordList)
 
 <!-- region:toc -->
 
@@ -8,7 +8,8 @@
   - [3.1. 核心功能简介](#31-核心功能简介)
   - [3.2. 功能演示](#32-功能演示)
   - [3.3. 使用示例](#33-使用示例)
-- [4. 🔗 引用](#4--引用)
+- [4. 🤔 `EnWordList` 组件依赖的词典数据源是？](#4--enwordlist-组件依赖的词典数据源是)
+- [5. 🔗 引用](#5--引用)
 
 <!-- endregion:toc -->
 
@@ -18,13 +19,7 @@
 
 ## 2. 🫧 评价
 
-单词组件的数据源来自于开源项目 [dict][1]。
-
-::: tip ⏰ TODO
-
-使用体验不是特别满意，还会继续优化！
-
-:::
+TODO：使用体验不是特别满意，还会继续优化！
 
 ## 3. 🤔 英文单词列表组件是什么？如何使用？有哪些功能？
 
@@ -109,8 +104,18 @@
 'audience',
 'meanwhile',]" />
 
-## 4. 🔗 引用
+## 4. 🤔 `EnWordList` 组件依赖的词典数据源是？
+
+`EnWordList` 组件依赖的词典数据源来自于项目：[TNotes.en-words][2]。
+
+原始数据源来自于项目：[dict][1]。
+
+两者之间的区别在于：在 en-words 中，额外记录了一些个人的学习笔记（比如添加了一些词汇、对一些词汇进行了修改）。
+
+## 5. 🔗 引用
 
 - [dict][1]
+- [TNotes.en-words][2]
 
 [1]: https://github.com/kajweb/dict
+[2]: https://github.com/tnotesjs/TNotes.en-words/

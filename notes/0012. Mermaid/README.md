@@ -1,4 +1,4 @@
-# [0012. Mermaid 图表](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0012.%20Mermaid%20%E5%9B%BE%E8%A1%A8)
+# [0012. Mermaid](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0012.%20Mermaid)
 
 <!-- region:toc -->
 

@@ -1,4 +1,4 @@
-# [0013. MarkMap 思维导图](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0013.%20MarkMap%20%E6%80%9D%E7%BB%B4%E5%AF%BC%E5%9B%BE)
+# [0013. MarkMap](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0013.%20MarkMap)
 
 <!-- region:toc -->
 

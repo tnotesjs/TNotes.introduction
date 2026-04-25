@@ -15,7 +15,9 @@
 
 ## 2. 🫧 评价
 
-`TNotes.introduction` 知识库是基于 @tnotesjs/core 搭建的一个开源知识库，顾名思义，（introduction）这个知识库就是用来介绍和 `TNotes` 这款工具相关内容的，可以将它视作 `TNotes` 的使用说明文档。
+`TNotes.introduction` 知识库是基于 [@tnotesjs/core][1] 搭建的一个开源知识库。
+
+顾名思义，这个知识库就是用来介绍和 `TNotes` 这款工具相关内容的，可以将它视作 `TNotes` 的使用说明文档。
 
 ## 3. 🤔 `TNotes.introduction` 这个知识库主要记录些什么内容呢？
 

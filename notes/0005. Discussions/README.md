@@ -1,4 +1,4 @@
-# [0005. 开启评论功能](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0005.%20%E5%BC%80%E5%90%AF%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD)
+# [0005. Discussions](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0005.%20Discussions)
 
 <!-- region:toc -->
 
