@@ -26,6 +26,10 @@
         "link": "/notes/0028. TNotes 根知识库/README"
       },
       {
+        "text": "✅ TNotes 公式支持",
+        "link": "/notes/0002. TNotes 公式支持/README"
+      },
+      {
         "text": "✅ 分仓库模式",
         "link": "/notes/0014. 分仓库模式/README"
       },
@@ -34,12 +38,8 @@
         "link": "/notes/0022. TNotes 脚本（待更新）/README"
       },
       {
-        "text": "✅ TNotes 公式支持",
-        "link": "/notes/0002. TNotes 公式支持/README"
-      },
-      {
-        "text": "⏰ TNotes 笔记配置文件",
-        "link": "/notes/0011. TNotes 笔记配置文件/README"
+        "text": "⏰ TNotes 笔记配置文件（待更新）",
+        "link": "/notes/0011. TNotes 笔记配置文件（待更新）/README"
       }
     ]
   },
@@ -174,7 +174,7 @@
     ]
   },
   {
-    "text": "8. 其他",
+    "text": "8. others",
     "collapsed": true,
     "items": [
       {
@@ -196,6 +196,10 @@
       {
         "text": "⏰ TNotes 规范",
         "link": "/notes/0035. TNotes 规范/README"
+      },
+      {
+        "text": "⏰ new",
+        "link": "/notes/0041. new/README"
       },
       {
         "text": "⏰ new",

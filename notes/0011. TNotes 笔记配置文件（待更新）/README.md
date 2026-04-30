@@ -1,4 +1,4 @@
-# [0011. TNotes 笔记配置文件](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0011.%20TNotes%20%E7%AC%94%E8%AE%B0%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
+# [0011. TNotes 笔记配置文件（待更新）](https://github.com/tnotesjs/TNotes.introduction/tree/main/notes/0011.%20TNotes%20%E7%AC%94%E8%AE%B0%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%EF%BC%88%E5%BE%85%E6%9B%B4%E6%96%B0%EF%BC%89)
 
 <!-- region:toc -->
 
